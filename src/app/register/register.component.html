@@ -1,0 +1,38 @@
+<div class="container-fluid" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
+  <div class="row justify-content-center">
+    <div class="">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="text-center">Registro</h2>
+          <form (ngSubmit)="register()" *ngIf="!mostrar">
+            <div class="mb-3">
+              <label for="username" class="form-label">Usuario</label>
+              <input type="text" class="form-control" id="username" placeholder="Usuario" [(ngModel)]="username" name="username" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <input type="email" class="form-control" id="email" placeholder="Correo electrónico" [(ngModel)]="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="password" placeholder="Contraseña" [(ngModel)]="password" name="password" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Repetir contraseña</label>
+              <input type="password" class="form-control" id="confirmPassword" placeholder="Repetir contraseña" [(ngModel)]="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="btn btn-dark d-block mx-auto">Enviar código</button>
+          </form>
+
+          <form (ngSubmit)="comp()" *ngIf="mostrar"> 
+            <div class="my-3" >
+              <label for="fa" class="form-label">Código de verificación</label>
+              <input type="fa" class="form-control" id="fa" placeholder="Contraseña" [(ngModel)]="fa" name="fa" required>
+            </div>
+            <button type="submit" class="btn btn-dark d-block mx-auto">Registrarse</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
