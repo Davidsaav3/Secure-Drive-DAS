@@ -24,6 +24,7 @@ export class LoginComponent {
   mostrar: any= false;
   mostrar2: any= false;
   mostrar3: any= false;
+  mostrar4: any= false;
   fa: string | undefined;
 
   constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
@@ -39,14 +40,15 @@ export class LoginComponent {
       console
       const url = 'https://proteccloud.000webhostapp.com/login.php';
       const body = { 
-          username: this.username, 
-          password: this.password 
+          username: this.registerForm.get('username')?.value, 
+          password: this.registerForm.get('password')?.value 
       };
       const httpOptions = {
           headers: new HttpHeaders({
               'Content-Type': 'application/x-www-form-urlencoded'
           })
       };
+      console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
           catchError((error: HttpErrorResponse) => {
@@ -69,6 +71,9 @@ export class LoginComponent {
               if(response.code==400){
                 this.mostrar2= true;
               }
+              if(response.code==401){
+                this.mostrar4= true;
+              }
           },
           (error: any) => {
               console.error('Error de solicitud:', error);
@@ -86,13 +91,15 @@ export class LoginComponent {
       console
       const url = 'https://proteccloud.000webhostapp.com/code.php';
       const body = { 
-          fa: this.fa, 
+        username: this.registerForm.get('username')?.value, 
+        fa: this.registerForm2.get('fa')?.value, 
       };
       const httpOptions = {
           headers: new HttpHeaders({
               'Content-Type': 'application/x-www-form-urlencoded'
           })
       };
+      console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
           catchError((error: HttpErrorResponse) => {

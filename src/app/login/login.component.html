@@ -24,6 +24,9 @@
             <div *ngIf="mostrar2" style="color: red;">
               Usuario o contraseña equivocados.
             </div>
+            <div *ngIf="mostrar4" style="color: red;">
+              El usuario no existe.
+            </div>
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
               <input type="password" formControlName="password" class="form-control" id="password" placeholder="Contraseña">

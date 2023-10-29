@@ -21,6 +21,9 @@
           
               </div>
             </div>
+            <div *ngIf="mostrar4" style="color: red;">
+              Nombre de usuario en uso, pruebe con otro.
+            </div>
             <div class="mb-3">
               <label for="email" class="form-label">Correo electrónico</label>
               <input type="email" formControlName="email" class="form-control" id="email" placeholder="Correo electrónico">
