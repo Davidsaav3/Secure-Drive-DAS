@@ -31,10 +31,11 @@
                 <div *ngIf="registerForm.get('email')?.errors?.['email']">
                   Correo electrónico no es válido.
                 </div>
-                <div *ngIf="mostrar2">
-                  Correo electrónico en uso, pruebe con otro.
-                </div>
+              
               </div>
+            </div>
+            <div *ngIf="mostrar2" style="color: red;">
+              Correo electrónico en uso, pruebe con otro.
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
@@ -77,10 +78,11 @@
                 <div *ngIf="registerForm2.get('fa')?.errors?.['maxlength']">
                   Código de verificación no puede tener más de 6 dígitos.
                 </div>
-                <div *ngIf="mostrar3">
-                  Código de verificación incorrecto.
-                </div>
+          
               </div>
+            </div>
+            <div *ngIf="mostrar3" style="color: red;">
+              Código de verificación incorrecto.
             </div>
             <button type="submit" class="btn btn-dark d-block mx-auto">Registrarse</button>
           </form>
