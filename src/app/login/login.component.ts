@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service'; 
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,7 @@ export class LoginComponent {
   mostrar3: any= false;
   fa: string | undefined;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
+  constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
   username = this.registerForm.get('username')?.value;
   password = this.registerForm.get('password')?.value;
 
@@ -83,7 +84,7 @@ export class LoginComponent {
   comp() {
     if (this.registerForm2.valid) {
       console
-      const url = 'https://proteccloud.000webhostapp.com/code.php';
+      const url = 'https://proteccloud.000webhostapp.com/login.php';
       const body = { 
           fa: this.fa, 
       };
@@ -109,6 +110,7 @@ export class LoginComponent {
           (response: any) => {
               console.log('Respuesta:', response);
               if(response.code==100){
+                this.authService.setAuthenticated(true);
                 this.router.navigate(['/home']);
               }
               if(response.code==400){

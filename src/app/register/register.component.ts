@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service'; 
 
 @Component({
   selector: 'app-register',
@@ -26,7 +27,7 @@ export class RegisterComponent {
   mostrar3: any= false;
   fa: string | undefined;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
+  constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
   username = this.registerForm.get('username')?.value;
   email = this.registerForm.get('email')?.value;
   password = this.registerForm.get('password')?.value;
@@ -114,6 +115,7 @@ export class RegisterComponent {
           (response: any) => {
               console.log('Respuesta:', response);
               if(response.code==100){
+                this.authService.setAuthenticated(true);
                 this.router.navigate(['/home']);
               }
               if(response.code==400){

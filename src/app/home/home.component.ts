@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/aut.service';
+import { AuthService } from '../auth.service'; // Ajusta la ruta según la ubicación de tu servicio AuthService
 
 @Component({
   selector: 'app-home',
@@ -38,8 +38,7 @@ export class HomeComponent  implements OnInit {
   }
   
   logout(): void {
-    this.authService.logout();
-    // Aquí puedes realizar otras acciones, como redirigir a la página de inicio de sesión, limpiar datos de usuario, etc.
+    this.authService.setAuthenticated(true);
   }
 
   onFileSelected(event: any): void {
