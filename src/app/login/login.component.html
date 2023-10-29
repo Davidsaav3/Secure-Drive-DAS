@@ -21,8 +21,8 @@
               
               </div>
             </div>
-            <div *ngIf="mostrar3" style="color: red;">
-              El usuario no existe en la base de datos.
+            <div *ngIf="mostrar2" style="color: red;">
+              Usuario o contraseña equivocados.
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
@@ -53,10 +53,11 @@
                 <div *ngIf="registerForm2.get('fa')?.errors?.['maxlength']">
                   Código de verificación no puede tener más de 6 dígitos.
                 </div>
-                <div *ngIf="mostrar3">
-                  Código de verificación incorrecto.
-                </div>
+             
               </div>
+            </div>
+            <div *ngIf="mostrar3" style="color: red;">
+              Código de verificación incorrecto.
             </div>
             <button type="submit" class="btn btn-dark d-block mx-auto">Iniciar sesión</button>
           </form>
