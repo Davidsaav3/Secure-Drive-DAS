@@ -1,4 +1,4 @@
 @import "~bootstrap/dist/css/bootstrap.css";
-.container-fluid {
+body {
     background: linear-gradient(to bottom, #3a3a3a, #000000);
 }

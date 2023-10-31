@@ -2,12 +2,35 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="d-flex">
       <img class="" width="60px" height="60px" src="https://media.istockphoto.com/id/936681148/es/vector/lock-icono-de.jpg?s=612x612&w=0&k=20&c=s4_wlpTBhoCaw-B4dGMLeMmls0zAFO8QuaBnomvpPzw=" alt="Candado">
-      <h1 class="ps-1 pt-1" href="#">Protección de la información</h1>
+      <h1 class="ps-1 pt-1" href="#">Secure Drive</h1>
+    </div>
+    <div>
+      <li class="nav-item container custom-container d-flex align-items-center">
+        <div class="btn-group" role="group" aria-label="Button group with three buttons">
+          <button (click)="pag=0" type="button" class="btn btn-outline-dark" style="background-color: white; color: black; border-color: black;">Mis archivos</button>
+          <button (click)="pag=1" type="button" class="btn btn-outline-dark" style="background-color: white; color: black; border-color: black;">Compartidos por mi</button>
+          <button (click)="pag=2" type="button" class="btn btn-outline-dark" style="background-color: white; color: black; border-color: black;">Compartidos conmigo</button>
+        </div>          
+      </li>
     </div>
     <div class="collapse navbar-collapse" style="justify-content: flex-end;" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
+          <li>
+            <label *ngIf="fileName==''" for="file-upload" class="btn btn-dark" style="width: max-content;">
+              <input id="file-upload" type="file" style="display: none;" (change)="showFileName($event)">
+              Subir Archivos
+            </label>
+            <label *ngIf="fileName!=''" for="file-upload" class="btn btn-dark" style="width: max-content;">
+              <input id="file-upload" type="file" style="display: none;">
+              {{ this.fileName }}
+              <div class="spinner-border text-white" role="status">
+                <span class="sr-only"></span>
+              </div>
+            </label>
+        </li>
+       
         <li class="nav-item container custom-container d-flex align-items-center">
-          <span class="navbar-text px-3">Davidsaav3@gmail.com</span>
+          <span class="navbar-text px-3">Davidsaav3</span>
         </li>
         <li class="nav-item">
           <button routerLink="/login" (click)="logout()" class="btn btn-outline-danger me-3 my-2 my-sm-0" type="submit"><span class="inline-span">Logout</span></button>
@@ -15,37 +38,87 @@
       </ul>
     </div>
   </nav>
-  <div class="container-fluid py-4" style="height: 100vh;">
 
-    <div class="card">
-      <div class="card-body d-flex">
-        <div class="d-flex">
-          <div><h2 class="">Subir archivos</h2></div>
-          <div class="ps-3"><input  type="file" (change)="onFileSelected($event)" class="form-control"></div>
-        </div>
-        <div class="ps-3">
-          <button (click)="upload()" class="btn btn-dark">Subir archivo</button>
-        </div>
-        <div class="list-group-item" *ngFor="let file of files">{{ file.name }}</div>
-      </div>
-    </div>
-
+  <div *ngIf="pag==0" class="container py-2" style="height: 100vh;"><!-- TUYO -->
     <h2 class="pt-3" style="color: aliceblue;">Mis archivos</h2>
     <div class="row">
       <div class="col-md-4 pb-4" *ngFor="let image of imageList">
-        <div class="container mt-4">
-          <div class="card" style="width: 21rem;">
-            <img class="card-img-top" [src]="image.url" alt="Imagen de prueba" style="height: 200px;">
-            <div class="card-body">
-              <h5 class="card-title">Nombre del Archivo</h5>
-              <button class="btn btn-dark">Descargar</button>
-              <button class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2">Compartir</button>
-              <button class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Borrar</button>
+          <div class="container mt-3">
+            <div class="card" style="">
+              <div class="row no-gutters">
+                <!--<div class="col-md-2">
+                  <img [src]="image.url" class="card-img" alt="...">
+                </div>-->
+                <div class="">
+                  <div class="card-body">
+                  <p class="card-title m-0"><strong>Nombre del Archivo</strong></p>
+                  <p class="card-text m-0">Tipo de archivo: mp3</p>
+                  <p class="card-text mb-1">Tmaño de archivo: 120 Mb</p>
+                  <button class="btn btn-dark"  (click)="descargar(1)">Descargar</button>
+                  <button class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="compartir(1)">Compartir</button>
+                  <button class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Eliminar</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="pag==1" class="container py-2" style="height: 100vh;"><!-- por mi -->
+    <h2 class="pt-3" style="color: aliceblue;">Compartido por mi</h2>
+    <div class="row">
+      <div class="col-md-4 pb-4" *ngFor="let image of imageList">
+          <div class="container mt-3">
+            <div class="card" style="">
+              <div class="row no-gutters">
+                <!--<div class="col-md-2">
+                  <img [src]="image.url" class="card-img" alt="...">
+                </div>-->
+                <div class="">
+                  <div class="card-body">
+                  <p class="card-title m-0"><strong>Nombre del Archivo</strong></p>
+                  <p class="card-text m-0">Tipo de archivo: mp3</p>
+                  <p class="card-text mb-1">Tamaño de archivo: 120 Mb</p>
+                  <p class="card-text mb-1">Compartido con: Davidsaav</p>
+                  <button class="btn btn-dark" (click)="descargar(1)">Descargar</button>
+                  <button class="btn btn-danger ms-3" (click)="noCompartir(1)">Dejar de compartir</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="pag==2" class="container py-2" style="height: 100vh;"><!-- conmigo  -->
+    <h2 class="pt-3" style="color: aliceblue;">Compartido conmigo</h2>
+    <div class="row">
+      <div class="col-md-4 pb-4" *ngFor="let image of imageList">
+          <div class="container mt-3">
+            <div class="card" style="">
+              <div class="row no-gutters">
+                <!--<div class="col-md-2">
+                  <img [src]="image.url" class="card-img" alt="...">
+                </div>-->
+                <div class="">
+                  <div class="card-body">
+                  <p class="card-title m-0"><strong>Nombre del Archivo</strong></p>
+                  <p class="card-text m-0">Tipo de archivo: mp3</p>
+                  <p class="card-text mb-1">Tmaño de archivo: 120 Mb</p>
+                  <p class="card-text mb-1">Compartido por: Davidsaav</p>
+                  <button class="btn btn-dark" (click)="descargar(1)">Descargar</button>
+                  <button class="btn btn-danger ms-3" (click)="noCompartir(1)">No me interesa</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
 
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -55,11 +128,11 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                  ¿Estás seguro de que deseas eliminar este archibo?
+                  ¿Estás seguro de que deseas eliminar este archivo?
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="button" class="btn btn-danger" (click)="deleteDoc(1)">Eliminar</button>
+                  <button type="button" class="btn btn-danger" (click)="eliminar(1)">Eliminar</button>
               </div>
           </div>
       </div>
@@ -69,25 +142,32 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel2">Compartir archivo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Con que usuario desea compartir el archivo?</p>
-                <form>
+              <h5 class="modal-title" id="confirmDeleteModalLabel2">Compartir archivo</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p>¿Con qué usuario desea compartir el archivo?</p>
+              <form [formGroup]="shareForm" (ngSubmit)="compartir(1)">
                   <div class="form-group">
-                      <label for="exampleInputEmail1">Correo Electrónico</label>
-                      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Introduce tu correo electrónico">
-                  </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" >Enviar</button>
-            </div>
+                      <label for="email" class="form-label">Correo electrónico</label>
+                      <input type="email" formControlName="email" class="form-control" id="email" placeholder="Correo electrónico">
+                      <div *ngIf="shareForm.get('email')?.invalid && (shareForm.get('email')?.dirty || shareForm.get('email')?.touched)" class="text-danger">
+                        <div *ngIf="shareForm.get('email')?.errors?.['required']">
+                          Correo electrónico es requerido.
+                        </div>
+                        <div *ngIf="shareForm.get('email')?.errors?.['email']">
+                          Correo electrónico no es válido.
+                        </div>
+                      </div>
+                    </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-primary" (click)="compartir(1)">Enviar</button>
+          </div>
         </div>
     </div>
 </div>
 
-  </div>
 </div>
