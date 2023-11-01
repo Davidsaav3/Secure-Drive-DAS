@@ -79,7 +79,11 @@ export class HomeComponent  implements OnInit {
     ],
   };
 
-  ngOnInit(): void { /////////////// INIT ///////////////
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  cargar(){ /////////////// INIT ///////////////
     const url = 'https://proteccloud.000webhostapp.com/files.php/'+this.username;
     this.http.get(url, { responseType: 'blob' }).subscribe((response: any) => {
       const blob = new Blob([response], { type: 'application/octet-stream' });
@@ -121,6 +125,9 @@ export class HomeComponent  implements OnInit {
         return response.json();
       })
       .then(data => {
+        if(data.code==100){
+          this.cargar();
+        }
       })
       .catch(error => {
         console.error('Error:', error);
@@ -135,10 +142,15 @@ export class HomeComponent  implements OnInit {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
-    this.http.delete(url, httpOptions).subscribe(() => {
-      console.log('Archivo eliminado con éxito');
-    }, error => {
-      console.error('Error al eliminar el archivo', error);
+    this.http.delete(url, httpOptions).subscribe(          
+      (response: any) => {
+        console.log('Respuesta:', response);
+        if(response.code==100){
+          this.cargar();
+        }
+    },
+    (error: any) => {
+        console.error('Error de solicitud:', error);
     });
   }
 
@@ -189,11 +201,11 @@ export class HomeComponent  implements OnInit {
           (response: any) => {
               console.log('Respuesta:', response);
               if(response.code==100){
+                this.cargar();
               }
           },
           (error: any) => {
               console.error('Error de solicitud:', error);
-              // Aquí puedes realizar acciones adicionales en caso de error de solicitud
           }
       );
     }
@@ -208,10 +220,15 @@ export class HomeComponent  implements OnInit {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
-    this.http.delete(url, httpOptions).subscribe(() => {
-      console.log('Archivo descompartido con éxito');
-    }, error => {
-      console.error('Error al eliminar el archivo', error);
+    this.http.delete(url, httpOptions).subscribe(          
+      (response: any) => {
+        console.log('Respuesta:', response);
+        if(response.code==100){
+          this.cargar();
+        }
+    },
+    (error: any) => {
+        console.error('Error de solicitud:', error);
     });
   }
 

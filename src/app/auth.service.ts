@@ -6,7 +6,9 @@ import { Injectable } from '@angular/core';
 export class AuthService {
   private isAuthenticated: boolean = true;
 
-  constructor() { }
+  constructor() { 
+    localStorage.setItem('auth', this.isAuthenticated.toString());
+  }
 
   setAuthenticated(value: boolean) {
     localStorage.setItem('auth', this.isAuthenticated.toString());
