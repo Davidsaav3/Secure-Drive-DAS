@@ -1,3 +1,7 @@
 .custom-background {
     background-color: rgb(31, 31, 31);
   }
+
+  .texto-negrita {
+    font-weight: bold;
+  }
