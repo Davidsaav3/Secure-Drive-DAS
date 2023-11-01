@@ -27,12 +27,9 @@ export class RegisterComponent {
   mostrar3: any= false;
   mostrar4: any= false;
   fa: string | undefined;
+  username= '';
 
   constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
-  username = this.registerForm.get('username')?.value;
-  email = this.registerForm.get('email')?.value;
-  password = this.registerForm.get('password')?.value;
-  confirmPassword = this.registerForm.get('confirmPassword')?.value;
 
   get registerFormControl() {
     return this.registerForm.controls;
@@ -72,6 +69,7 @@ export class RegisterComponent {
               console.log('Respuesta:', response);
               if(response.code==100){
                 this.mostrar= true;
+                this.username = this.registerForm.get('username')?.value;
               }
               if(response.code==400){
                 this.mostrar2= true;
@@ -122,6 +120,7 @@ export class RegisterComponent {
           (response: any) => {
               console.log('Respuesta:', response);
               if(response.code==100){
+                localStorage.setItem('username', this.username);
                 this.authService.setAuthenticated(true);
                 this.router.navigate(['/home']);
               }

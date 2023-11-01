@@ -15,50 +15,84 @@ import { AuthService } from '../auth.service';
 export class HomeComponent  implements OnInit {
 
   constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
-  
+ 
   files: any[] = [];
   selectedFile: File | null = null;
   fileName: string = '';
   email: any;
   pag= 0;
-  username= 'davidsaav3';
-
+  username= localStorage.getItem('username');
+  id= 0;
+  
   shareForm: FormGroup = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required]],
   });
 
-  imageList: any[] = [
-    { url: 'https://via.placeholder.com/400' },
-    { url: 'https://via.placeholder.com/300' },
-    { url: 'https://via.placeholder.com/300' },
-    { url: 'https://via.placeholder.com/300' },
-    { url: 'https://via.placeholder.com/300' },
-    { url: 'https://via.placeholder.com/300' },
-    { url: 'https://via.placeholder.com/300' },
-  ];
+  archivos = {
+    archivo_mio: [
+      {
+        id: 0,
+        nombre: 'Archivo 1',
+        tamano: '100',
+        tipo: 'JPG',
+        user: 'Davidsaav',
+      },
+      {
+        id: 1,
+        nombre: 'Archivo 2',
+        tamano: '150',
+        tipo: 'MP4',
+        user: 'Davidsaav',
+      },
+      {
+        id: 2,
+        nombre: 'Archivo 3',
+        tamano: '120',
+        tipo: 'MP3',
+        user: 'Davidsaav',
+      }
+    ],
+    archivo_pormi: [
+      {
+        id: 0,
+        nombre: 'Archivo 1',
+        tamano: '100',
+        tipo: 'JPG',
+        user: 'Davidsaav',
+      },
+      {
+        id: 1,
+        nombre: 'Archivo 2',
+        tamano: '150',
+        tipo: 'MP4',
+        user: 'Davidsaav',
+      }
+    ],
+    archivo_conmigo: [
+      {
+        id: 0,
+        nombre: 'Archivo 1',
+        tamano: '100',
+        tipo: 'JPG',
+        user: 'Davidsaav',
+      }
+    ],
+  };
 
   ngOnInit(): void { /////////////// INIT ///////////////
-    fetch('http://ejemplo.com/api/userdata') 
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Error al obtener los datos del usuario.');
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.email = data.email;
-        this.files = data.files;
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-      //
-      this.shareForm = this.formBuilder.group({
-        email: ['', [Validators.required, Validators.email]]
-      });
+    const url = 'https://proteccloud.000webhostapp.com/files.php/'+this.username;
+    this.http.get(url, { responseType: 'blob' }).subscribe((response: any) => {
+      const blob = new Blob([response], { type: 'application/octet-stream' });
+      const urlDescarga = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = urlDescarga;
+      link.download = 'descarga';
+      link.click();
+      window.URL.revokeObjectURL(urlDescarga);
+    });
   }
 
-  showFileName(event: any) { // FILE
+  nombre(event: any) { // FILE
     let input = event.target;
     this.fileName = input.files[0].name;
     setTimeout(() => {
@@ -68,14 +102,15 @@ export class HomeComponent  implements OnInit {
   
   logout(): void {
     this.authService.setAuthenticated(false);
+    localStorage.removeItem('username');
+    localStorage.removeItem('auth');
   }
 
   upload(): void { /////////////// SUBIR ARCHIVO ///////////////
     if (this.selectedFile) {
       const uploadData = new FormData();
       uploadData.append('file', this.selectedFile, this.selectedFile.name);
-
-      fetch('http://ejemplo.com/api/upload', {
+      fetch('https://proteccloud.000webhostapp.com/files.php', {
         method: 'POST',
         body: uploadData
       })
@@ -95,6 +130,7 @@ export class HomeComponent  implements OnInit {
   }
 
   eliminar(id: number) { /////////////// ELIMIANR ARCHIVO ///////////////
+    console.log(id)
     const url = `https://proteccloud.000webhostapp.com/files.php/${id}`;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -107,6 +143,7 @@ export class HomeComponent  implements OnInit {
   }
 
   descargar(id: any) { /////////////// DESCARGAR ///////////////
+    console.log(id)
     const url = 'https://proteccloud.000webhostapp.com/files.php/'+id;
     this.http.get(url, { responseType: 'blob' }).subscribe((response: any) => {
       const blob = new Blob([response], { type: 'application/octet-stream' });
@@ -128,6 +165,7 @@ export class HomeComponent  implements OnInit {
         username_share: this.shareForm.get('username')?.value, 
         id_doc: id
       };
+      console.log(body)
       const httpOptions = {
           headers: new HttpHeaders({
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -165,6 +203,7 @@ export class HomeComponent  implements OnInit {
   }
 
   noCompartir(id: any) { //////////////// DEJAR DE COMPARTIR ///////////////
+    console.log(id)
     const url = `https://proteccloud.000webhostapp.com/share.php/${id}`;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -175,4 +214,5 @@ export class HomeComponent  implements OnInit {
       console.error('Error al eliminar el archivo', error);
     });
   }
+
 }

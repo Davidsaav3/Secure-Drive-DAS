@@ -4,7 +4,7 @@
       <div class="card">
         <div class="card-body">
           <h2 class="text-center">Login</h2>
-          <form [formGroup]="registerForm" (ngSubmit)="register()" *ngIf="!mostrar" class="p-3">
+          <form [formGroup]="registerForm" (ngSubmit)="login()" *ngIf="!mostrar" class="p-3">
             <div class="mb-3">
               <label for="username" class="form-label">Usuario</label>
               <input type="text" formControlName="username" class="form-control" id="username" placeholder="Usuario">

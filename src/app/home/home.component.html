@@ -17,7 +17,7 @@
       <ul class="navbar-nav ml-auto">
           <li>
             <label *ngIf="fileName==''" for="file-upload" class="btn btn-dark" style="width: max-content;">
-              <input id="file-upload" type="file" style="display: none;" (change)="showFileName($event)">
+              <input id="file-upload" type="file" style="display: none;" (change)="nombre($event)">
               Subir Archivos
             </label>
             <label *ngIf="fileName!=''" for="file-upload" class="btn btn-dark" style="width: max-content;">
@@ -42,7 +42,7 @@
   <div *ngIf="pag==0" class="container py-2" style="height: 100vh;"><!-- TUYO -->
     <h2 class="pt-3" style="color: aliceblue;">Mis archivos</h2>
     <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let image of imageList">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos.archivo_mio">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
@@ -51,12 +51,11 @@
                 </div>-->
                 <div class="">
                   <div class="card-body">
-                  <p class="card-title m-0"><strong>Nombre del Archivo</strong></p>
-                  <p class="card-text m-0">Tipo de archivo: mp3</p>
-                  <p class="card-text mb-1">Tmaño de archivo: 120 Mb</p>
-                  <button class="btn btn-dark"  (click)="descargar(1)">Descargar</button>
-                  <button class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="compartir(1)">Compartir</button>
-                  <button class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Eliminar</button>
+                  <p class="card-title m-0"><strong>{{archivo.nombre}}</strong></p>
+                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano}} Mb</p>
+                  <button class="btn btn-dark"  (click)="descargar(archivo.id)">Descargar</button>
+                  <button class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id= archivo.id">Compartir</button>
+                  <button class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="id= archivo.id">Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -69,7 +68,7 @@
   <div *ngIf="pag==1" class="container py-2" style="height: 100vh;"><!-- por mi -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido por mi</h2>
     <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let image of imageList">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos.archivo_pormi">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
@@ -78,12 +77,11 @@
                 </div>-->
                 <div class="">
                   <div class="card-body">
-                  <p class="card-title m-0"><strong>Nombre del Archivo</strong></p>
-                  <p class="card-text m-0">Tipo de archivo: mp3</p>
-                  <p class="card-text mb-1">Tamaño de archivo: 120 Mb</p>
-                  <p class="card-text mb-1">Compartido con: Davidsaav</p>
-                  <button class="btn btn-dark" (click)="descargar(1)">Descargar</button>
-                  <button class="btn btn-danger ms-3" (click)="noCompartir(1)">Dejar de compartir</button>
+                    <p class="card-title m-0"><strong>{{archivo.nombre}}</strong></p>
+                    <p class="card-text m-0">Archivo {{archivo.tipo}} de {{archivo.tamano}} Mb</p>
+                    <p class="card-text">Compartido por {{archivo.user}}</p>
+                    <button class="btn btn-dark" (click)="descargar(archivo.id)">Descargar</button>
+                  <button class="btn btn-danger ms-3" (click)="noCompartir(archivo.id)">Dejar de compartir</button>
                   </div>
                 </div>
               </div>
@@ -96,7 +94,7 @@
   <div *ngIf="pag==2" class="container py-2" style="height: 100vh;"><!-- conmigo  -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido conmigo</h2>
     <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let image of imageList">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos.archivo_conmigo">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
@@ -105,12 +103,11 @@
                 </div>-->
                 <div class="">
                   <div class="card-body">
-                  <p class="card-title m-0"><strong>Nombre del Archivo</strong></p>
-                  <p class="card-text m-0">Tipo de archivo: mp3</p>
-                  <p class="card-text mb-1">Tmaño de archivo: 120 Mb</p>
-                  <p class="card-text mb-1">Compartido por: Davidsaav</p>
-                  <button class="btn btn-dark" (click)="descargar(1)">Descargar</button>
-                  <button class="btn btn-danger ms-3" (click)="noCompartir(1)">No me interesa</button>
+                  <p class="card-title m-0"><strong>{{archivo.nombre}}</strong></p>
+                  <p class="card-text m-0">Archivo {{archivo.tipo}} de {{archivo.tamano}} Mb</p>
+                  <p class="card-text">Compartido por {{archivo.user}}</p>
+                  <button class="btn btn-dark" (click)="descargar(archivo.id)">Descargar</button>
+                  <button class="btn btn-danger ms-3" (click)="noCompartir(archivo.id)">No me interesa</button>
                   </div>
                 </div>
               </div>
@@ -132,7 +129,7 @@
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="button" class="btn btn-danger" (click)="eliminar(1)">Eliminar</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="eliminar(id)">Eliminar</button>
               </div>
           </div>
       </div>
@@ -147,16 +144,12 @@
           </div>
           <div class="modal-body">
               <p>¿Con qué usuario desea compartir el archivo?</p>
-              <form [formGroup]="shareForm" (ngSubmit)="compartir(1)">
+              <form [formGroup]="shareForm">
                   <div class="form-group">
-                      <label for="email" class="form-label">Correo electrónico</label>
-                      <input type="email" formControlName="email" class="form-control" id="email" placeholder="Correo electrónico">
-                      <div *ngIf="shareForm.get('email')?.invalid && (shareForm.get('email')?.dirty || shareForm.get('email')?.touched)" class="text-danger">
-                        <div *ngIf="shareForm.get('email')?.errors?.['required']">
-                          Correo electrónico es requerido.
-                        </div>
-                        <div *ngIf="shareForm.get('email')?.errors?.['email']">
-                          Correo electrónico no es válido.
+                      <input type="text" formControlName="username" class="form-control" id="username" placeholder="Correo electrónico">
+                      <div *ngIf="shareForm.get('username')?.invalid && (shareForm.get('username')?.dirty || shareForm.get('username')?.touched)" class="text-danger">
+                        <div *ngIf="shareForm.get('username')?.errors?.['required']">
+                          Nombre de usuario requerido.
                         </div>
                       </div>
                     </div>
@@ -164,7 +157,7 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" class="btn btn-primary" (click)="compartir(1)">Enviar</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="compartir(id)">Enviar</button>
           </div>
         </div>
     </div>

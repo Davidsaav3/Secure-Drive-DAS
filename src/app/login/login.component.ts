@@ -26,16 +26,15 @@ export class LoginComponent {
   mostrar3: any= false;
   mostrar4: any= false;
   fa: string | undefined;
+  username= '';
 
   constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
-  username = this.registerForm.get('username')?.value;
-  password = this.registerForm.get('password')?.value;
 
   get registerFormControl() {
     return this.registerForm.controls;
   }
 
-  register() {
+  login() {
     if (this.registerForm.valid) {
       console
       const url = 'https://proteccloud.000webhostapp.com/login.php';
@@ -66,6 +65,7 @@ export class LoginComponent {
           (response: any) => {
               console.log('Respuesta:', response);
               if(response.code==100){
+                this.username = this.registerForm.get('username')?.value;
                 this.mostrar= true;
               }
               if(response.code==400){
@@ -117,6 +117,7 @@ export class LoginComponent {
           (response: any) => {
               console.log('Respuesta:', response);
               if(response.code==100){
+                localStorage.setItem('username', this.username);
                 this.authService.setAuthenticated(true);
                 this.router.navigate(['/home']);
               }
