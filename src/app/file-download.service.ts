@@ -16,6 +16,7 @@ export class FileDownloadService {
     headers.append('Content-Type', 'application/json');
     
     const formData = new FormData();
+    console.log(fileName)
     formData.append('file_name', fileName);
 
     return this.http.post(url, formData, { headers, responseType: 'blob' })

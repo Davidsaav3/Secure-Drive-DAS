@@ -142,8 +142,8 @@ export class HomeComponent  implements OnInit {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
     const formData = new FormData();
-    formData.append('file_name', id);
-
+    formData.append('file_name', this.username+'/'+id);
+    
       const headers = new HttpHeaders();
       this.http.post('https://proteccloud.000webhostapp.com/delete.php', formData, { headers })
         .subscribe(
