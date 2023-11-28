@@ -22,10 +22,12 @@ export class RegisterComponent {
     confirmPassword: ['', [Validators.required, Validators.minLength(6)]]
   });
 
+  cont: any= false;
   mostrar: any= false;
   mostrar2: any= false;
   mostrar3: any= false;
   mostrar4: any= false;
+  mostrar5: any= false;
   fa: string | undefined;
   username= '';
 
@@ -59,7 +61,12 @@ export class RegisterComponent {
               } else {
                   console.error(
                       `Código de error del servidor: ${error.status}, ` +
-                      `cuerpo del error: ${error.error}`);
+                      `cuerpo del error: ${error.message}`+
+                      ` ${error.message}`);
+                      if(error.status==200){
+                        this.mostrar= true;
+                        this.username = this.registerForm.get('username')?.value;
+                      }
               }
               return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
           })
@@ -67,7 +74,7 @@ export class RegisterComponent {
       .subscribe(
           (response: any) => {
               console.log('Respuesta:', response);
-              if(response.code==100){
+              if(response.code==100 || response.code==200){
                 this.mostrar= true;
                 this.username = this.registerForm.get('username')?.value;
               }
@@ -81,6 +88,7 @@ export class RegisterComponent {
           (error: any) => {
               console.error('Error de solicitud:', error);
               // Aquí puedes realizar acciones adicionales en caso de error de solicitud
+              
           }
       );
     }
@@ -90,7 +98,8 @@ export class RegisterComponent {
 }
 
   comp() {
-    if (this.registerForm2.valid) {
+    this.cont++;
+    if (this.registerForm2.valid && this.cont<3) {
       console
       const url = 'https://proteccloud.000webhostapp.com/code.php';
       const body = { 
@@ -112,6 +121,11 @@ export class RegisterComponent {
                   console.error(
                       `Código de error del servidor: ${error.status}, ` +
                       `cuerpo del error: ${error.error}`);
+                      if(error.status==200){
+                        localStorage.setItem('username', this.username);
+                        this.authService.setAuthenticated(true);
+                        this.router.navigate(['/home']);
+                      }
               }
               return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
           })
@@ -136,6 +150,14 @@ export class RegisterComponent {
     }
     else{
       this.registerForm.markAllAsTouched();
+    }
+    if(this.cont>=3){
+      this.mostrar5= true;
+      this.mostrar3= false;
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 2000);
+      this.cont= 0;
     }
   }
 }

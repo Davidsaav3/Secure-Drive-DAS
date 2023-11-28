@@ -16,19 +16,21 @@
     <div class="collapse navbar-collapse" style="justify-content: flex-end;" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
           <li>
-            <label *ngIf="fileName==''" for="file-upload" class="btn btn-dark" style="width: max-content;">
-              <input id="file-upload" type="file" style="display: none;" (change)="nombre($event)">
-              Subir Archivos
-            </label>
-            <label *ngIf="fileName!=''" for="file-upload" class="btn btn-dark" style="width: max-content;">
-              <input id="file-upload" type="file" style="display: none;">
-              {{ this.fileName }}
-              <span class="ms-2 spinner-grow spinner-grow-sm" aria-hidden="true"></span>
-            </label>
-        </li>
+            <form id="miFormulario" class="d-flex">
+              <label *ngIf="fileName==''" for="archivoInput" class="btn btn-dark" style="width: max-content;">
+                <input type="file" id="archivoInput" style="display: none;" (change)="nombre($event)">
+                Subir Archivos
+              </label>
+              <label *ngIf="fileName!=''" for="archivoInput1" class="btn btn-dark" style="width: max-content;">
+                <button id="archivoInput1" type="file" style="display: none;"></button>
+                {{ this.fileName }}
+                <span class="ms-2 spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+              </label>
+            </form>
+          </li>
        
         <li class="nav-item container custom-container d-flex align-items-center">
-          <span class="navbar-text px-3">Davidsaav3</span>
+          <span class="navbar-text px-3">{{this.username}}</span>
         </li>
         <li class="nav-item">
           <button routerLink="/login" (click)="logout()" class="btn btn-outline-danger border border-white me-3 my-2 my-sm-0" type="submit"><span class="inline-span">Logout</span></button>
@@ -39,8 +41,9 @@
 
   <div *ngIf="pag==0" class="container py-2" style="height: 100vh;"><!-- TUYO -->
     <h2 class="pt-3" style="color: aliceblue;">Mis archivos</h2>
-    <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos.archivo_mio">
+
+    <div class="row" *ngIf="archivos && archivos.length > 0">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
@@ -51,9 +54,9 @@
                   <div class="card-body">
                   <p class="card-title m-0"><strong>{{archivo.nombre}}</strong></p>
                   <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano}} Mb</p>
-                  <button class="btn btn-dark"  (click)="descargar(archivo.id)">Descargar</button>
-                  <button class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id= archivo.id">Compartir</button>
-                  <button class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="id= archivo.id">Eliminar</button>
+                  <button class="btn btn-dark"  (click)="descargar(archivo.nombre)">Descargar</button>
+                  <button class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id= archivo.nombre">Compartir</button>
+                  <button class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="id= archivo.nombre">Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -61,12 +64,15 @@
           </div>
       </div>
     </div>
+    <div *ngIf="!archivos || archivos.length === 0">
+      No se encontraron archivos.
+    </div>
   </div>
 
   <div *ngIf="pag==1" class="container py-2" style="height: 100vh;"><!-- por mi -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido por mi</h2>
     <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos.archivo_pormi">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos2.archivo_pormi">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
@@ -92,7 +98,7 @@
   <div *ngIf="pag==2" class="container py-2" style="height: 100vh;"><!-- conmigo  -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido conmigo</h2>
     <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos.archivo_conmigo">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos2.archivo_conmigo">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">

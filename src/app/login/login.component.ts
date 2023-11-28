@@ -21,10 +21,12 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
+  cont: any= 0;
   mostrar: any= false;
   mostrar2: any= false;
   mostrar3: any= false;
   mostrar4: any= false;
+  mostrar5: any= false;
   fa: string | undefined;
   username= '';
 
@@ -56,7 +58,11 @@ export class LoginComponent {
               } else {
                   console.error(
                       `Código de error del servidor: ${error.status}, ` +
-                      `cuerpo del error: ${error.error}`);
+                      `cuerpo del error: ${error.message}`);
+                      if(error.status==200){
+                        this.username = this.registerForm.get('username')?.value;
+                        this.mostrar= true;
+                      }
               }
               return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
           })
@@ -64,7 +70,7 @@ export class LoginComponent {
       .subscribe(
           (response: any) => {
               console.log('Respuesta:', response);
-              if(response.code==100){
+              if(response.code==100 || response.code==200){
                 this.username = this.registerForm.get('username')?.value;
                 this.mostrar= true;
               }
@@ -87,7 +93,8 @@ export class LoginComponent {
 }
 
   comp() {
-    if (this.registerForm2.valid) {
+    this.cont++;
+    if (this.registerForm2.valid && this.cont<3) {
       console
       const url = 'https://proteccloud.000webhostapp.com/code.php';
       const body = { 
@@ -108,7 +115,12 @@ export class LoginComponent {
               } else {
                   console.error(
                       `Código de error del servidor: ${error.status}, ` +
-                      `cuerpo del error: ${error.error}`);
+                      `cuerpo del error: ${error.message}`);
+                      if(error.status==200){
+                        localStorage.setItem('username', this.username);
+                        this.authService.setAuthenticated(true);
+                        this.router.navigate(['/home']);
+                      }
               }
               return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
           })
@@ -133,6 +145,14 @@ export class LoginComponent {
     }
     else{
       this.registerForm.markAllAsTouched();
+    }
+    if(this.cont>=3){
+      this.mostrar5= true;
+      this.mostrar3= false;
+      setTimeout(() => {
+        this.router.navigate(['/register']);
+      }, 2000);
+      this.cont= 0;
     }
   }
 
