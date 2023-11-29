@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import { throwError, Observable } from 'rxjs';
+import { throwError } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service'; 
-import { FileDownloadService } from '../file-download.service';
-import { FileService } from '../file.service';
-import { ArchivoService } from '../archivo.service';
+import { DownloaderService } from '../downloader.service';
+import { UploadService } from '../upload.service';
+import { FilesService } from '../files.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +17,7 @@ import { ArchivoService } from '../archivo.service';
 
 export class HomeComponent  implements OnInit {
 
-  constructor(private archivoService: ArchivoService,private fileService: FileService, private fileDownloadService: FileDownloadService, private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
+  constructor(private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
  
   files: any[] = [];
   selectedFile: File | null = null;
@@ -90,7 +90,7 @@ export class HomeComponent  implements OnInit {
 
   cargar() {
     const folderPath = 'storage/'+this.username; 
-    this.archivoService.getFiles(folderPath).subscribe(
+    this.filesService.files(folderPath).subscribe(
       (response: any) => {
         this.archivos = response.archivos;
         console.log(this.archivos)
@@ -108,7 +108,7 @@ export class HomeComponent  implements OnInit {
     setTimeout(() => {
       this.fileName= '';
       this.cargar();
-    }, 2000);
+    }, 1000);
   }
   
   logout(): void { // CERRRA SESIÓN
@@ -119,7 +119,7 @@ export class HomeComponent  implements OnInit {
 
   upload(event: any) {
     const file = event.target.files && event.target.files[0];
-    this.fileService.subirArchivo(file, this.username).subscribe(
+    this.uploadService.upload(file, this.username).subscribe(
       response => {
         console.log(response.files)
         if (response.files) {
@@ -151,25 +151,26 @@ export class HomeComponent  implements OnInit {
             console.log('Respuesta del servidor:', data);
             setTimeout(() => {
               this.cargar();
-            }, 1000);
+            }, 500);
           },
           (error: any) => {
             console.error('Error al subir el archivo:', error);
-            // Manejar errores aquí
+
           }
         );
   }
 
   descargar(id: any) { /////////////// DESCARGAR ///////////////
     console.log(id)
-    this.fileDownloadService.handleFileDownload(id);
+    this.downloaderService.downloader(this.username+'/'+id);
+    
   }
 
   compartir(id: any) { /////////////// COMPARTIR ///////////////
     if (this.shareForm.valid) {
       console
       const url = 'https://proteccloud.000webhostapp.com/share.php';
-      const body = { 
+      const body = {
         username: this.username, 
         username_share: this.shareForm.get('username')?.value, 
         id_doc: id
@@ -228,115 +229,4 @@ export class HomeComponent  implements OnInit {
         console.error('Error de solicitud:', error);
     });
   }
-
-  /*
-  upload(): void {
-    const httpOptions = {
-      headers: new HttpHeaders({
-          'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    };
-    const archivoInput = document.getElementById('archivoInput') as HTMLInputElement;
-    const archivo = archivoInput.files ? archivoInput.files[0] : null;
-
-    if (archivo) {
-      console.log(archivo)
-      const formData = new FormData();
-      formData.append('archivo', archivo);
-
-      this.http.post('https://proteccloud.000webhostapp.com/upload.php', formData, httpOptions)
-        .subscribe(
-          (data: any) => {
-            console.log('Respuesta del servidor:', data);
-          },
-          (error: any) => {
-            console.error('Error al subir el archivo:', error);
-          }
-        );
-    } else {
-      console.error('No se ha seleccionado ningún archivo.');
-    }
-  }
-   */
-
-    /*
-   upload(){
-    const httpOptions = {
-      headers: new HttpHeaders({
-          'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    };
-    const archivoInput = document.getElementById('archivoInput') as HTMLInputElement;
-    const archivo = archivoInput.files ? archivoInput.files[0] : null;
-
-    if (archivo) {
-      const formData = new FormData();
-      formData.append('archivo', archivo);
-      this.http.post('https://proteccloud.000webhostapp.com/upload.php', formData, httpOptions)
-      .pipe(
-          catchError((error: HttpErrorResponse) => {
-              if (error.error instanceof ErrorEvent) {
-                  console.error('Error del lado del cliente:', error.error.message);
-              } else {
-                  console.error(
-                      `Código de error del servidor: ${error.status}, ` +
-                      `cuerpo del error: ${error.message}`);
-                      if(error.status==200){
-                        
-                      }
-              }
-              return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
-          })
-      )
-      .subscribe(
-          (response: any) => {
-              console.log('Respuesta:', response);
-              if(response.code==100){
-               
-              }
-              if(response.code==400){
-
-              }
-              if(response.code==401){
-
-              }
-          },
-          (error: any) => {
-              console.error('Error de solicitud:', error);
-              // Aquí puedes realizar acciones adicionales en caso de error de solicitud
-          }
-      );
-    }
-  }
-  */
-
-  /*
-upload(): void {
-    const httpOptions = {
-      headers: new HttpHeaders({
-          'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    };
-    const archivoInput = document.getElementById('archivoInput') as HTMLInputElement;
-    const archivo = archivoInput.files ? archivoInput.files[0] : null;
-
-    if (archivo) {
-      const formData = new FormData();
-      formData.append('archivo', archivo);
-
-      this.http.post('https://proteccloud.000webhostapp.com/upload.php', formData, httpOptions)
-        .subscribe(
-          (data: any) => {
-            console.log('Respuesta del servidor:', data);
-          },
-          (error: any) => {
-            console.error('Error al subir el archivo:', error);
-          }
-        );
-    } else {
-      console.error('No se ha seleccionado ningún archivo.');
-    }
-  }
-  */
-
 }

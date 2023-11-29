@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { saveAs } from 'file-saver';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FileDownloadService {
+
+export class DownloaderService {
+  
   constructor(private http: HttpClient) {}
 
   downloadFile(fileName: string): Observable<any> {
@@ -28,7 +29,7 @@ export class FileDownloadService {
       );
   }
 
-  handleFileDownload(fileName: string): void {
+  downloader(fileName: string): void {
     this.downloadFile(fileName).subscribe(
       (response: any) => {
         const blob = new Blob([response], { type: 'application/octet-stream' });
@@ -39,7 +40,7 @@ export class FileDownloadService {
       },
       (error: any) => {
         console.error('Error al descargar el archivo:', error);
-        // Manejar errores aquí
+
       }
     );
   }

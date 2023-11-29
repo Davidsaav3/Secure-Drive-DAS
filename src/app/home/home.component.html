@@ -52,11 +52,11 @@
                 </div>-->
                 <div class="">
                   <div class="card-body">
-                  <p class="card-title m-0"><strong>{{archivo.nombre}}</strong></p>
-                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano}} Mb</p>
-                  <button class="btn btn-dark"  (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id= archivo.nombre">Compartir</button>
-                  <button class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="id= archivo.nombre">Eliminar</button>
+                  <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
+                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
+                  <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
+                  <button class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id= archivo.nombre">Compartir</button>
+                  <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="id= archivo.nombre">Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -64,7 +64,7 @@
           </div>
       </div>
     </div>
-    <div *ngIf="!archivos || archivos.length === 0">
+    <div *ngIf="!archivos || archivos.length === 0" style="color: white;">
       No se encontraron archivos.
     </div>
   </div>
