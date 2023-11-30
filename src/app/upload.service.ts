@@ -12,8 +12,10 @@ export class UploadService {
 
   upload(archivo: File, ruta : any): Observable<any> {
     const formData: FormData = new FormData();
+    //console.log(archivo)
+    //console.log(ruta)
     formData.append('uploaded_file', archivo, archivo.name);
     formData.append('ruta', ruta);
-    return this.http.post<any>(this.apiUrl, formData);
+    return this.http.post<any>(this.apiUrl, formData)
   }
 }

@@ -8,6 +8,8 @@ import { AuthService } from '../auth.service';
 import { DownloaderService } from '../downloader.service';
 import { UploadService } from '../upload.service';
 import { FilesService } from '../files.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DownService } from '../down.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +19,7 @@ import { FilesService } from '../files.service';
 
 export class HomeComponent  implements OnInit {
 
-  constructor(private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
+  constructor(private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
  
   files: any[] = [];
   selectedFile: File | null = null;
@@ -29,9 +31,16 @@ export class HomeComponent  implements OnInit {
   archivos: any[] = [];
   fileList: any;
 
+  imageName = 'tu-imagen.jpg'; // Reemplaza con el nombre de tu imagen
+  imageUrl1: string[] = [];
+
+  folderPath = '/imagenes'; // Reemplaza con la ruta de tus imágenes
+  images: any[] = [];
   shareForm: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
   });
+
+
 
   archivos2 = {
     archivo_mio: [
@@ -88,18 +97,49 @@ export class HomeComponent  implements OnInit {
     this.cargar();
   }
 
+  down(id :string): void {
+    this.downService.getFileView(id).subscribe(
+      (url: string) => {
+        return url;
+        console.log(url)
+        this.imageUrl1.push(url);
+      },
+      (error: any) => {
+        console.error('Error al obtener la imagen:', error);
+      }
+    );
+  }
+
+  getSafeImageUrl(image: any): SafeUrl {
+    const base64Image = image.contenido;
+    const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
+    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
+  }
+
   cargar() {
-    const folderPath = 'storage/'+this.username; 
+    const folderPath = 'storage/' + this.username; 
     this.filesService.files(folderPath).subscribe(
       (response: any) => {
         this.archivos = response.archivos;
+        for (let i = 0; i < this.archivos.length; i++) {
+          const archivo = this.archivos[i];
+          const filePath = this.username + '/' + archivo.nombre;
+          this.downService.getFileView(filePath).subscribe(
+            (url: string) => {
+              this.archivos[i].url= url;
+            },
+            (error: any) => {
+              console.error('Error al obtener la imagen:', error);
+            }
+          );
+        }
         console.log(this.archivos)
       },
       (error: any) => {
         console.error('Error al obtener la lista de archivos:', error);
       }
     );
-  }
+  }  
 
   nombre(event: any) { // FILE
     let input = event.target;
@@ -130,20 +170,20 @@ export class HomeComponent  implements OnInit {
         }
       },
       error => {
-        console.error('Error al hacer la solicitud:', error);
+        console.error('Error al hacer la solicitud:', error.error);
       }
     );
   }
 
   eliminar(id: string) { /////////////// ELIMIANR ARCHIVO ///////////////
-    console.log(id)
     const url = `https://proteccloud.000webhostapp.com/files.php`;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
     const formData = new FormData();
     formData.append('file_name', this.username+'/'+id);
-    
+    console.log(this.username+'/'+id)
+
       const headers = new HttpHeaders();
       this.http.post('https://proteccloud.000webhostapp.com/delete.php', formData, { headers })
         .subscribe(
@@ -155,7 +195,9 @@ export class HomeComponent  implements OnInit {
           },
           (error: any) => {
             console.error('Error al subir el archivo:', error);
-
+            setTimeout(() => {
+              this.cargar();
+            }, 500);
           }
         );
   }

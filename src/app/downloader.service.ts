@@ -8,11 +8,11 @@ import { catchError } from 'rxjs/operators';
 })
 
 export class DownloaderService {
-  
+
   constructor(private http: HttpClient) {}
 
   downloadFile(fileName: string): Observable<any> {
-    const url = `https://proteccloud.000webhostapp.com/downloader.php`; 
+    const url = `https://proteccloud.000webhostapp.com/download.php`; 
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     

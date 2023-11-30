@@ -47,9 +47,18 @@
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
-                <!--<div class="col-md-2">
-                  <img [src]="image.url" class="card-img" alt="...">
-                </div>-->
+                  <div *ngIf="archivo.tipo=='jpg' || archivo.tipo=='png'" class="col-md-2" style="width: auto;">
+                    <img [src]="archivo.url" class="card-img" alt="...">
+                  </div>
+                  <video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
+                    <source [src]="archivo.url" type="video/mp4">
+                    Tu navegador no soporta el elemento de video.
+                  </video>
+                  <audio *ngIf="archivo.tipo=='mp3'" controls>
+                    <source [src]="archivo.url" type="audio/mp3">
+                    Tu navegador no soporta el elemento de audio.
+                  </audio>
+                  <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>
                 <div class="">
                   <div class="card-body">
                   <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
