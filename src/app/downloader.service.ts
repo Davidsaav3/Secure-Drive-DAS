@@ -12,7 +12,7 @@ export class DownloaderService {
   constructor(private http: HttpClient) {}
 
   downloadFile(fileName: string): Observable<any> {
-    const url = `https://proteccloud.000webhostapp.com/download.php`; 
+    const url = `https://proteccloud.000webhostapp.com/downloader.php`; 
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     
@@ -32,6 +32,7 @@ export class DownloaderService {
   downloader(fileName: string): void {
     this.downloadFile(fileName).subscribe(
       (response: any) => {
+        //console.log(response)
         const blob = new Blob([response], { type: 'application/octet-stream' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);

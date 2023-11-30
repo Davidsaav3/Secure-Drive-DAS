@@ -100,6 +100,7 @@ export class HomeComponent  implements OnInit {
   down(id :string): void {
     this.downService.getFileView(id).subscribe(
       (url: string) => {
+        console.log(url)
         return url;
         console.log(url)
         this.imageUrl1.push(url);
@@ -205,7 +206,7 @@ export class HomeComponent  implements OnInit {
   descargar(id: any) { /////////////// DESCARGAR ///////////////
     console.log(id)
     this.downloaderService.downloader(this.username+'/'+id);
-    
+    console.log(this.downloaderService.downloader(this.username+'/'+id))
   }
 
   compartir(id: any) { /////////////// COMPARTIR ///////////////

@@ -1,18 +1,17 @@
 <?php
- header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: *');
     header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
     header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
     header("Allow: GET, POST, OPTIONS, PUT, DELETE");
     include_once("functions.php");
     include_once("sql.php");
     include_once("smpt.php");
-    require_once("functions.php");
 
     $conn = createDataBaseConnection();
 
 // Directorio para guardar
 $destiny = "storage/";
-
+$response;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
     $archivo_name = $_FILES["uploaded_file"]["name"];
     $archivo_temp = $_FILES["uploaded_file"]["tmp_name"];
@@ -22,7 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
 
     // Recibir la ruta desde Angular
     $ruta = isset($_POST["ruta"]) ? $_POST["ruta"] : '';
-
     // Se cifra el archivo y se sube al servidor
     if ($archivo_error === UPLOAD_ERR_OK) {
         // Combina la ruta con el directorio de destino
@@ -32,52 +30,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
         if (!is_dir($ruta_destino)) {
             mkdir($ruta_destino, 0777, true);
         }
-
-        // Mueve el archivo al directorio de destino
-        file_put_contents($archivo_temp, AESEncoding(file_get_contents($archivo_temp), "2FA"));
-
-        move_uploaded_file($archivo_temp, $ruta_destino . $archivo_name);
+        //Obtenemos el nombre del usuario
+        $user = explode("/", $ruta)[0];
+        //Generamos una clave AES para cifrar
+        $key4Encrypt = random_bytes(32);
+        //Se inicia la conexion con la base de datos y se recupera la clave publica del usuario
+        $conn = createDataBaseConnection();
+        $sql = "SELECT k2 FROM usuarios WHERE username='".$user."'";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $publicKey = $row["k2"];
+        }
+        else{
+            $response = array("code"  => "No se ha encontrado en la base de datos el k2");
+        }
+        //Ciframos la clave AES con RSA usando la clave publica
+        $key2Upload = RSAencoding($publicKey, $key4Encrypt);
         
         ////////////////////////////// David //////////////////////////////////////////
-        $user = explode("/", $ruta)[0];
-        $file_name = explode("/", $ruta)[1];
-        $file_key = "000";
         // Inserción en la tabla files
-        $conn = createDataBaseConnection();
-        $sql_insert = "INSERT INTO files (user, name, key) VALUES ('$user', '$file_name', '$file_key')";
+        $sql_insert = "INSERT INTO files (user, name, ckey) VALUES ('$user', '$archivo_name', '$key2Upload')";
         if ($conn->query($sql_insert) === TRUE) {
-            echo "El archivo se ha subido correctamente y la información se ha guardado en la tabla files.";
+            // Mueve el archivo al directorio de destino cifrado con la clave generada anteriormente andes de ser cifrada con la clave publica
+            file_put_contents($archivo_temp, AESEncoding(file_get_contents($archivo_temp), $key4Encrypt));
+            move_uploaded_file($archivo_temp, $ruta_destino . $archivo_name);
+            $response = array("code"  => "Se subio dpm");
         } else {
-            echo "Error al insertar información en la tabla files: " . $conn->error;
+            $response = array("code"  => "Error con la bbdd");
         }
         closeDataBaseConnection($conn);
         //////////////////////////////////////////////////////////////////////////////
 
         echo "El archivo se ha subido correctamente.";
     } else {
-        echo "Error al subir el archivo.";
+        $response = array("code"  => "ERROR AL SUBIR ARCHIVO");
     }
 } else {
-    echo "No se ha subido ningún archivo.";
+    $response = array("code"  => "EL POST TA VACIO");
 }
 
-/*$newname = dirname(__FILE__).'/upload/'.$_FILES['uploaded_file']['name'].'.crypto';
-$tempfile = $_FILES['uploaded_file']['tmp_name'];
-if (!file_exists($newname)) {
-    $ALGORITHM = 'AES-128-CBC';
-    $IV    = '12dasdq3g5b2434b';
-    $password = '123456';
-    file_put_contents($tempfile, openssl_encrypt(file_get_contents($tempfile), $ALGORITHM, $password, 0, $IV));
-    if (move_uploaded_file($tempfile,$newname)) {
-        echo 'It\'s done! The file has been saved.';
-    } else {
-        echo 'Error: A problem occurred during file upload!';
-    }
-} else {
-    echo 'Error: File '.$_FILES['uploaded_file']['name'].' already exists';
-}*/
-
-
-
-
+echo json_encode($response);
 ?>
