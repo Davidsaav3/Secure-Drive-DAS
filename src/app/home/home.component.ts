@@ -125,14 +125,16 @@ export class HomeComponent  implements OnInit {
         for (let i = 0; i < this.archivos.length; i++) {
           const archivo = this.archivos[i];
           const filePath = this.username + '/' + archivo.nombre;
-          this.downService.getFileView(filePath).subscribe(
-            (url: string) => {
-              this.archivos[i].url= url;
-            },
-            (error: any) => {
-              console.error('Error al obtener la imagen:', error);
-            }
-          );
+          //setTimeout(() => {
+            this.downService.getFileView(filePath).subscribe(
+              (url: string) => {
+                this.archivos[i].url= url;
+              },
+              (error: any) => {
+                console.error('Error al obtener la imagen:', error);
+              }
+            );
+          //}, 500);
         }
         console.log(this.archivos)
       },
