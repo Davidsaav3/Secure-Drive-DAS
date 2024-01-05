@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class MyfilesService {
-  private apiUrl = 'https://proteccloud.000webhostapp.com/myshare.php';
+  private apiUrl = 'https://proteccloud.000webhostapp.com/files.php';
   
   constructor(private http: HttpClient) {}
 

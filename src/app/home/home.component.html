@@ -103,7 +103,7 @@
                   <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
                   <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
                   <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-danger ms-3" (click)="noCompartir(archivo.id)">Dejar de compartir</button>
+                  <button class="btn btn-danger ms-3" (click)="shoShare(archivo.id)">Dejar de compartir</button>
                   </div>
                 </div>
               </div>
@@ -143,7 +143,7 @@
                   <p class="card-text mb-0">Compartido por {{archivo.user}}</p>
                   <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
                   <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-danger ms-3" (click)="noCompartir(archivo.id)">No me interesa</button>
+                  <button class="btn btn-danger ms-3" (click)="shoShare(archivo.id)">No me interesa</button>
                   </div>
                 </div>
               </div>
@@ -200,6 +200,24 @@
           </div>
         </div>
     </div>
+</div>
+
+<div *ngIf="Okshare" class="top-0 left-0 p-3" style="position: fixed;">
+  <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">Archivo compartido con éxito</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="Notshare" class="top-0 left-0 p-3" style="position: fixed;">
+  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">Error al compartir el archivo</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
 </div>
 
 </div>

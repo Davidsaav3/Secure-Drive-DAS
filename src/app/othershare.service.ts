@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class OtherfilesService {
-  private apiUrl = 'https://proteccloud.000webhostapp.com/othershare.php';
+  private apiUrl = 'https://proteccloud.000webhostapp.com/files.php';
   
   constructor(private http: HttpClient) {}
 

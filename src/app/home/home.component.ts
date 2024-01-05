@@ -34,6 +34,9 @@ export class HomeComponent  implements OnInit {
   archivos2: any[] = [];
   archivos3: any[] = [];
   fileList: any;
+  
+  Okshare = false;
+  Notshare = false;
 
   imageName = 'tu-imagen.jpg'; // Reemplaza con el nombre de tu imagen
   imageUrl1: string[] = [];
@@ -46,8 +49,8 @@ export class HomeComponent  implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
-    this.cargarMy();
-    this.cargarOther();
+    this.fileMy();
+    this.fileOther();
   }
 
   cargar() {
@@ -77,7 +80,7 @@ export class HomeComponent  implements OnInit {
     );
   }  
 
-  cargarMy() {
+  fileMy() {
     const folderPath = 'storage/' + this.username; 
     this.myfilesService.files(folderPath).subscribe(
       (response: any) => {
@@ -104,7 +107,7 @@ export class HomeComponent  implements OnInit {
     );
   }  
 
-  cargarOther() {
+  fileOther() {
     const folderPath = 'storage/' + this.username; 
     this.otherfilesService.files(folderPath).subscribe(
       (response: any) => {
@@ -239,6 +242,10 @@ export class HomeComponent  implements OnInit {
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
           catchError((error: HttpErrorResponse) => {
+              this.Notshare = true;
+              setTimeout(() => {
+                this.Notshare = false;
+              }, 2000);
               if (error.error instanceof ErrorEvent) {
                   console.error('Error del lado del cliente:', error.error.message);
               } else {
@@ -254,6 +261,10 @@ export class HomeComponent  implements OnInit {
               console.log('Respuesta:', response);
               if(response.code==100){
                 this.cargar();
+                this.Okshare = true;
+                setTimeout(() => {
+                  this.Okshare = false;
+                }, 2000);
               }
           },
           (error: any) => {
@@ -266,7 +277,7 @@ export class HomeComponent  implements OnInit {
     }    
   }
 
-  noCompartir(id: any) { //////////////// DEJAR DE COMPARTIR ///////////////
+  shoShare(id: any) { //////////////// DEJAR DE COMPARTIR ///////////////
     console.log(id)
     const formData = new FormData();
     formData.append('file_name', this.username+'/'+id);
