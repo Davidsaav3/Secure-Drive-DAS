@@ -8,6 +8,8 @@ import { AuthService } from '../auth.service';
 import { DownloaderService } from '../downloader.service';
 import { UploadService } from '../upload.service';
 import { FilesService } from '../files.service';
+import { MyfilesService } from '../myshare.service';
+import { OtherfilesService } from '../othershare.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { DownService } from '../down.service';
 
@@ -19,7 +21,7 @@ import { DownService } from '../down.service';
 
 export class HomeComponent  implements OnInit {
 
-  constructor(private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
+  constructor(private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService) { }
  
   files: any[] = [];
   selectedFile: File | null = null;
@@ -29,6 +31,8 @@ export class HomeComponent  implements OnInit {
   username= localStorage.getItem('username');
   id= 'p2.txt';
   archivos: any[] = [];
+  archivos2: any[] = [];
+  archivos3: any[] = [];
   fileList: any;
 
   imageName = 'tu-imagen.jpg'; // Reemplaza con el nombre de tu imagen
@@ -40,81 +44,10 @@ export class HomeComponent  implements OnInit {
     username: ['', [Validators.required]],
   });
 
-
-
-  archivos2 = {
-    archivo_mio: [
-      {
-        id: 0,
-        nombre: 'p2.txt',
-        tamano: '100',
-        tipo: 'JPG',
-        user: 'Davidsaav',
-      },
-      {
-        id: 1,
-        nombre: 'Archivo 2',
-        tamano: '150',
-        tipo: 'MP4',
-        user: 'Davidsaav',
-      },
-      {
-        id: 2,
-        nombre: 'Archivo 3',
-        tamano: '120',
-        tipo: 'MP3',
-        user: 'Davidsaav',
-      }
-    ],
-    archivo_pormi: [
-      {
-        id: 0,
-        nombre: 'Archivo 1',
-        tamano: '100',
-        tipo: 'JPG',
-        user: 'Davidsaav',
-      },
-      {
-        id: 1,
-        nombre: 'Archivo 2',
-        tamano: '150',
-        tipo: 'MP4',
-        user: 'Davidsaav',
-      }
-    ],
-    archivo_conmigo: [
-      {
-        id: 0,
-        nombre: 'Archivo 1',
-        tamano: '100',
-        tipo: 'JPG',
-        user: 'Davidsaav',
-      }
-    ],
-  };
-
   ngOnInit(): void {
     this.cargar();
-  }
-
-  down(id :string): void {
-    this.downService.getFileView(id).subscribe(
-      (url: string) => {
-        console.log(url)
-        return url;
-        console.log(url)
-        this.imageUrl1.push(url);
-      },
-      (error: any) => {
-        console.error('Error al obtener la imagen:', error);
-      }
-    );
-  }
-
-  getSafeImageUrl(image: any): SafeUrl {
-    const base64Image = image.contenido;
-    const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
-    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
+    this.cargarMy();
+    this.cargarOther();
   }
 
   cargar() {
@@ -143,6 +76,82 @@ export class HomeComponent  implements OnInit {
       }
     );
   }  
+
+  cargarMy() {
+    const folderPath = 'storage/' + this.username; 
+    this.myfilesService.files(folderPath).subscribe(
+      (response: any) => {
+        this.archivos2 = response.archivos;
+        for (let i = 0; i < this.archivos2.length; i++) {
+          const archivo = this.archivos2[i];
+          const filePath = this.username + '/' + archivo.nombre;
+          //setTimeout(() => {
+            this.downService.getFileView(filePath).subscribe(
+              (url: string) => {
+                this.archivos2[i].url= url;
+              },
+              (error: any) => {
+                console.error('Error al obtener la imagen:', error);
+              }
+            );
+          //}, 500);
+        }
+        console.log(this.archivos)
+      },
+      (error: any) => {
+        console.error('Error al obtener la lista de archivos:', error);
+      }
+    );
+  }  
+
+  cargarOther() {
+    const folderPath = 'storage/' + this.username; 
+    this.otherfilesService.files(folderPath).subscribe(
+      (response: any) => {
+        this.archivos3 = response.archivos3;
+        for (let i = 0; i < this.archivos3.length; i++) {
+          const archivo = this.archivos3[i];
+          const filePath = this.username + '/' + archivo.nombre;
+          //setTimeout(() => {
+            this.downService.getFileView(filePath).subscribe(
+              (url: string) => {
+                this.archivos3[i].url= url;
+              },
+              (error: any) => {
+                console.error('Error al obtener la imagen:', error);
+              }
+            );
+          //}, 500);
+        }
+        console.log(this.archivos)
+      },
+      (error: any) => {
+        console.error('Error al obtener la lista de archivos:', error);
+      }
+    );
+  }  
+
+  ///////////////////////
+
+  down(id :string): void {
+    this.downService.getFileView(id).subscribe(
+      (url: string) => {
+        console.log(url)
+        return url;
+        console.log(url)
+        this.imageUrl1.push(url);
+      },
+      (error: any) => {
+        console.error('Error al obtener la imagen:', error);
+      }
+    );
+  }
+
+  getSafeImageUrl(image: any): SafeUrl {
+    const base64Image = image.contenido;
+    const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
+    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
+  }
 
   nombre(event: any) { // FILE
     let input = event.target;
@@ -259,19 +268,24 @@ export class HomeComponent  implements OnInit {
 
   noCompartir(id: any) { //////////////// DEJAR DE COMPARTIR ///////////////
     console.log(id)
-    const url = `https://proteccloud.000webhostapp.com/share.php/${id}`;
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    };
-    this.http.delete(url, httpOptions).subscribe(          
-      (response: any) => {
-        console.log('Respuesta:', response);
-        if(response.code==100){
-          this.cargar();
+    const formData = new FormData();
+    formData.append('file_name', this.username+'/'+id);
+    console.log(this.username+'/'+id)
+    const headers = new HttpHeaders();
+    this.http.post('https://proteccloud.000webhostapp.com/noshare.php', formData, { headers })
+      .subscribe(
+        (data: any) => {
+          console.log('Respuesta del servidor:', data);
+          setTimeout(() => {
+            this.cargar();
+          }, 500);
+        },
+        (error: any) => {
+          console.error('Error al subir el archivo:', error);
+          setTimeout(() => {
+            this.cargar();
+          }, 500);
         }
-    },
-    (error: any) => {
-        console.error('Error de solicitud:', error);
-    });
+      );
   }
 }

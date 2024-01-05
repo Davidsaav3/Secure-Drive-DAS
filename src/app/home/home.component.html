@@ -80,20 +80,29 @@
 
   <div *ngIf="pag==1" class="container py-2" style="height: 100vh;"><!-- por mi -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido por mi</h2>
-    <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos2.archivo_pormi">
+
+    <div class="row" *ngIf="archivos2 && archivos2.length > 0">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos2">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
-                <!--<div class="col-md-2">
-                  <img [src]="image.url" class="card-img" alt="...">
-                </div>-->
+                  <div *ngIf="archivo.tipo=='jpg' || archivo.tipo=='png'" class="col-md-2" style="width: auto;">
+                    <img [src]="archivo.url" class="card-img" alt="...">
+                  </div>
+                  <video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
+                    <source [src]="archivo.url" type="video/mp4">
+                    Tu navegador no soporta el elemento de video.
+                  </video>
+                  <audio *ngIf="archivo.tipo=='mp3'" controls>
+                    <source [src]="archivo.url" type="audio/mp3">
+                    Tu navegador no soporta el elemento de audio.
+                  </audio>
+                  <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>
                 <div class="">
                   <div class="card-body">
-                    <p class="card-title m-0"><strong>{{archivo.nombre}}</strong></p>
-                    <p class="card-text m-0">Archivo {{archivo.tipo}} de {{archivo.tamano}} Mb</p>
-                    <p class="card-text">Compartido por {{archivo.user}}</p>
-                    <button class="btn btn-dark" (click)="descargar(archivo.id)">Descargar</button>
+                  <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
+                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
+                  <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
                   <button class="btn btn-danger ms-3" (click)="noCompartir(archivo.id)">Dejar de compartir</button>
                   </div>
                 </div>
@@ -102,24 +111,38 @@
           </div>
       </div>
     </div>
+    <div *ngIf="!archivos || archivos.length === 0" style="color: white;">
+      No se encontraron archivos.
+    </div>
   </div>
 
+  
   <div *ngIf="pag==2" class="container py-2" style="height: 100vh;"><!-- conmigo  -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido conmigo</h2>
-    <div class="row">
-      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos2.archivo_conmigo">
+
+    <div class="row" *ngIf="archivos2 && archivos2.length > 0">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos2">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
-                <!--<div class="col-md-2">
-                  <img [src]="image.url" class="card-img" alt="...">
-                </div>-->
+                  <div *ngIf="archivo.tipo=='jpg' || archivo.tipo=='png'" class="col-md-2" style="width: auto;">
+                    <img [src]="archivo.url" class="card-img" alt="...">
+                  </div>
+                  <video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
+                    <source [src]="archivo.url" type="video/mp4">
+                    Tu navegador no soporta el elemento de video.
+                  </video>
+                  <audio *ngIf="archivo.tipo=='mp3'" controls>
+                    <source [src]="archivo.url" type="audio/mp3">
+                    Tu navegador no soporta el elemento de audio.
+                  </audio>
+                  <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>
                 <div class="">
                   <div class="card-body">
-                  <p class="card-title m-0"><strong>{{archivo.nombre}}</strong></p>
-                  <p class="card-text m-0">Archivo {{archivo.tipo}} de {{archivo.tamano}} Mb</p>
-                  <p class="card-text">Compartido por {{archivo.user}}</p>
-                  <button class="btn btn-dark" (click)="descargar(archivo.id)">Descargar</button>
+                  <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
+                  <p class="card-text mb-0">Compartido por {{archivo.user}}</p>
+                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
+                  <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
                   <button class="btn btn-danger ms-3" (click)="noCompartir(archivo.id)">No me interesa</button>
                   </div>
                 </div>
@@ -127,6 +150,9 @@
             </div>
           </div>
       </div>
+    </div>
+    <div *ngIf="!archivos || archivos.length === 0" style="color: white;">
+      No se encontraron archivos.
     </div>
   </div>
 
