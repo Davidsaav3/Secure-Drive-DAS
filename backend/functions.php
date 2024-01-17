@@ -1,6 +1,23 @@
 <?php
+
+function getConfigVariable($variable){
+    $configPath = 'config.conf';
+    if(!file_exists($configPath)){
+        die("No se ha encontrado archivo de configuración");
+    }
+
+    $read = parse_ini_file($configPath);
+
+    if(!isset($read[$variable])){
+        die("No se ha encontrado la variable");
+    }
+
+    return $read[$variable];
+}
  function generateHash($data){
-    return substr(password_hash($data, PASSWORD_BCRYPT), 7);
+    $pepper = getConfigVariable("pepper");
+    $pepperedPwd = hash_hmac("sha512", $data, $pepper);
+    return substr(password_hash($pepperedPwd, PASSWORD_DEFAULT), 7);
 }
 
 function prepareHashToUpload($hasToTurn){
@@ -23,7 +40,9 @@ function prepareHashToUse($hasToUse){
 
 function checkHash($hash, $wtCheck){
     $hashReady = "$2y$10$". prepareHashToUse($hash);
-    return password_verify($wtCheck, $hashReady);
+    $pepper = getConfigVariable("pepper");
+    $pepperedPwd = hash_hmac("sha512", $wtCheck, $pepper);
+    return password_verify($pepperedPwd, $hashReady);
 }
 
 function generateRSA(){
@@ -31,29 +50,42 @@ function generateRSA(){
     openssl_pkey_export($keys, $privateKey);
     $publicKeyDetails = openssl_pkey_get_details($keys);
     $publicKey = $publicKeyDetails['key'];
-    $pre = '/-----BEGIN PUBLIC KEY-----/';
-    $post = '/-----END PUBLIC KEY-----/';
-    $publicKey = preg_replace($pre,'',$publicKey);
-    $publicKey = preg_replace($post,'',$publicKey);
-    $pre = '/-----BEGIN PRIVATE KEY-----/';
-    $post = '/-----END PRIVATE KEY-----/';
-    $privateKey = preg_replace($pre,'',$privateKey);
-    $privateKey = preg_replace($post,'',$privateKey);
     return array("private"=>$privateKey, "public"=>$publicKey);
 }
 
+function RSAencoding($rsaPkey, $dataToEncode){
+    $encrypted_data = '';
+    openssl_public_encrypt($dataToEncode, $encrypted_data, $rsaPkey, OPENSSL_PKCS1_OAEP_PADDING);
+    return base64_encode($encrypted_data);
+}
+
+function RSAdecode($rsaPkey, $dataToDecode){
+    $decrypted_data = '';
+    $dataToDecode = base64_decode($dataToDecode);
+    openssl_private_decrypt($dataToDecode, $decrypted_data, $rsaPkey, OPENSSL_PKCS1_OAEP_PADDING);
+    return $decrypted_data;
+}
+
+
+
 function AESEncoding($dataToEncode, $keyEncoding){
-    $iVector = openssl_random_pseudo_bytes(16);
-    $encodedData = openssl_encrypt($dataToEncode,"aes-256-ctr", $keyEncoding, OPENSSL_RAW_DATA, $iVector);
-    $textToEncode = $iVector . $encodedData;
-    return base64_encode($textToEncode);
+    $iv_len = openssl_cipher_iv_length("aes-256-gcm");
+    $iVector = openssl_random_pseudo_bytes($iv_len);
+    $tag = '';
+    $tagLength = 16;
+    $encodedData = openssl_encrypt($dataToEncode, "aes-256-gcm", $keyEncoding, OPENSSL_RAW_DATA, $iVector, $tag, "", $tagLength);
+    //$textToEncode = $iVector . $tag . $encodedData;
+    return base64_encode($iVector.$encodedData.$tag);
 }
 
 function AESDecode($dataToDecode, $keyDecoding){
     $stringCombined = base64_decode($dataToDecode);
-    $iVector = substr($stringCombined,0,16);
-    $cipherText = substr($stringCombined,16);
-    return openssl_decrypt($cipherText, 'aes-256-ctr', $keyDecoding, OPENSSL_RAW_DATA, $iVector);
+    $iv_len = openssl_cipher_iv_length("aes-256-gcm");
+    $tagLength = 16;
+    $iVector = substr($stringCombined, 0, $iv_len);
+    $cipherText = substr($stringCombined, $iv_len, -$tagLength);
+    $tag = substr($stringCombined, -$tagLength);
+    return openssl_decrypt($cipherText, 'aes-256-gcm', $keyDecoding, OPENSSL_RAW_DATA, $iVector, $tag);
 }
 
 ?>

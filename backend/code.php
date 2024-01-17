@@ -6,6 +6,7 @@
     require_once("sql.php");
     require_once("functions.php");
 
+
     $conn = createDataBaseConnection();
     $data = json_decode(file_get_contents('php://input'));
 

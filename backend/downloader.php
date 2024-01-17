@@ -6,10 +6,12 @@ header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 include_once("functions.php");
 include_once("sql.php");
 
+//Comprobamos que recibimos una peticion POST con los parametros deseados
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["file_name"])) {
+    //Recuperamos el nombre del archivo
     $file_name = $_POST["file_name"];
     $file_path = "storage/" . $file_name;
-
+    //Si existe el archivo en el servidor seguimos
     if (file_exists($file_path)) {
         // Comprobamos que también exista en la base de datos y obtenemos su clave
         $conn = createDataBaseConnection();
@@ -17,21 +19,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["file_name"])) {
         $file = explode("/", $file_name)[1];
         $sql = "SELECT ckey FROM files WHERE user='".$user."' AND name='".$file."'";
         $result = $conn->query($sql);
-
+        //De existir, recuperamos la clave que se almacena CIFRADA en la base de datos
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $encryptedKey = $row["ckey"];
 
+            //Recuperamos el hash modificado y la clave privada cifrada del servidor
             $sql = "SELECT password, k1 FROM usuarios WHERE username='".$user."'";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
-                $hashRdy = prepareHashToUse($row["password"]);
-                $privateRdy = AESDecode($row["k1"], $hashRdy);
-                $decryptedKey = RSAdecode($privateRdy, $encryptedKey);
+                $hashRdy = prepareHashToUse($row["password"]); //Realizamos las modificaciones pertienentes para tener el hash listo, ya que NO se almacena en limpio en el servidor
+                $privateRdy = AESDecode($row["k1"], $hashRdy); //Usando el hash original desciframos usando AES la clave privada
+                $decryptedKey = RSAdecode($privateRdy, $encryptedKey); //con la clave privada lista, deciframos la clave que cifra el archivo usando RSA
 
-                // No es necesario crear un archivo temporal
+                // Desciframos el archivo usando la clave descifrada y el algoritmo AES-256-GCM
                 $decryptedContent = AESDecode(file_get_contents($file_path), $decryptedKey);
 
                 header('Content-Description: File Transfer');
@@ -44,9 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["file_name"])) {
 
                 // Enviar el contenido descifrado directamente al navegador
                 echo $decryptedContent;
-
-                // Opcionalmente, puedes limpiar la salida del búfer y finalizar el script
-                ob_clean();
                 exit();
             } else {
                 $response = array("code" => "No se ha encontrado en la base de datos el archivo");
