@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -12,6 +11,7 @@ import { MyfilesService } from '../myshare.service';
 import { OtherfilesService } from '../othershare.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { DownService } from '../down.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -19,9 +19,10 @@ import { DownService } from '../down.service';
   styleUrls: ['./../app.component.css']
 })
 
-export class HomeComponent  implements OnInit {
+export class HomeComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService) { }
+  constructor(private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
+    }
  
   files: any[] = [];
   selectedFile: File | null = null;
@@ -52,6 +53,9 @@ export class HomeComponent  implements OnInit {
   });
 
   ngOnInit(): void {
+    if (localStorage.getItem('username')==null) {
+      this.router.navigate(['login']);
+    }
     this.cargar();
     this.fileMy();
     this.fileOther();
