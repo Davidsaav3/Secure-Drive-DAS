@@ -9,8 +9,8 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent , canActivate: [AuthGuard]},
-  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirige a la página de inicio de sesión por defecto
-  { path: '**', redirectTo: '/login' } // Redirige a la página de inicio de sesión si la URL no coincide con ninguna ruta definida
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, 
+  { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({

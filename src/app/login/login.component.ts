@@ -41,48 +41,45 @@ export class LoginComponent {
       console
       const url = 'https://proteccloud.000webhostapp.com/login.php';
       const body = { 
-          username: this.registerForm.get('username')?.value, 
-          password: this.registerForm.get('password')?.value 
+        username: this.registerForm.get('username')?.value, 
+        password: this.registerForm.get('password')?.value 
       };
       const httpOptions = {
-          headers: new HttpHeaders({
-              'Content-Type': 'application/x-www-form-urlencoded'
-          })
+        headers: new HttpHeaders({
+          'Content-Type': 'application/x-www-form-urlencoded'
+        })
       };
-      //console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
-          catchError((error: HttpErrorResponse) => {
-              if (error.error instanceof ErrorEvent) {
-                  //console.error('Error del lado del cliente:', error.error.message);
-              } else {
-                  //console.error(`Código de error del servidor: ${error.status}, `+`cuerpo del error: ${error.message}`);
-                      if(error.status==200){
-                        this.username = this.registerForm.get('username')?.value;
-                        this.mostrar= true;
-                      }
-              }
-              return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
-          })
+        catchError((error: HttpErrorResponse) => {
+          if (error.error instanceof ErrorEvent) {
+            //console.error('Error del lado del cliente:', error.error.message);
+          } 
+          else {
+            if(error.status==200){
+              this.username = this.registerForm.get('username')?.value;
+              this.mostrar= true;
+            }
+          }
+          return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
+        })
       )
       .subscribe(
-          (response: any) => {
-              //console.log('Respuesta:', response);
-              if(response.code==100 || response.code==200){
-                this.username = this.registerForm.get('username')?.value;
-                this.mostrar= true;
-              }
-              if(response.code==400){
-                this.mostrar2= true;
-              }
-              if(response.code==401){
-                this.mostrar4= true;
-              }
-          },
-          (error: any) => {
-              //console.error('Error de solicitud:', error);
-              // Aquí puedes realizar acciones adicionales en caso de error de solicitud
+        (response: any) => {
+          if(response.code==100 || response.code==200){
+            this.username = this.registerForm.get('username')?.value;
+            this.mostrar= true;
           }
+          if(response.code==400){
+            this.mostrar2= true;
+          }
+          if(response.code==401){
+            this.mostrar4= true;
+          }
+        },
+        (error: any) => {
+          //console.error('Error de solicitud:', error);
+        }
       );
     }
     else{
@@ -100,30 +97,28 @@ export class LoginComponent {
         fa: this.registerForm2.get('fa')?.value, 
       };
       const httpOptions = {
-          headers: new HttpHeaders({
-              'Content-Type': 'application/x-www-form-urlencoded'
-          })
+        headers: new HttpHeaders({
+          'Content-Type': 'application/x-www-form-urlencoded'
+        })
       };
-      //console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
-          catchError((error: HttpErrorResponse) => {
-              if (error.error instanceof ErrorEvent) {
-                  //console.error('Error del lado del cliente:', error.error.message);
-              } else {
-                  //console.error(`Código de error del servidor: ${error.status}, `+`cuerpo del error: ${error.message}`);
-                      if(error.status==200){
-                        localStorage.setItem('username', this.username);
-                        this.authService.setAuthenticated(true);
-                        this.router.navigate(['/home']);
-                      }
-              }
-              return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
-          })
+        catchError((error: HttpErrorResponse) => {
+          if (error.error instanceof ErrorEvent) {
+
+          } 
+          else {
+            if(error.status==200){
+              localStorage.setItem('username', this.username);
+              this.authService.setAuthenticated(true);
+              this.router.navigate(['/home']);
+            }
+          }
+          return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
+        })
       )
       .subscribe(
           (response: any) => {
-              //console.log('Respuesta:', response);
               if(response.code==100){
                 localStorage.setItem('username', this.username);
                 this.authService.setAuthenticated(true);
@@ -135,7 +130,6 @@ export class LoginComponent {
           },
           (error: any) => {
               //console.error('Error de solicitud:', error);
-              // Aquí puedes realizar acciones adicionales en caso de error de solicitud
           }
       );
     }

@@ -15,11 +15,8 @@ export class DownloaderService {
     const url = `https://proteccloud.000webhostapp.com/downloader.php`; 
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
-    
     const formData = new FormData();
-    //console.log(fileName)
     formData.append('file_name', fileName);
-
     return this.http.post(url, formData, { headers, responseType: 'blob' })
       .pipe(
         catchError((error: HttpErrorResponse) => {
@@ -32,7 +29,6 @@ export class DownloaderService {
   downloader(fileName: string): void {
     this.downloadFile(fileName).subscribe(
       (response: any) => {
-        //console.log(response)
         const blob = new Blob([response], { type: 'application/octet-stream' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
@@ -41,7 +37,6 @@ export class DownloaderService {
       },
       (error: any) => {
         //console.error('Error al descargar el archivo:', error);
-
       }
     );
   }

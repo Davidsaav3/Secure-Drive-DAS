@@ -10,12 +10,9 @@ export class DownService {
   constructor(private http: HttpClient) {}
 
   downloadFile(fileName: string): Observable<any> {
-    const url = `https://proteccloud.000webhostapp.com/downloader.php`;
-    
-    // No es necesario establecer Content-Type en el FormData
+    const url = `https://proteccloud.000webhostapp.com/downloader.php`
     const formData = new FormData();
     formData.append('file_name', fileName);
-
     return this.http.post(url, formData, { responseType: 'blob' }).pipe(
       catchError((error: HttpErrorResponse) => {
         //console.error('Error al descargar el archivo:', error);
