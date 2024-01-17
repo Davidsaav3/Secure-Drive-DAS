@@ -6,13 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class OtherfilesService {
-  private apiUrl = 'https://proteccloud.000webhostapp.com/files.php';
+  private apiUrl = 'https://proteccloud.000webhostapp.com/sharedwithme.php';
   
   constructor(private http: HttpClient) {}
 
-  files(folderPath: string): Observable<any> {
+  files(folderPath: string, username: string): Observable<any> {
     const formData = new FormData();
     formData.append('folder_path', folderPath);
+    formData.append('username', username);
     return this.http.post<any>(this.apiUrl, formData);
   }
 }

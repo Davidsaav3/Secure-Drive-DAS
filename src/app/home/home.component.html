@@ -7,9 +7,9 @@
     <div>
       <li class="nav-item container custom-container d-flex align-items-center">
         <div class="btn-group" role="group" aria-label="Button group with three buttons">
-          <button (click)="pag=0" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 0}" style="background-color: white; color: black; border-color: black;">Mis archivos</button>
-          <button (click)="pag=1" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 1}" style="background-color: white; color: black; border-color: black;">Compartidos por mi</button>
-          <button (click)="pag=2" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 2}" style="background-color: white; color: black; border-color: black;">Compartidos conmigo</button>
+          <button (click)="pag=0" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 0}" style="background-color: white; color: black; border-color: black;" (click)="this.cargar();">Mis archivos</button>
+          <button (click)="pag=1" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 1}" style="background-color: white; color: black; border-color: black;" (click)="this.fileMy();">Compartidos por mi</button>
+          <button (click)="pag=2" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 2}" style="background-color: white; color: black; border-color: black;" (click)="this.fileOther();">Compartidos conmigo</button>
         </div>          
       </li>
     </div>
@@ -39,7 +39,7 @@
     </div>
   </nav>
 
-  <div *ngIf="pag==0" class="container py-2" style="height: 100vh;"><!-- TUYO -->
+  <div *ngIf="pag==0" class="container py-2" style="min-height: 100vh;"><!-- TUYO -->
     <h2 class="pt-3" style="color: aliceblue;">Mis archivos</h2>
 
     <div class="row" *ngIf="archivos && archivos.length > 0">
@@ -78,7 +78,7 @@
     </div>
   </div>
 
-  <div *ngIf="pag==1" class="container py-2" style="height: 100vh;"><!-- por mi -->
+  <div *ngIf="pag==1" class="container py-2" style="min-height: 100vh;"><!-- por mi -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido por mi</h2>
 
     <div class="row" *ngIf="archivos2 && archivos2.length > 0">
@@ -100,10 +100,11 @@
                   <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>
                 <div class="">
                   <div class="card-body">
-                  <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
-                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
-                  <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-danger ms-3" (click)="shoShare(archivo.id)">Dejar de compartir</button>
+                    <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
+                    <p class="card-text mb-0">Compartido con {{archivo.shared_user}}</p>
+                    <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
+                    <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
+                    <button class="btn btn-danger ms-3" (click)="noShare(archivo.nombre)">Dejar de compartir</button>
                   </div>
                 </div>
               </div>
@@ -117,11 +118,11 @@
   </div>
 
   
-  <div *ngIf="pag==2" class="container py-2" style="height: 100vh;"><!-- conmigo  -->
+  <div *ngIf="pag==2" class="container py-2" style="min-height: 100vh;"><!-- conmigo  -->
     <h2 class="pt-3" style="color: aliceblue;">Compartido conmigo</h2>
 
-    <div class="row" *ngIf="archivos2 && archivos2.length > 0">
-      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos2">
+    <div class="row" *ngIf="archivos3 && archivos3.length > 0">
+      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos3">
           <div class="container mt-3">
             <div class="card" style="">
               <div class="row no-gutters">
@@ -140,10 +141,10 @@
                 <div class="">
                   <div class="card-body">
                   <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
-                  <p class="card-text mb-0">Compartido por {{archivo.user}}</p>
+                  <p class="card-text mb-0">Compartido por {{archivo.file_owner}}</p>
                   <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
                   <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-danger ms-3" (click)="shoShare(archivo.id)">No me interesa</button>
+                  <button class="btn btn-danger ms-3" (click)="noShare(archivo.nombre)">No me interesa</button>
                   </div>
                 </div>
               </div>
@@ -185,7 +186,10 @@
               <p>¿Con qué usuario desea compartir el archivo?</p>
               <form [formGroup]="shareForm">
                   <div class="form-group">
-                      <input type="text" formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">
+                      <select formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">
+                        <option *ngFor="let option of options" [value]="option" formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">{{ option }}</option>
+                      </select>
+                      <!--<input type="select" formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">-->
                       <div *ngIf="shareForm.get('username')?.invalid && (shareForm.get('username')?.dirty || shareForm.get('username')?.touched)" class="text-danger">
                         <div *ngIf="shareForm.get('username')?.errors?.['required']">
                           Nombre de usuario requerido.
@@ -215,6 +219,33 @@
   <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body">Error al compartir el archivo</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="UserNotshare" class="top-0 left-0 p-3" style="position: fixed;">
+  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">El nombre de usuario introducido es incorrecto</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="Okdelete" class="top-0 left-0 p-3" style="position: fixed;">
+  <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">Eliminado de archivos compartidos</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="Nodelete" class="top-0 left-0 p-3" style="position: fixed;">
+  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">Error al eliminar de archivos compartidos</div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
   </div>

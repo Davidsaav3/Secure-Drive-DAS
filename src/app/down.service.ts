@@ -18,7 +18,7 @@ export class DownService {
 
     return this.http.post(url, formData, { responseType: 'blob' }).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.error('Error al descargar el archivo:', error);
+        //console.error('Error al descargar el archivo:', error);
         return throwError('No se pudo descargar el archivo; inténtalo de nuevo más tarde.');
       })
     );
@@ -27,7 +27,7 @@ export class DownService {
   getFileView(fileName: string): Observable<string> {
     return this.downloadFile(fileName).pipe(
       catchError((error: any) => {
-        console.error('Error al descargar el archivo:', error);
+        //console.error('Error al descargar el archivo:', error);
         return throwError('No se pudo obtener el archivo; inténtalo de nuevo más tarde.');
       }),
       map((response: any) => {

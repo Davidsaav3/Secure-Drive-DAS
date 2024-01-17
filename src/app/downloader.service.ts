@@ -17,13 +17,13 @@ export class DownloaderService {
     headers.append('Content-Type', 'application/json');
     
     const formData = new FormData();
-    console.log(fileName)
+    //console.log(fileName)
     formData.append('file_name', fileName);
 
     return this.http.post(url, formData, { headers, responseType: 'blob' })
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          console.error('Error al descargar el archivo:', error);
+          //console.error('Error al descargar el archivo:', error);
           return throwError('No se pudo descargar el archivo; inténtalo de nuevo más tarde.');
         })
       );
@@ -40,7 +40,7 @@ export class DownloaderService {
         link.click();
       },
       (error: any) => {
-        console.error('Error al descargar el archivo:', error);
+        //console.error('Error al descargar el archivo:', error);
 
       }
     );

@@ -49,16 +49,14 @@ export class LoginComponent {
               'Content-Type': 'application/x-www-form-urlencoded'
           })
       };
-      console.log(body)
+      //console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
           catchError((error: HttpErrorResponse) => {
               if (error.error instanceof ErrorEvent) {
-                  console.error('Error del lado del cliente:', error.error.message);
+                  //console.error('Error del lado del cliente:', error.error.message);
               } else {
-                  console.error(
-                      `Código de error del servidor: ${error.status}, ` +
-                      `cuerpo del error: ${error.message}`);
+                  //console.error(`Código de error del servidor: ${error.status}, `+`cuerpo del error: ${error.message}`);
                       if(error.status==200){
                         this.username = this.registerForm.get('username')?.value;
                         this.mostrar= true;
@@ -69,7 +67,7 @@ export class LoginComponent {
       )
       .subscribe(
           (response: any) => {
-              console.log('Respuesta:', response);
+              //console.log('Respuesta:', response);
               if(response.code==100 || response.code==200){
                 this.username = this.registerForm.get('username')?.value;
                 this.mostrar= true;
@@ -82,7 +80,7 @@ export class LoginComponent {
               }
           },
           (error: any) => {
-              console.error('Error de solicitud:', error);
+              //console.error('Error de solicitud:', error);
               // Aquí puedes realizar acciones adicionales en caso de error de solicitud
           }
       );
@@ -106,16 +104,14 @@ export class LoginComponent {
               'Content-Type': 'application/x-www-form-urlencoded'
           })
       };
-      console.log(body)
+      //console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
           catchError((error: HttpErrorResponse) => {
               if (error.error instanceof ErrorEvent) {
-                  console.error('Error del lado del cliente:', error.error.message);
+                  //console.error('Error del lado del cliente:', error.error.message);
               } else {
-                  console.error(
-                      `Código de error del servidor: ${error.status}, ` +
-                      `cuerpo del error: ${error.message}`);
+                  //console.error(`Código de error del servidor: ${error.status}, `+`cuerpo del error: ${error.message}`);
                       if(error.status==200){
                         localStorage.setItem('username', this.username);
                         this.authService.setAuthenticated(true);
@@ -127,7 +123,7 @@ export class LoginComponent {
       )
       .subscribe(
           (response: any) => {
-              console.log('Respuesta:', response);
+              //console.log('Respuesta:', response);
               if(response.code==100){
                 localStorage.setItem('username', this.username);
                 this.authService.setAuthenticated(true);
@@ -138,7 +134,7 @@ export class LoginComponent {
               }
           },
           (error: any) => {
-              console.error('Error de solicitud:', error);
+              //console.error('Error de solicitud:', error);
               // Aquí puedes realizar acciones adicionales en caso de error de solicitud
           }
       );

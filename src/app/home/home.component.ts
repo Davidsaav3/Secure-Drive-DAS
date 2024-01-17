@@ -34,9 +34,13 @@ export class HomeComponent  implements OnInit {
   archivos2: any[] = [];
   archivos3: any[] = [];
   fileList: any;
-  
+  options: string[] = [];
+
   Okshare = false;
   Notshare = false;
+  Okdelete = false;
+  UserNotshare = false;
+  Nodelete = false;
 
   imageName = 'tu-imagen.jpg'; // Reemplaza con el nombre de tu imagen
   imageUrl1: string[] = [];
@@ -49,8 +53,22 @@ export class HomeComponent  implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
-    this.fileMy();
-    this.fileOther();
+    this.getOptions();
+  }
+
+  getOptions(){
+    const formData = new FormData();
+    formData.append('username', this.username+``);
+    return this.http.post<any>('https://proteccloud.000webhostapp.com/select.php', formData)
+      .subscribe(data => {
+        if (data) {
+          this.options = data.usernames;
+        } else {
+          //console.error('Formato de respuesta incorrecto', data);
+        }
+      }, error => {
+        //console.error('Error al realizar la solicitud', error);
+      });  
   }
 
   cargar() {
@@ -67,23 +85,24 @@ export class HomeComponent  implements OnInit {
                 this.archivos[i].url= url;
               },
               (error: any) => {
-                console.error('Error al obtener la imagen:', error);
+                //console.error('Error al obtener la imagen:', error);
               }
             );
-          //}, 500);
+          //}, 3000);
         }
-        console.log(this.archivos)
+        //console.log(this.archivos)
       },
       (error: any) => {
-        console.error('Error al obtener la lista de archivos:', error);
+        //console.error('Error al obtener la lista de archivos:', error);
       }
     );
   }  
 
   fileMy() {
     const folderPath = 'storage/' + this.username; 
-    this.myfilesService.files(folderPath).subscribe(
+    this.myfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
+        //console.log(response)
         this.archivos2 = response.archivos;
         for (let i = 0; i < this.archivos2.length; i++) {
           const archivo = this.archivos2[i];
@@ -94,24 +113,24 @@ export class HomeComponent  implements OnInit {
                 this.archivos2[i].url= url;
               },
               (error: any) => {
-                console.error('Error al obtener la imagen:', error);
+                //console.error('Error al obtener la imagen:', error);
               }
             );
-          //}, 500);
+          //}, 3000);
         }
-        console.log(this.archivos)
+        //console.log(this.archivos)
       },
       (error: any) => {
-        console.error('Error al obtener la lista de archivos:', error);
+        //console.error('Error al obtener la lista de archivos:', error);
       }
     );
   }  
 
   fileOther() {
     const folderPath = 'storage/' + this.username; 
-    this.otherfilesService.files(folderPath).subscribe(
+    this.myfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
-        this.archivos3 = response.archivos3;
+        this.archivos3 = response.archivos;
         for (let i = 0; i < this.archivos3.length; i++) {
           const archivo = this.archivos3[i];
           const filePath = this.username + '/' + archivo.nombre;
@@ -121,15 +140,15 @@ export class HomeComponent  implements OnInit {
                 this.archivos3[i].url= url;
               },
               (error: any) => {
-                console.error('Error al obtener la imagen:', error);
+                //console.error('Error al obtener la imagen:', error);
               }
             );
-          //}, 500);
+          //}, 3000);
         }
-        console.log(this.archivos)
+        //console.log(this.archivos)
       },
       (error: any) => {
-        console.error('Error al obtener la lista de archivos:', error);
+        //console.error('Error al obtener la lista de archivos:', error);
       }
     );
   }  
@@ -139,13 +158,13 @@ export class HomeComponent  implements OnInit {
   down(id :string): void {
     this.downService.getFileView(id).subscribe(
       (url: string) => {
-        console.log(url)
+        //console.log(url)
         return url;
-        console.log(url)
+        //console.log(url)
         this.imageUrl1.push(url);
       },
       (error: any) => {
-        console.error('Error al obtener la imagen:', error);
+        //console.error('Error al obtener la imagen:', error);
       }
     );
   }
@@ -163,7 +182,7 @@ export class HomeComponent  implements OnInit {
     setTimeout(() => {
       this.fileName= '';
       this.cargar();
-    }, 1000);
+    }, 3000);
   }
   
   logout(): void { // CERRRA SESIÓN
@@ -176,16 +195,16 @@ export class HomeComponent  implements OnInit {
     const file = event.target.files && event.target.files[0];
     this.uploadService.upload(file, this.username).subscribe(
       response => {
-        console.log(response.files)
+        //console.log(response.files)
         if (response.files) {
-          console.log(response)
+          //console.log(response)
           this.fileList = response.files;
         } else {
-          console.error('Error al obtener archivos:', response);
+          //console.error('Error al obtener archivos:', response);
         }
       },
       error => {
-        console.error('Error al hacer la solicitud:', error.error);
+        //console.error('Error al hacer la solicitud:', error.error);
       }
     );
   }
@@ -197,30 +216,30 @@ export class HomeComponent  implements OnInit {
     };
     const formData = new FormData();
     formData.append('file_name', this.username+'/'+id);
-    console.log(this.username+'/'+id)
+    //console.log(this.username+'/'+id)
 
       const headers = new HttpHeaders();
       this.http.post('https://proteccloud.000webhostapp.com/delete.php', formData, { headers })
         .subscribe(
           (data: any) => {
-            console.log('Respuesta del servidor:', data);
+            //console.log('Respuesta del servidor:', data);
             setTimeout(() => {
               this.cargar();
-            }, 500);
+            }, 3000);
           },
           (error: any) => {
-            console.error('Error al subir el archivo:', error);
+            //console.error('Error al subir el archivo:', error);
             setTimeout(() => {
               this.cargar();
-            }, 500);
+            }, 3000);
           }
         );
   }
 
   descargar(id: any) { /////////////// DESCARGAR ///////////////
-    console.log(id)
+    //console.log(id)
     this.downloaderService.downloader(this.username+'/'+id);
-    console.log(this.downloaderService.downloader(this.username+'/'+id))
+    //console.log(this.downloaderService.downloader(this.username+'/'+id))
   }
 
   compartir(id: any) { /////////////// COMPARTIR ///////////////
@@ -228,47 +247,44 @@ export class HomeComponent  implements OnInit {
       console
       const url = 'https://proteccloud.000webhostapp.com/share.php';
       const body = {
-        username: this.username, 
-        username_share: this.shareForm.get('username')?.value, 
-        id_doc: id
+        files_user: this.username, 
+        share_user: this.shareForm.get('username')?.value, 
+        files_name: id
       };
-      console.log(body)
       const httpOptions = {
           headers: new HttpHeaders({
               'Content-Type': 'application/x-www-form-urlencoded'
           })
       };
-      console.log(body)
+      //console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
           catchError((error: HttpErrorResponse) => {
               this.Notshare = true;
               setTimeout(() => {
                 this.Notshare = false;
-              }, 2000);
+              }, 3000);
               if (error.error instanceof ErrorEvent) {
-                  console.error('Error del lado del cliente:', error.error.message);
+                  //console.error('Error del lado del cliente:', error.error.message);
               } else {
-                  console.error(
-                      `Código de error del servidor: ${error.status}, ` +
-                      `cuerpo del error: ${error.error}`);
+                  //console.error(`Código de error del servidor: ${error.status}, ` + `cuerpo del error: ${error.error}`);
               }
               return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
           })
       )
       .subscribe(
           (response: any) => {
-              console.log('Respuesta:', response);
-              if(response.code==100){
-                this.cargar();
+              //console.log('Respuesta:', response);
+              if(response.code=="Se subio dpm"){
+                //this.cargar();
                 this.Okshare = true;
                 setTimeout(() => {
                   this.Okshare = false;
-                }, 2000);
+                }, 3000);
               }
           },
           (error: any) => {
-              console.error('Error de solicitud:', error);
+              //console.error('Error de solicitud:', error);
           }
       );
     }
@@ -277,25 +293,37 @@ export class HomeComponent  implements OnInit {
     }    
   }
 
-  shoShare(id: any) { //////////////// DEJAR DE COMPARTIR ///////////////
-    console.log(id)
+  noShare(id: any) { //////////////// DEJAR DE COMPARTIR ///////////////
+    //console.log(id)
     const formData = new FormData();
     formData.append('file_name', this.username+'/'+id);
-    console.log(this.username+'/'+id)
+    //console.log(this.username+'/'+id)
     const headers = new HttpHeaders();
     this.http.post('https://proteccloud.000webhostapp.com/noshare.php', formData, { headers })
       .subscribe(
         (data: any) => {
-          console.log('Respuesta del servidor:', data);
-          setTimeout(() => {
-            this.cargar();
-          }, 500);
+          //console.log('Respuesta del servidor:', data);
+         
         },
         (error: any) => {
-          console.error('Error al subir el archivo:', error);
-          setTimeout(() => {
-            this.cargar();
-          }, 500);
+          //console.log(error.status)
+          //console.error('Error al subir el archivo:', error);
+          if(error.status==200){
+            this.Okdelete = true;
+            setTimeout(() => {
+              this.fileMy();
+              this.fileOther();
+              this.Okdelete = false;
+            }, 3000);
+          }
+          else{
+            this.Nodelete = true;
+            setTimeout(() => {
+              this.cargar();
+              this.Nodelete = false;
+            }, 3000);
+          }
+          
         }
       );
   }
