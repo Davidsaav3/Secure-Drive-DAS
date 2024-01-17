@@ -128,12 +128,13 @@ export class HomeComponent  implements OnInit {
 
   fileOther() {
     const folderPath = 'storage/' + this.username; 
-    this.myfilesService.files(folderPath, this.username+'').subscribe(
+    this.otherfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
+        //console.log(response)
         this.archivos3 = response.archivos;
         for (let i = 0; i < this.archivos3.length; i++) {
           const archivo = this.archivos3[i];
-          const filePath = this.username + '/' + archivo.nombre;
+          const filePath = archivo.owner + '/' + archivo.nombre;
           //setTimeout(() => {
             this.downService.getFileView(filePath).subscribe(
               (url: string) => {
@@ -145,7 +146,7 @@ export class HomeComponent  implements OnInit {
             );
           //}, 3000);
         }
-        //console.log(this.archivos)
+        //console.log (this.archivos3)
       },
       (error: any) => {
         //console.error('Error al obtener la lista de archivos:', error);
@@ -182,7 +183,7 @@ export class HomeComponent  implements OnInit {
     setTimeout(() => {
       this.fileName= '';
       this.cargar();
-    }, 3000);
+    }, 500);
   }
   
   logout(): void { // CERRRA SESIÓN
@@ -225,13 +226,13 @@ export class HomeComponent  implements OnInit {
             //console.log('Respuesta del servidor:', data);
             setTimeout(() => {
               this.cargar();
-            }, 3000);
+            }, 500);
           },
           (error: any) => {
             //console.error('Error al subir el archivo:', error);
             setTimeout(() => {
               this.cargar();
-            }, 3000);
+            }, 500);
           }
         );
   }
@@ -310,16 +311,17 @@ export class HomeComponent  implements OnInit {
           //console.error('Error al subir el archivo:', error);
           if(error.status==200){
             this.Okdelete = true;
+            this.fileMy();
+            this.fileOther();
             setTimeout(() => {
-              this.fileMy();
-              this.fileOther();
-              this.Okdelete = false;
+            this.Okdelete = false;
             }, 3000);
           }
           else{
             this.Nodelete = true;
+            this.fileMy();
+            this.fileOther();
             setTimeout(() => {
-              this.cargar();
               this.Nodelete = false;
             }, 3000);
           }

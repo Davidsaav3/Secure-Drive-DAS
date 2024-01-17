@@ -62,10 +62,10 @@
                 <div class="">
                   <div class="card-body">
                   <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
-                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
-                  <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id= archivo.nombre">Compartir</button>
-                  <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="id= archivo.nombre">Eliminar</button>
+                  <p class="card-text mb-0">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
+                  <button class="btn btn-dark me-3 mt-2"  (click)="descargar(archivo.nombre)">Descargar</button>
+                  <button class="btn btn-primary me-3 mt-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id= archivo.nombre">Compartir</button>
+                  <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="id= archivo.nombre">Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -102,9 +102,9 @@
                   <div class="card-body">
                     <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
                     <p class="card-text mb-0">Compartido con {{archivo.shared_user}}</p>
-                    <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
-                    <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
-                    <button class="btn btn-danger ms-3" (click)="noShare(archivo.nombre)">Dejar de compartir</button>
+                    <p class="card-text mb-0">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
+                    <button class="btn btn-dark me-3 mt-2"  (click)="descargar(archivo.nombre)">Descargar</button>
+                    <button class="btn btn-danger me-3 mt-2" (click)="noShare(archivo.nombre)">Dejar de compartir</button>
                   </div>
                 </div>
               </div>
@@ -141,10 +141,10 @@
                 <div class="">
                   <div class="card-body">
                   <h5 class="card-title m-0 mb-1"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
-                  <p class="card-text mb-0">Compartido por {{archivo.file_owner}}</p>
-                  <p class="card-text">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
-                  <button class="btn btn-dark me-3"  (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-danger ms-3" (click)="noShare(archivo.nombre)">No me interesa</button>
+                  <p class="card-text mb-0">Compartido por {{archivo.owner}}</p>
+                  <p class="card-text mb-0">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
+                  <button class="btn btn-dark me-3 mt-2"   (click)="descargar(archivo.nombre)">Descargar</button>
+                  <button class="btn btn-danger me-3 mt-2" (click)="noShare(archivo.nombre)">No me interesa</button>
                   </div>
                 </div>
               </div>
