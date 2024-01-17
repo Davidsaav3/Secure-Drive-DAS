@@ -7,9 +7,9 @@
     <div>
       <li class="nav-item container custom-container d-flex align-items-center">
         <div class="btn-group" role="group" aria-label="Button group with three buttons">
-          <button (click)="pag=0" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 0}" style="background-color: white; color: black; border-color: black;" (click)="this.cargar();">Mis archivos</button>
-          <button (click)="pag=1" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 1}" style="background-color: white; color: black; border-color: black;" (click)="this.fileMy();">Compartidos por mi</button>
-          <button (click)="pag=2" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 2}" style="background-color: white; color: black; border-color: black;" (click)="this.fileOther();">Compartidos conmigo</button>
+          <button (click)="pag=0" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 0}" style="background-color: white; color: black; border-color: black;">Mis archivos</button>
+          <button (click)="pag=1" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 1}" style="background-color: white; color: black; border-color: black;">Compartidos por mi</button>
+          <button (click)="pag=2" type="button" class="btn btn-outline-dark" [ngClass]="{'texto-negrita': pag === 2}" style="background-color: white; color: black; border-color: black;">Compartidos conmigo</button>
         </div>          
       </li>
     </div>
@@ -104,7 +104,7 @@
                     <p class="card-text mb-0">Compartido con {{archivo.shared_user}}</p>
                     <p class="card-text mb-0">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
                     <button class="btn btn-dark me-3 mt-2"  (click)="descargar(archivo.nombre)">Descargar</button>
-                    <button class="btn btn-danger me-3 mt-2" (click)="noShare(archivo.nombre)">Dejar de compartir</button>
+                    <button class="btn btn-danger me-3 mt-2" (click)="noShare(archivo.nombre, 0)">Dejar de compartir</button>
                   </div>
                 </div>
               </div>
@@ -144,7 +144,7 @@
                   <p class="card-text mb-0">Compartido por {{archivo.owner}}</p>
                   <p class="card-text mb-0">Archivo {{archivo.tipo}} de {{archivo.tamano/1024}} Kb</p>
                   <button class="btn btn-dark me-3 mt-2"   (click)="descargar(archivo.nombre)">Descargar</button>
-                  <button class="btn btn-danger me-3 mt-2" (click)="noShare(archivo.nombre)">No me interesa</button>
+                  <button class="btn btn-danger me-3 mt-2" (click)="noShare(archivo.nombre, 1)">No me interesa</button>
                   </div>
                 </div>
               </div>
@@ -185,17 +185,16 @@
           <div class="modal-body">
               <p>¿Con qué usuario desea compartir el archivo?</p>
               <form [formGroup]="shareForm">
-                  <div class="form-group">
-                      <select formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">
-                        <option *ngFor="let option of options" [value]="option" formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">{{ option }}</option>
-                      </select>
-                      <!--<input type="select" formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">-->
-                      <div *ngIf="shareForm.get('username')?.invalid && (shareForm.get('username')?.dirty || shareForm.get('username')?.touched)" class="text-danger">
-                        <div *ngIf="shareForm.get('username')?.errors?.['required']">
-                          Nombre de usuario requerido.
-                        </div>
-                      </div>
+                <div class="form-group">
+                  <select formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">
+                    <option *ngFor="let option of options" [value]="option">{{ option }}</option>
+                  </select>
+                  <div *ngIf="shareForm.get('username')?.invalid && (shareForm.get('username')?.dirty || shareForm.get('username')?.touched)" class="text-danger">
+                    <div *ngIf="shareForm.get('username')?.errors?.['required']">
+                      Nombre de usuario requerido.
                     </div>
+                  </div>
+                </div>
               </form>
           </div>
           <div class="modal-footer">

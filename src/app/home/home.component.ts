@@ -21,7 +21,7 @@ import { DownService } from '../down.service';
 
 export class HomeComponent  implements OnInit {
 
-  constructor(private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService) { }
+  constructor(private fb: FormBuilder, private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService) { }
  
   files: any[] = [];
   selectedFile: File | null = null;
@@ -53,6 +53,8 @@ export class HomeComponent  implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+    this.fileMy();
+    this.fileOther();
     this.getOptions();
   }
 
@@ -63,7 +65,8 @@ export class HomeComponent  implements OnInit {
       .subscribe(data => {
         if (data) {
           this.options = data.usernames;
-        } else {
+        } 
+        else {
           //console.error('Formato de respuesta incorrecto', data);
         }
       }, error => {
@@ -79,16 +82,14 @@ export class HomeComponent  implements OnInit {
         for (let i = 0; i < this.archivos.length; i++) {
           const archivo = this.archivos[i];
           const filePath = this.username + '/' + archivo.nombre;
-          //setTimeout(() => {
-            this.downService.getFileView(filePath).subscribe(
-              (url: string) => {
-                this.archivos[i].url= url;
-              },
-              (error: any) => {
-                //console.error('Error al obtener la imagen:', error);
-              }
-            );
-          //}, 3000);
+          this.downService.getFileView(filePath).subscribe(
+            (url: string) => {
+              this.archivos[i].url= url;
+            },
+            (error: any) => {
+              //console.error('Error al obtener la imagen:', error);
+            }
+          );
         }
         //console.log(this.archivos)
       },
@@ -102,23 +103,19 @@ export class HomeComponent  implements OnInit {
     const folderPath = 'storage/' + this.username; 
     this.myfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
-        //console.log(response)
         this.archivos2 = response.archivos;
         for (let i = 0; i < this.archivos2.length; i++) {
           const archivo = this.archivos2[i];
           const filePath = this.username + '/' + archivo.nombre;
-          //setTimeout(() => {
-            this.downService.getFileView(filePath).subscribe(
-              (url: string) => {
-                this.archivos2[i].url= url;
-              },
-              (error: any) => {
-                //console.error('Error al obtener la imagen:', error);
-              }
-            );
-          //}, 3000);
+          this.downService.getFileView(filePath).subscribe(
+            (url: string) => {
+              this.archivos2[i].url= url;
+            },
+            (error: any) => {
+              //console.error('Error al obtener la imagen:', error);
+            }
+          );
         }
-        //console.log(this.archivos)
       },
       (error: any) => {
         //console.error('Error al obtener la lista de archivos:', error);
@@ -130,23 +127,19 @@ export class HomeComponent  implements OnInit {
     const folderPath = 'storage/' + this.username; 
     this.otherfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
-        //console.log(response)
         this.archivos3 = response.archivos;
         for (let i = 0; i < this.archivos3.length; i++) {
           const archivo = this.archivos3[i];
           const filePath = archivo.owner + '/' + archivo.nombre;
-          //setTimeout(() => {
-            this.downService.getFileView(filePath).subscribe(
-              (url: string) => {
-                this.archivos3[i].url= url;
-              },
-              (error: any) => {
-                //console.error('Error al obtener la imagen:', error);
-              }
-            );
-          //}, 3000);
+          this.downService.getFileView(filePath).subscribe(
+            (url: string) => {
+              this.archivos3[i].url= url;
+            },
+            (error: any) => {
+              //console.error('Error al obtener la imagen:', error);
+            }
+          );
         }
-        //console.log (this.archivos3)
       },
       (error: any) => {
         //console.error('Error al obtener la lista de archivos:', error);
@@ -159,9 +152,7 @@ export class HomeComponent  implements OnInit {
   down(id :string): void {
     this.downService.getFileView(id).subscribe(
       (url: string) => {
-        //console.log(url)
         return url;
-        //console.log(url)
         this.imageUrl1.push(url);
       },
       (error: any) => {
@@ -196,9 +187,7 @@ export class HomeComponent  implements OnInit {
     const file = event.target.files && event.target.files[0];
     this.uploadService.upload(file, this.username).subscribe(
       response => {
-        //console.log(response.files)
         if (response.files) {
-          //console.log(response)
           this.fileList = response.files;
         } else {
           //console.error('Error al obtener archivos:', response);
@@ -217,13 +206,11 @@ export class HomeComponent  implements OnInit {
     };
     const formData = new FormData();
     formData.append('file_name', this.username+'/'+id);
-    //console.log(this.username+'/'+id)
 
       const headers = new HttpHeaders();
       this.http.post('https://proteccloud.000webhostapp.com/delete.php', formData, { headers })
         .subscribe(
           (data: any) => {
-            //console.log('Respuesta del servidor:', data);
             setTimeout(() => {
               this.cargar();
             }, 500);
@@ -238,9 +225,7 @@ export class HomeComponent  implements OnInit {
   }
 
   descargar(id: any) { /////////////// DESCARGAR ///////////////
-    //console.log(id)
     this.downloaderService.downloader(this.username+'/'+id);
-    //console.log(this.downloaderService.downloader(this.username+'/'+id))
   }
 
   compartir(id: any) { /////////////// COMPARTIR ///////////////
@@ -257,7 +242,6 @@ export class HomeComponent  implements OnInit {
               'Content-Type': 'application/x-www-form-urlencoded'
           })
       };
-      //console.log(body)
       this.http.post(url, JSON.stringify(body), httpOptions)
       .pipe(
           catchError((error: HttpErrorResponse) => {
@@ -275,10 +259,11 @@ export class HomeComponent  implements OnInit {
       )
       .subscribe(
           (response: any) => {
-              //console.log('Respuesta:', response);
               if(response.code=="Se subio dpm"){
-                //this.cargar();
                 this.Okshare = true;
+                this.fileMy();
+                this.fileOther();
+                
                 setTimeout(() => {
                   this.Okshare = false;
                 }, 3000);
@@ -294,21 +279,16 @@ export class HomeComponent  implements OnInit {
     }    
   }
 
-  noShare(id: any) { //////////////// DEJAR DE COMPARTIR ///////////////
-    //console.log(id)
+  noShare(id: any, num: any) { //////////////// DEJAR DE COMPARTIR ///////////////
     const formData = new FormData();
-    formData.append('file_name', this.username+'/'+id);
-    //console.log(this.username+'/'+id)
+    formData.append('file_name', this.username+'/'+id+'/'+num);
     const headers = new HttpHeaders();
     this.http.post('https://proteccloud.000webhostapp.com/noshare.php', formData, { headers })
       .subscribe(
         (data: any) => {
           //console.log('Respuesta del servidor:', data);
-         
         },
         (error: any) => {
-          //console.log(error.status)
-          //console.error('Error al subir el archivo:', error);
           if(error.status==200){
             this.Okdelete = true;
             this.fileMy();
@@ -325,7 +305,6 @@ export class HomeComponent  implements OnInit {
               this.Nodelete = false;
             }, 3000);
           }
-          
         }
       );
   }
