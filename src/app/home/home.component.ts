@@ -279,9 +279,9 @@ export class HomeComponent  implements OnInit {
     }    
   }
 
-  noShare(id: any, num: any) { //////////////// DEJAR DE COMPARTIR ///////////////
+  noShare(id: any, num: any, otro: any) { //////////////// DEJAR DE COMPARTIR ///////////////
     const formData = new FormData();
-    formData.append('file_name', this.username+'/'+id+'/'+num);
+    formData.append('file_name', this.username+'/'+id+'/'+num+'/'+otro);
     const headers = new HttpHeaders();
     this.http.post('https://proteccloud.000webhostapp.com/noshare.php', formData, { headers })
       .subscribe(
