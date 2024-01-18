@@ -136,23 +136,32 @@ export class HomeComponent implements OnInit {
     const folderPath = 'storage/' + this.username; 
     this.otherfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
-        
-        this.archivos3 = response.archivos;
-        for (let i = 0; i < this.archivos3.length; i++) {
-          const archivo = this.archivos3[i];
-          const filePath = archivo.owner + '/' + archivo.nombre;
-          this.downService.getFileView(filePath).subscribe(
-            (url: string) => {
-              this.archivos3[i].url= url;
-            },
-            (error: any) => {
-              //console.error('Error al obtener la imagen:', error);
-            }
-          );
+        // Verifica si response.archivos es un array y tiene una propiedad 'length'
+        if (Array.isArray(response.archivos) && response.archivos.length) {
+          this.archivos3 = response.archivos;
+  
+          for (let i = 0; i < this.archivos3.length; i++) {
+            const archivo = this.archivos3[i];
+            const filePath = archivo.owner + '/' + archivo.nombre;
+  
+            this.downService.getFileView(filePath).subscribe(
+              (url: string) => {
+                this.archivos3[i].url = url;
+              },
+              (error: any) => {
+                // Manejar el error al obtener la imagen
+                // console.error('Error al obtener la imagen:', error);
+              }
+            );
+          }
+        } else {
+          // Manejar el caso en el que response.archivos no es un array o su propiedad 'length' es 0
+          // Por ejemplo, podrías asignar un valor predeterminado o mostrar un mensaje al usuario
         }
       },
       (error: any) => {
-        //console.error('Error al obtener la lista de archivos:', error);
+        // Manejar el error al obtener la lista de archivos
+        // console.error('Error al obtener la lista de archivos:', error);
       }
     );
   }  
