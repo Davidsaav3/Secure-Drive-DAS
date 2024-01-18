@@ -5,6 +5,7 @@ import { throwError } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service'; 
 import { DownloaderService } from '../downloader.service';
+import { DownloaderSharedService } from '../downloaderShared.service';
 import { UploadService } from '../upload.service';
 import { FilesService } from '../files.service';
 import { MyfilesService } from '../myshare.service';
@@ -21,7 +22,7 @@ import { Router } from '@angular/router';
 
 export class HomeComponent implements OnInit {
 
-  constructor(private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
+  constructor(private downloaderShared: DownloaderSharedService, private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
     }
  
   files: any[] = [];
@@ -230,6 +231,10 @@ export class HomeComponent implements OnInit {
 
   descargar(id: any) { /////////////// DESCARGAR ///////////////
     this.downloaderService.downloader(this.username+'/'+id);
+  }
+
+  descargarShared(id: any, owner: any) { /////////////// DESCARGAR ///////////////
+    this.downloaderShared.downloader(owner+'/'+id, owner, this.username);
   }
 
   compartir(id: any) { /////////////// COMPARTIR ///////////////
