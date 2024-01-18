@@ -11,7 +11,7 @@
 
 // Directorio para guardar
 $destiny = "storage/";
-$response;
+$response = array();
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
     $archivo_name = $_FILES["uploaded_file"]["name"];
     $archivo_temp = $_FILES["uploaded_file"]["tmp_name"];
@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
             $publicKey = $row["k2"];
         }
         else{
-            $response = array("code"  => "No se ha encontrado en la base de datos el k2");
+            $response = array("code"  => 401);
         }
         //Ciframos la clave AES con RSA usando la clave publica
         $key2Upload = RSAencoding($publicKey, $key4Encrypt);
@@ -55,19 +55,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
             // Mueve el archivo al directorio de destino cifrado con la clave generada anteriormente andes de ser cifrada con la clave publica
             file_put_contents($archivo_temp, AESEncoding(file_get_contents($archivo_temp), $key4Encrypt));
             move_uploaded_file($archivo_temp, $ruta_destino . $archivo_name);
-            $response = array("code"  => "Se subio dpm");
+            $response = array("code"  => 201);
         } else {
-            $response = array("code"  => "Error con la bbdd");
+            $response = array("code"  => 402);
         }
         closeDataBaseConnection($conn);
         //////////////////////////////////////////////////////////////////////////////
-
-        echo "El archivo se ha subido correctamente.";
     } else {
-        $response = array("code"  => "ERROR AL SUBIR ARCHIVO");
+        $response = array("code"  => 401);
     }
 } else {
-    $response = array("code"  => "EL POST TA VACIO");
+    $response = array("code"  => 401);
 }
 
 echo json_encode($response);

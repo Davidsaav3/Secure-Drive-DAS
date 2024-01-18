@@ -13,25 +13,22 @@
     $data = json_decode(file_get_contents('php://input'));
     //$data = array("username"=> "persona", "password"=> "paco3", "email"=>"gomito");
 
-    $sql = "SELECT * FROM usuarios WHERE username='".$data->username."'";
+    $sql = "SELECT * FROM usuarios WHERE (username='".$data->username."' OR email='".generateHash($data->email)."') AND confirmed <> 0";
     $result = $conn->query($sql);
     $debug = array();
 
     if ($result->num_rows > 0) {
-        $response = array("code" => 401);
+        $response = array("code" => 400);
         $row = $result->fetch_assoc();
-        if(strcmp($row["email"], $data->email) == 0) {
-            $response["code"] = 400;
-        }
     } else {
         $randomNumber = rand(100000, 999999);
         $keysToUse = generateRSA();
         $ogHash    = generateHash($data->password);
         $pvKey = AESEncoding($keysToUse["private"], $ogHash);
         $sql2 = "INSERT INTO usuarios (username, password, email, k1, k2, cod)
-        VALUES ('".$data->username."', '".prepareHashToUpload($ogHash)."', '".AESEncoding($data->email, $ogHash)."', '".$pvKey."', '".$keysToUse["public"]."', '".AESEncoding($randomNumber, $ogHash)."')";
+        VALUES ('".$data->username."', '".prepareHashToUpload($ogHash)."', '".generateHash($data->email)."', '".$pvKey."', '".$keysToUse["public"]."', '".generateHash($randomNumber)."')";
         if ($conn->query($sql2) === TRUE) {
-            $response = array("code"  => 100);
+            $response = array("code"  => 200);
             enviarCorreoDobleFactor($data->email, $data->username, $randomNumber);
         } else {
             $response = array("code"  => 401);

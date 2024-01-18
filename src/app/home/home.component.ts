@@ -13,6 +13,14 @@ import { OtherfilesService } from '../othershare.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { DownService } from '../down.service';
 import { Router } from '@angular/router';
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'replace' })
+export class ReplacePipe implements PipeTransform {
+  transform(value: string, find: string, replacement: string): string {
+    return value.replace(new RegExp(find, 'g'), replacement);
+  }
+}
 
 @Component({
   selector: 'app-home',
@@ -108,7 +116,7 @@ export class HomeComponent implements OnInit {
     );
   }  
 
-  fileMy() {
+  fileMy() { /////////////// ARCHIVOS COMPARTIDOS POR TI ///////////////
     const folderPath = 'storage/' + this.username; 
     this.myfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
@@ -132,7 +140,7 @@ export class HomeComponent implements OnInit {
     );
   }  
 
-  fileOther() {
+  fileOther() { /////////////// ARCHIVOS COMPARTIDOS CONTIGO ///////////////
     const folderPath = 'storage/' + this.username; 
     this.otherfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
@@ -149,19 +157,17 @@ export class HomeComponent implements OnInit {
                 this.archivos3[i].url = url;
               },
               (error: any) => {
-                // Manejar el error al obtener la imagen
                 // console.error('Error al obtener la imagen:', error);
               }
             );
           }
-        } else {
-          // Manejar el caso en el que response.archivos no es un array o su propiedad 'length' es 0
-          // Por ejemplo, podrías asignar un valor predeterminado o mostrar un mensaje al usuario
+        } 
+        else {               
+          // console.error('Error al obtener la imagen:', error);
         }
       },
       (error: any) => {
-        // Manejar el error al obtener la lista de archivos
-        // console.error('Error al obtener la lista de archivos:', error);
+        // console.error('Error al obtener la imagen:', error);
       }
     );
   }  

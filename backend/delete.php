@@ -30,6 +30,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["file_name"])) {
         $file_name = explode("/", $archivo_name)[1];
         $sql_delete = "DELETE FROM files WHERE user = '$user' AND name = '$file_name'";
         if ($conn->query($sql_delete) === TRUE) {
+            $sql_select = "SELECT id FROM share WHERE file_name = '$file_name' AND file_owner = '$user'";
+            $result = $conn->query($sql_select);
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                $sql_delete = "DELETE FROM share WHERE id = '".$row['id']."'";
+                $conn->query($sql_delete);
+                }
+          } else {   
+          } 
             echo "El archivo se ha eliminado correctamente de la tabla files.";
         } else {
             echo "Error al eliminar información en la tabla files: " . $conn->error;
