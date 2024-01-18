@@ -43,6 +43,10 @@ export class HomeComponent implements OnInit {
   Okdelete = false;
   UserNotshare = false;
   Nodelete = false;
+  Noupload = false;
+  Okdeleteall = false;
+  NoNoupload = false;
+  Okupload = false;
 
   imageName = 'tu-imagen.jpg'; // Reemplaza con el nombre de tu imagen
   imageUrl1: string[] = [];
@@ -132,6 +136,7 @@ export class HomeComponent implements OnInit {
     const folderPath = 'storage/' + this.username; 
     this.otherfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
+        
         this.archivos3 = response.archivos;
         for (let i = 0; i < this.archivos3.length; i++) {
           const archivo = this.archivos3[i];
@@ -179,7 +184,7 @@ export class HomeComponent implements OnInit {
     setTimeout(() => {
       this.fileName= '';
       this.cargar();
-    }, 500);
+    }, 1000);
   }
   
   logout(): void { // CERRRA SESIÓN
@@ -192,13 +197,44 @@ export class HomeComponent implements OnInit {
     const file = event.target.files && event.target.files[0];
     this.uploadService.upload(file, this.username).subscribe(
       response => {
-        if (response.files) {
+        //console.log(response.code)
+        if (response.code==201) { // Archivo subido correctamente
           this.fileList = response.files;
-        } else {
-          //console.error('Error al obtener archivos:', response);
+          this.Okupload = true;         
+          setTimeout(() => {
+            this.cargar();
+          }, 500); 
+          setTimeout(() => {
+            this.Okupload = false;
+          }, 3000);
         }
+        if (response.code==401) { // Error al subir el archivo
+          this.Noupload = true;          
+          setTimeout(() => {
+            this.Noupload = false;
+          }, 3000);
+        } 
+        if (response.code==402) { // No puedes subir un archivo con el mismo nombre
+          this.NoNoupload = true;          
+          setTimeout(() => {
+            this.NoNoupload = false;
+          }, 3000);
+        } 
       },
       error => {
+        //console.log(error.status)
+        if (error.status==401) { // Error al subir el archivo
+          this.Noupload = true;          
+          setTimeout(() => {
+            this.Noupload = false;
+          }, 3000);
+        } 
+        if (error.status==200) { // No puedes subir un archivo con el mismo nombre
+          this.NoNoupload = true;          
+          setTimeout(() => {
+            this.NoNoupload = false;
+          }, 3000);
+        } 
         //console.error('Error al hacer la solicitud:', error.error);
       }
     );
@@ -216,12 +252,20 @@ export class HomeComponent implements OnInit {
       this.http.post('https://proteccloud.000webhostapp.com/delete.php', formData, { headers })
         .subscribe(
           (data: any) => {
+            this.Okdeleteall = true;  
+            setTimeout(() => {
+              this.Okdeleteall =  false;
+            }, 3000);
             setTimeout(() => {
               this.cargar();
             }, 500);
           },
           (error: any) => {
             //console.error('Error al subir el archivo:', error);
+            this.Okdeleteall = true;  
+            setTimeout(() => {
+              this.Okdeleteall =  false;
+            }, 3000);
             setTimeout(() => {
               this.cargar();
             }, 500);
