@@ -14,7 +14,6 @@ include_once("sql.php");
     $files_user = $data->files_user;
     $files_name = $data->files_name;
     $share_user = $data->share_user;
-
     //Se recupera la clave cifrada que se usa para cifrar el archivo en el servidor
     $sql = "SELECT ckey FROM files WHERE user='".$files_user."' AND name='".$files_name."'"  ;
     $result = $conn->query($sql);
@@ -22,7 +21,6 @@ include_once("sql.php");
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $encryptedKey = $row["ckey"];
-
         //Recuperamos el hash modificado y la clave privada cifrada del servidor del usuario que comparte el archivo
         $sql = "SELECT password, k1 FROM usuarios WHERE username='".$files_user."'";
         $result = $conn->query($sql);
@@ -42,11 +40,14 @@ include_once("sql.php");
                 $publicKey = $row["k2"];
                 //Ciframos la clave AES con RSA usando la clave publica
                 $key2Upload = RSAencoding($publicKey, $decryptedKey);
+
+                $signature = VSign($key2Upload, $privateRdy);
+                $signature_escaped = mysqli_real_escape_string($conn, $signature);
                 
                 //Insertamos los datos en la tabla correspondiente
-                $sql_insert = "INSERT INTO share (file_name, file_owner, shared_user ,ckey) VALUES ('$files_name', '$files_user', '$share_user' ,'$key2Upload')";
+                $sql_insert = "INSERT INTO share (file_name, file_owner, shared_user ,ckey ,vsignature) VALUES ('$files_name', '$files_user', '$share_user' ,'$key2Upload', '".$signature_escaped."')";
                 if ($conn->query($sql_insert) === TRUE) {
-                    $response = array("code"  => "Se subio dpm");
+                    $response = array("code"  => "Se subio");
                 } else {
                     $response = array("code"  => "Error con la bbdd");
                 }
@@ -54,12 +55,12 @@ include_once("sql.php");
                 $response = array("code" => "No se ha encontrado en la base de datos el archivo");
             }
         } else {
-            $response = array("code" => "No se ha encontrado en la base de datos el archivo");
+            $response = array("code" => 402);
         }
 
 
     } else {
-        $response = array("code"=> $files_name);
+        $response = array("code"=> 401);
     }
     closeDataBaseConnection($conn);
 

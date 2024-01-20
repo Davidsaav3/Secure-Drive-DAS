@@ -57,9 +57,5 @@ include_once("sql.php");
     } else {
         $response = array("code" => "Archivo no encontrado ".$file_name);
         echo json_encode($response);
-    }
-//} else {
-//    $response = array("code" => "Solicitud no válida");
- //   echo json_encode($response);
-//}
+    }-
 ?>

@@ -88,4 +88,15 @@ function AESDecode($dataToDecode, $keyDecoding){
     return openssl_decrypt($cipherText, 'aes-256-gcm', $keyDecoding, OPENSSL_RAW_DATA, $iVector, $tag);
 }
 
+function VSign($data, $pvk){
+    $signature = 0;
+    openssl_sign($data, $signature, $pvk, OPENSSL_ALGO_SHA512);
+    return base64_encode($signature);
+}
+
+function VSignCheck($data, $signature, $pk){
+    $signature = base64_decode($signature);
+    return openssl_verify($data, $signature, $pk, OPENSSL_ALGO_SHA512);
+}
+
 ?>
