@@ -5,6 +5,7 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 include_once("functions.php");
 include_once("sql.php");
+
 //Comprobamos que recibimos una peticion POST con los parametros deseados
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["file_name"])) {
     //Recuperamos el nombre del archivo
@@ -33,13 +34,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["file_name"])) {
                 //Recuperamos el hash modificado y la clave privada cifrada del servidor
                 $sql = "SELECT password, k1 FROM usuarios WHERE username='".$file_shared."'";
                 $result = $conn->query($sql);
+
                 if ($result->num_rows > 0) {
                     $row = $result->fetch_assoc();
                     $hashRdy = prepareHashToUse($row["password"]); //Realizamos las modificaciones pertienentes para tener el hash listo, ya que NO se almacena en limpio en el servidor
                     $privateRdy = AESDecode($row["k1"], $hashRdy); //Usando el hash original desciframos usando AES la clave privada
                     $decryptedKey = RSAdecode($privateRdy, $encryptedKey); //con la clave privada lista, deciframos la clave que cifra el archivo usando RSA
+
                     // Desciframos el archivo usando la clave descifrada y el algoritmo AES-256-GCM
                     $decryptedContent = AESDecode(file_get_contents($file_path), $decryptedKey);
+
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
                     header('Content-Disposition: attachment; filename="' . $file_name . '"');

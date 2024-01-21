@@ -11,15 +11,15 @@
 
     $conn = createDataBaseConnection();
     $data = json_decode(file_get_contents('php://input'));
-    //$data = array("username"=> "persona", "password"=> "paco3", "email"=>"gomito");
 
+    //Se comprueba si el usuario existe
     $sql = "SELECT * FROM usuarios WHERE username='".$data->username."'";
     $result = $conn->query($sql);
     $debug = array();
 
     if ($result->num_rows > 0) {
-        $response = array("code" => 400);
-    } else {
+        $response = array("code" => 400); //El nombre del usuario esta en uso
+    } else {//Se acepta el registro, se generan y gestionan las claves del usuario, el código de autentificaion. Todo se sube de manera protegida
         $randomNumber = rand(100000, 999999);
         $keysToUse = generateRSA();
         $ogHash    = generateHash($data->password);

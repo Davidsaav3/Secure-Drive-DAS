@@ -22,7 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $filePath = $folderPath . '/' . $file;
                 if (file_exists($filePath)) {
                     $tmp_file = "storage/dsp0000/enc.enc";
-                    //$tmp_content = file_get_contents($tmp_file);
                     $fileContent = base64_encode($filePath);
                     $fileContent = '';
                     $fileInfo = array(
@@ -55,8 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 function get_file_url($file) {
-    // Construir la URL según la estructura de tu aplicación Angular
-    // Puedes cambiar esta lógica según la configuración de tu servidor y tu aplicación Angular
+    // Construir la URL según la estructura de la aplicación Angular
     $angular_base_url = "https://proteccloud.000webhostapp.com/";
     $relative_path = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
     return $angular_base_url . $relative_path;

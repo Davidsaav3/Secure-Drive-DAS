@@ -48,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
         //Ciframos la clave AES con RSA usando la clave publica
         $key2Upload = RSAencoding($publicKey, $key4Encrypt);
         
-        ////////////////////////////// David //////////////////////////////////////////
         // Inserción en la tabla files
         $sql_insert = "INSERT INTO files (user, name, ckey) VALUES ('$user', '$archivo_name', '$key2Upload')";
         if ($conn->query($sql_insert) === TRUE) {
@@ -60,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["uploaded_file"])) {
             $response = array("code"  => 402);
         }
         closeDataBaseConnection($conn);
-        //////////////////////////////////////////////////////////////////////////////
     } else {
         $response = array("code"  => 401);
     }

@@ -5,13 +5,17 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 require_once("sql.php");
 $conn = createDataBaseConnection();
+
+/*
+//Se seleccionan los archivos que se han compartido con el usuario usando una sentencia SQL para mostrarselos
+*/
 $sql = "SELECT file_name, file_owner FROM share WHERE shared_user='".$_POST["username"]."'"  ;
 $result = $conn->query($sql);
 $response = array();
 if ($result->num_rows > 0) {
     $fileData = array();
     $id = 0;
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {//Por cada archivo que le han compartido se agrega a un array que se pasa al front end
         $filePath = 'storage/' . $row['file_owner'] . '/' . $row['file_name'];
         if (file_exists($filePath)) {
             $tmp_file = "storage/dsp0000/enc.enc";

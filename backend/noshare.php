@@ -6,7 +6,10 @@ header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 include_once("sql.php");
 require_once("functions.php");
 $conn = createDataBaseConnection();
-    
+
+/*
+Se hacen consultas a la base de datos para dejar de compartir los archivos, estas consultas gestionan el borrado de las entradas en la BBDD relacionadas con compartir archivos
+*/
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["file_name"])) {
     $archivo_name = $_POST["file_name"];
 

@@ -14,6 +14,7 @@ include_once("sql.php");
     $files_user = $data->files_user;
     $files_name = $data->files_name;
     $share_user = $data->share_user;
+
     //Se recupera la clave cifrada que se usa para cifrar el archivo en el servidor
     $sql = "SELECT ckey FROM files WHERE user='".$files_user."' AND name='".$files_name."'"  ;
     $result = $conn->query($sql);
@@ -21,6 +22,7 @@ include_once("sql.php");
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $encryptedKey = $row["ckey"];
+
         //Recuperamos el hash modificado y la clave privada cifrada del servidor del usuario que comparte el archivo
         $sql = "SELECT password, k1 FROM usuarios WHERE username='".$files_user."'";
         $result = $conn->query($sql);
