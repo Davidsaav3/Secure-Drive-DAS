@@ -1,0 +1,102 @@
+<div class="container-fluid" style="min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+  <div class="row justify-content-center">
+    <div class="">
+      <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px;">
+        <div class="card-body">
+          <h2 class="text-center" style="color: aliceblue;">Registro</h2>
+          <form [formGroup]="registerForm" (ngSubmit)="register()" *ngIf="!mostrar" class="p-3">
+            <div class="mb-3">
+              <label style="color: aliceblue;" for="username" class="form-label">Usuario</label>
+              <input type="text" formControlName="username" class="form-control" id="username" placeholder="Usuario">
+              <div *ngIf="registerForm.get('username')?.invalid && (registerForm.get('username')?.dirty || registerForm.get('username')?.touched)" class="text-danger">
+                <div *ngIf="registerForm.get('username')?.errors?.['required']">
+                  Usuario es requerido.
+                </div>
+                <div *ngIf="registerForm.get('username')?.errors?.['minlength']">
+                  Usuario debe tener al menos 3 caracteres.
+                </div>
+                <div *ngIf="registerForm.get('username')?.errors?.['maxlength']">
+                  Usuario no puede tener más de 20 caracteres.
+                </div>
+          
+              </div>
+            </div>
+            <div *ngIf="mostrar4" style="color: red;">
+              Nombre de usuario en uso, pruebe con otro.
+            </div>
+            <div class="mb-3">
+              <label style="color: aliceblue;" for="email" class="form-label">Correo electrónico</label>
+              <input type="email" formControlName="email" class="form-control" id="email" placeholder="Correo electrónico">
+              <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)" class="text-danger">
+                <div *ngIf="registerForm.get('email')?.errors?.['required']">
+                  Correo electrónico es requerido.
+                </div>
+                <div *ngIf="registerForm.get('email')?.errors?.['email']">
+                  Correo electrónico no es válido.
+                </div>
+              
+              </div>
+            </div>
+            <div *ngIf="mostrar2" style="color: red;">
+              Correo electrónico en uso, pruebe con otro.
+            </div>
+            <div class="mb-3">
+              <label style="color: aliceblue;" for="password" class="form-label">Contraseña</label>
+              <input type="password" formControlName="password" class="form-control" id="password" placeholder="Contraseña">
+              <div *ngIf="registerForm.get('password')?.invalid && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)" class="text-danger">
+                <div *ngIf="registerForm.get('password')?.errors?.['required']">
+                  Contraseña es requerida.
+                </div>
+                <div *ngIf="registerForm.get('password')?.errors?.['minlength']">
+                  Contraseña debe tener al menos 6 caracteres.
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label style="color: aliceblue;" for="confirmPassword" class="form-label">Repetir contraseña</label>
+              <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword" placeholder="Repetir contraseña">
+              <div *ngIf="registerForm.get('confirmPassword')?.invalid && (registerForm.get('confirmPassword')?.dirty || registerForm.get('confirmPassword')?.touched)" class="text-danger">
+                <div *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">
+                  Repetir contraseña es requerida.
+                </div>
+                <div *ngIf="registerForm.get('confirmPassword')?.errors?.['minlength']">
+                  Repetir contraseña debe tener al menos 6 caracteres.
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-dark d-block mx-auto">Enviar código</button>
+          </form>
+        
+          <form [formGroup]="registerForm2" (ngSubmit)="comp()" *ngIf="mostrar" class="p-3">
+            <div class="my-3">
+              <label style="color: aliceblue;" for="fa" class="form-label">Código de verificación</label>
+              <input type="text" formControlName="fa" class="form-control" id="fa" placeholder="Código de verificación">
+              <div *ngIf="registerForm2.get('fa')?.invalid && (registerForm2.get('fa')?.dirty || registerForm2.get('fa')?.touched)" class="text-danger">
+                <div *ngIf="registerForm2.get('fa')?.errors?.['required']">
+                  Código de verificación es requerido.
+                </div>
+                <div *ngIf="registerForm2.get('fa')?.errors?.['minlength']">
+                  Código de verificación debe tener al menos 6 dígitos.
+                </div>
+                <div *ngIf="registerForm2.get('fa')?.errors?.['maxlength']">
+                  Código de verificación no puede tener más de 6 dígitos.
+                </div>
+          
+              </div>
+            </div>
+            <div *ngIf="mostrar3" style="color: red;">
+              Código de verificación incorrecto.
+            </div>
+            <div *ngIf="mostrar5" style="color: red;">
+              Demasiados intentos fallidos.
+            </div>
+            <button type="submit" class="btn btn-dark d-block mx-auto">Registrarse</button>
+          </form>
+          <div class="text-center mt-1">
+            <a style="color: rgb(99, 99, 99);" routerLink="/entrar">Inicia sesión aquí</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

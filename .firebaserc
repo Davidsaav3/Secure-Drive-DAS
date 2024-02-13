@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "drivepi-76d69"
-  }
+    "default": "drivepi-76d69",
+    "uabook": "uabook-81dcf"
+  },
+  "targets": {},
+  "etags": {}
 }
