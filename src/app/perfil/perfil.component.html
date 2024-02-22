@@ -1,81 +1,80 @@
 <div class="">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand ps-3" href="/inicio">UABook</a>
-    <div class="collapse navbar-collapse" style="justify-content: flex-end;" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <form id="miFormulario" class="d-flex">
-            <label *ngIf="fileName==''" for="archivoInput" class="btn btn-dark" style="width: max-content;">
-              <input type="file" id="archivoInput" style="display: none;" (change)="nombre($event)">
-              Subir
-            </label>
-            <label *ngIf="fileName!=''" for="archivoInput1" class="btn btn-dark" style="width: max-content;">
-              <button id="archivoInput1" type="file" style="display: none;"></button>
-              {{ this.fileName }}
-              <span class="ms-2 spinner-grow spinner-grow-sm" aria-hidden="true"></span>
-            </label>
-          </form>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/solicitudes">Solicitudes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/mensajes">Chat</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/perfil">Perfil</a>
-        </li>
-        <li class="nav-item pe-3">
-          <a class="nav-link" href="/entrar">Salir</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  <app-nav></app-nav>
 
   <div class="px-3 pt-3 pb-3" style="background-color: rgb(33, 37, 41)">
     <div class="row">
       <div class="col-md-1">
-        <img src="https://via.placeholder.com/150" alt="Foto de Perfil" class="img-fluid rounded-circle">
+        <img [src]=profileimage alt="Foto de Perfil" class="img-fluid rounded-circle">
       </div>
-      <div style="color: aliceblue;" class="col-md-11">
-        <h2>Davidsaav3</h2>
-        <p>2 Imagenes</p>
+      <div style="color: aliceblue;" class="col-md-9">
+        <h2>{{username}}</h2>
+        <p> {{numimages}} Imagenes &nbsp; {{numfollowers}} Seguidores &nbsp; {{numfollow}} Siguiendo</p>
+      </div>
+      <div *ngIf="profile" style="background-color: rgb(33, 37, 41);"  class="col-md-2">
+        <span *ngIf="!follow" class="input-group-text" style="justify-content: center;">Seguir</span>
+        <span *ngIf="follow" class="input-group-text" style="justify-content: center;">Dejar de seguir</span>
+      </div>
+      <div *ngIf="!profile" class="form-check form-switch col-md-2">
+        <label class="form-check-label" style="color: aliceblue;" for="flexSwitchCheckDefault">Perfil público ?</label>
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
       </div>
     </div>
   </div>
 
-  <div *ngIf="pag==0" class="container py-2" style="min-height: 100vh;"><!-- TUYO -->
-    <div class="row" *ngIf="archivos && archivos.length > 0">
-      <div class="col-md-4 pb-4" *ngFor="let archivo of archivos">
-          <div class="container mt-3">
-            <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px;">
-              <div class="row no-gutters">
-                  <div *ngIf="archivo.tipo=='jpg' || archivo.tipo=='png'" class="col-md-2" style="width: auto;">
-                    <img [src]="archivo.url" class="card-img" alt="...">
-                  </div>
-                  <video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
-                    <source [src]="archivo.url" type="video/mp4">
-                    Tu navegador no soporta el elemento de video.
-                  </video>
-                  <audio *ngIf="archivo.tipo=='mp3'" controls>
-                    <source [src]="archivo.url" type="audio/mp3">
-                    Tu navegador no soporta el elemento de audio.
-                  </audio>
-                  <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>
-                <div class="">
-                  <div class="card-body">
-                    <h5 class="card-title m-0 mb-1" style="color: aliceblue;"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
-                    <p class="card-text mb-0" style="color: aliceblue;">Archivo {{archivo.tipo}} de {{+archivo.tamano/1024 | number:'1.0-0'}} Kb</p>
+  <div class="row m-0">
+    <div class="col-md-9 m-0">
+      <div *ngIf="pag==0" class="container py-2" style="min-height: 100vh;">
+        <div class="row" *ngIf="archivos && archivos.length > 0">
+          <div class="col-md-6 pb-4" *ngFor="let archivo of archivos">
+            <div class="container mt-3">
+              <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px; position: relative;">
+                <h5 class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
+                <button type="button" class="btn-close"  aria-label="Close" style="background-color: aliceblue; position: absolute; top: 0; right: 0; z-index: 100;" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"></button>
+                <div class="row no-gutters">
+                    <div *ngIf="archivo.tipo=='jpg' || archivo.tipo=='png'" class="col-md-2" style="width: auto;">
+                      <img [src]="archivo.url" class="card-img" alt="...">
+                    </div>
+                    <video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
+                      <source [src]="archivo.url" type="video/mp4">
+                      Tu navegador no soporta el elemento de video.
+                    </video>
+                    <audio *ngIf="archivo.tipo=='mp3'" controls>
+                      <source [src]="archivo.url" type="audio/mp3">
+                      Tu navegador no soporta el elemento de audio.
+                    </audio>
+                    <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>
+                  <div class="">
+                    <div class="card-body">
+                      <div class="d-flex pt-1">
+                        <p class="card-text mb-0 me-2 pt-1" style="color: aliceblue;">{{megusta}} Me gusta </p>
+                        <span class="input-group-text me-2 py-0 my-0" style="justify-content: center;">Me gusta</span>
+                        <span class="input-group-text py-0 my-0" style="justify-content: center;" data-bs-target="#confirmDeleteModal2" data-bs-toggle="modal">Compartir</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div *ngIf="!archivos || archivos.length === 0" style="color: white;">
+        </div>
       </div>
     </div>
-    <div *ngIf="!archivos || archivos.length === 0" style="color: white;">
+    <div class="col-md-3" style="background-color: rgb(194, 194, 194)">
+      <h2 class="mt-2">Solicitudes</h2>
+      <ul class="list-group" *ngFor="let item of solicitudes">
+        <li class="list-group-item d-flex justify-content-between align-items-center mt-2" style="background-color: rgb(33, 37, 41); color: aliceblue;">
+           {{item}}
+          <div>
+            <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2">Aceptar</button>
+            <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2 ms-3">Rechazar</button>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
+
 
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -125,55 +124,10 @@
     </div>
 </div>
 
-<div *ngIf="Okshare" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Archivo compartido con éxito</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="Notshare" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Archivo ya compartido con ese usuarioy</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="UserNotshare" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">El nombre de usuario introducido es incorrecto</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="Okdelete" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Eliminado de archivos compartidos</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
 <div *ngIf="Okdeleteall" class="top-0 left-0 p-3" style="position: fixed;">
   <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body">Eliminado correctamente</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="Nodelete" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Error al eliminar de archivos compartidos</div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
   </div>

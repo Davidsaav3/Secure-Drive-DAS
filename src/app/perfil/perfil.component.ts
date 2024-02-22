@@ -31,7 +31,7 @@ export class ReplacePipe implements PipeTransform {
 export class PerfilComponent implements OnInit {
 
   constructor(private downloaderShared: DownloaderSharedService, private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
-    }
+  }
  
   files: any[] = [];
   selectedFile: File | null = null;
@@ -42,9 +42,17 @@ export class PerfilComponent implements OnInit {
   id= 'p2.txt';
   archivos: any[] = [];
   archivos2: any[] = [];
-  archivos3: any[] = [];
   fileList: any;
   options: string[] = [];
+
+  solicitudes: string[] = ["David","Luis","Adam"];
+  profile= true;
+  follow= true;
+  numfollow= 0;
+  numfollowers= 0;
+  numimages= 0;
+  profileimage= "https://via.placeholder.com/150";
+  megusta= 0;
 
   Okshare = false;
   Notshare = false;
@@ -65,17 +73,15 @@ export class PerfilComponent implements OnInit {
     username: ['', [Validators.required]],
   });
 
-  ngOnInit(): void {
+  ngOnInit(): void { // INICILIZACIÓN
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }
     this.cargar();
     this.fileMy();
-    this.fileOther();
-    this.getOptions();
   }
 
-  getOptions(){
+  getOptions(){ // OBTIENE USUARIOS PARA COMPARTIR
     const formData = new FormData();
     formData.append('username', this.username+``);
     return this.http.post<any>('https://proteccloud.000webhostapp.com/select.php', formData)
@@ -91,7 +97,7 @@ export class PerfilComponent implements OnInit {
       });  
   }
 
-  cargar() {
+  cargar() { // CARGA IMAGENES DEL USUARIO
     const folderPath = 'storage/' + this.username; 
     this.filesService.files(folderPath).subscribe(
       (response: any) => {
@@ -116,7 +122,7 @@ export class PerfilComponent implements OnInit {
     );
   }  
 
-  fileMy() { /////////////// ARCHIVOS COMPARTIDOS POR TI ///////////////
+  fileMy() { // CARGA IMAGENES DEL USUARIO
     const folderPath = 'storage/' + this.username; 
     this.myfilesService.files(folderPath, this.username+'').subscribe(
       (response: any) => {
@@ -140,41 +146,9 @@ export class PerfilComponent implements OnInit {
     );
   }  
 
-  fileOther() { /////////////// ARCHIVOS COMPARTIDOS CONTIGO ///////////////
-    const folderPath = 'storage/' + this.username; 
-    this.otherfilesService.files(folderPath, this.username+'').subscribe(
-      (response: any) => {
-        // Verifica si response.archivos es un array y tiene una propiedad 'length'
-        if (Array.isArray(response.archivos) && response.archivos.length) {
-          this.archivos3 = response.archivos;
-  
-          for (let i = 0; i < this.archivos3.length; i++) {
-            const archivo = this.archivos3[i];
-            const filePath = archivo.owner + '/' + archivo.nombre;
-  
-            this.downService.getFileView(filePath).subscribe(
-              (url: string) => {
-                this.archivos3[i].url = url;
-              },
-              (error: any) => {
-                // console.error('Error al obtener la imagen:', error);
-              }
-            );
-          }
-        } 
-        else {               
-          // console.error('Error al obtener la imagen:', error);
-        }
-      },
-      (error: any) => {
-        // console.error('Error al obtener la imagen:', error);
-      }
-    );
-  }  
-
   ///////////////////////
 
-  down(id :string): void {
+  down(id :string): void { // DESCARGAR IMAGENES
     this.downService.getFileView(id).subscribe(
       (url: string) => {
         return url;
@@ -186,76 +160,22 @@ export class PerfilComponent implements OnInit {
     );
   }
 
-  getSafeImageUrl(image: any): SafeUrl {
+  getSafeImageUrl(image: any): SafeUrl { // PREVISUALIZACIÓN IMAGENES
     const base64Image = image.contenido;
     const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
     return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
   }
 
-  nombre(event: any) { // FILE
+  nombre(event: any) { // OBTENER NOMBRE DE USUARIO ACTUAL
     let input = event.target;
     this.fileName = input.files[0].name;
-    this.upload(event)
     setTimeout(() => {
       this.fileName= '';
       this.cargar();
     }, 1000);
   }
-  
-  logout(): void { // CERRRA SESIÓN
-    this.authService.setAuthenticated(false);
-    localStorage.removeItem('username');
-    localStorage.removeItem('auth');
-  }
 
-  upload(event: any) {
-    const file = event.target.files && event.target.files[0];
-    this.uploadService.upload(file, this.username).subscribe(
-      response => {
-        //console.log(response.code)
-        if (response.code==201) { // Archivo subido correctamente
-          this.fileList = response.files;
-          this.Okupload = true;         
-          setTimeout(() => {
-            this.cargar();
-          }, 500); 
-          setTimeout(() => {
-            this.Okupload = false;
-          }, 3000);
-        }
-        if (response.code==401) { // Error al subir el archivo
-          this.Noupload = true;          
-          setTimeout(() => {
-            this.Noupload = false;
-          }, 3000);
-        } 
-        if (response.code==402) { // No puedes subir un archivo con el mismo nombre
-          this.NoNoupload = true;          
-          setTimeout(() => {
-            this.NoNoupload = false;
-          }, 3000);
-        } 
-      },
-      error => {
-        //console.log(error.status)
-        if (error.status==401) { // Error al subir el archivo
-          this.Noupload = true;          
-          setTimeout(() => {
-            this.Noupload = false;
-          }, 3000);
-        } 
-        if (error.status==200) { // No puedes subir un archivo con el mismo nombre
-          this.NoNoupload = true;          
-          setTimeout(() => {
-            this.NoNoupload = false;
-          }, 3000);
-        } 
-        //console.error('Error al hacer la solicitud:', error.error);
-      }
-    );
-  }
-
-  eliminar(id: string) { /////////////// ELIMIANR ARCHIVO ///////////////
+  eliminar(id: string) { // ELIMINA UNA PUBLICACIÓN
     const url = `https://proteccloud.000webhostapp.com/files.php`;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -288,15 +208,15 @@ export class PerfilComponent implements OnInit {
         );
   }
 
-  descargar(id: any) { /////////////// DESCARGAR ///////////////
+  descargar(id: any) { // DESCARGAR IMAGEN
     this.downloaderService.downloader(this.username+'/'+id);
   }
 
-  descargarShared(id: any, owner: any) { /////////////// DESCARGAR ///////////////
+  descargarShared(id: any, owner: any) { // DESCARGAR COMPARTIDA
     this.downloaderShared.downloader(owner+'/'+id, owner, this.username);
   }
 
-  compartir(id: any) { /////////////// COMPARTIR ///////////////
+  compartir(id: any) { // COMPARTIR PUBLICACIÓN
     if (this.shareForm.valid) {
       console
       const url = 'https://proteccloud.000webhostapp.com/share.php';
@@ -330,7 +250,6 @@ export class PerfilComponent implements OnInit {
               if(response.code=="Se subio dpm"){
                 this.Okshare = true;
                 this.fileMy();
-                this.fileOther();
                 
                 setTimeout(() => {
                   this.Okshare = false;
@@ -347,7 +266,7 @@ export class PerfilComponent implements OnInit {
     }    
   }
 
-  noShare(id: any, num: any, otro: any) { //////////////// DEJAR DE COMPARTIR ///////////////
+  noShare(id: any, num: any, otro: any) { // DEJAR DE COMPARTIR
     const formData = new FormData();
     formData.append('file_name', this.username+'/'+id+'/'+num+'/'+otro);
     const headers = new HttpHeaders();
@@ -360,7 +279,6 @@ export class PerfilComponent implements OnInit {
           if(error.status==200){
             this.Okdelete = true;
             this.fileMy();
-            this.fileOther();
             setTimeout(() => {
             this.Okdelete = false;
             }, 3000);
@@ -368,7 +286,6 @@ export class PerfilComponent implements OnInit {
           else{
             this.Nodelete = true;
             this.fileMy();
-            this.fileOther();
             setTimeout(() => {
               this.Nodelete = false;
             }, 3000);

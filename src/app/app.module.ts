@@ -11,6 +11,7 @@ import { EntrarComponent } from './entrar/entrar.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NavComponent } from './nav/nav.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     InicioComponent,
     MensajesComponent,
     RegistroComponent,
-    EntrarComponent
+    EntrarComponent,
+    NavComponent
   ],
   imports: [
     HttpClientModule,
@@ -32,4 +34,4 @@ import { ReactiveFormsModule } from '@angular/forms';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { NavComponent: any }

@@ -31,7 +31,7 @@ export class ReplacePipe implements PipeTransform {
 export class InicioComponent implements OnInit {
 
   constructor(private downloaderShared: DownloaderSharedService, private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
-    }
+  }
  
   files: any[] = [];
   selectedFile: File | null = null;

@@ -15,8 +15,8 @@ const routes: Routes = [
   { path: 'perfil', component: PerfilComponent , canActivate: [AuthGuard]},
   { path: 'inicio', component: InicioComponent , canActivate: [AuthGuard]},
   { path: 'mensajes', component: MensajesComponent , canActivate: [AuthGuard]},
-  { path: '', redirectTo: '/entrar', pathMatch: 'full' }, 
-  { path: '**', redirectTo: '/entrar' }
+  { path: '', redirectTo: '/inicio', pathMatch: 'full' }, 
+  { path: '**', redirectTo: '/inicio' }
 ];
 
 @NgModule({

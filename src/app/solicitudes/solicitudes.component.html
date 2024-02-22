@@ -1,44 +1,13 @@
 <div class="">
-  
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand ps-3" href="/inicio">UABook</a>
-    <div class="collapse navbar-collapse" style="justify-content: flex-end;" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <form id="miFormulario" class="d-flex">
-            <label *ngIf="fileName==''" for="archivoInput" class="btn btn-dark" style="width: max-content;">
-              <input type="file" id="archivoInput" style="display: none;" (change)="nombre($event)">
-              Subir
-            </label>
-            <label *ngIf="fileName!=''" for="archivoInput1" class="btn btn-dark" style="width: max-content;">
-              <button id="archivoInput1" type="file" style="display: none;"></button>
-              {{ this.fileName }}
-              <span class="ms-2 spinner-grow spinner-grow-sm" aria-hidden="true"></span>
-            </label>
-          </form>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/solicitudes">Solicitudes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/mensajes">Chat</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/perfil">Perfil</a>
-        </li>
-        <li class="nav-item pe-3">
-          <a class="nav-link" href="/entrar">Salir</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  <app-nav></app-nav>
 
   <div class="container mt-5">
     <h2>Solicitudes</h2>
     <ul class="list-group">
       <!-- Primer usuario -->
       <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgb(33, 37, 41); border-radius:20px; color: aliceblue;">
-        Usuario 1
+        <p>Davidsaav</p>
+        <p>15 Seguidores / 5 Publicaciones</p>
         <div>
           <button type="button" style="background-color: aliceblue; color: rgb(33, 37, 41);" class="btn mr-2">Aceptar</button>
           <button type="button" style="background-color: aliceblue; color: rgb(33, 37, 41);" class="btn mr-2 ms-3">Rechazar</button>
