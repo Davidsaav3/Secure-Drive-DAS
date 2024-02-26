@@ -5,3 +5,14 @@
   .texto-negrita {
     font-weight: bold;
   }
+
+  .scrollable-div {
+    max-height: 75vh; /* Ejemplo de altura máxima */
+    overflow: auto;
+  }
+
+  .scrollable-div2 {
+    max-height: 93vh; /* Ejemplo de altura máxima */
+    overflow: auto;
+  }
+  

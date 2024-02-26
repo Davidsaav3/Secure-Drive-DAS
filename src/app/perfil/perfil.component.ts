@@ -63,6 +63,13 @@ export class PerfilComponent implements OnInit {
   Okdeleteall = false;
   NoNoupload = false;
   Okupload = false;
+  mostrarDiv: boolean = false;
+  parametroDeUrl: any;
+
+
+  toggleDiv() {
+    this.mostrarDiv = !this.mostrarDiv;
+  }
 
   imageName = 'tu-imagen.jpg'; // Reemplaza con el nombre de tu imagen
   imageUrl1: string[] = [];
@@ -74,6 +81,7 @@ export class PerfilComponent implements OnInit {
   });
 
   ngOnInit(): void { // INICILIZACIÓN
+    //this.parametroDeUrl = this.router.snapshot.params['nombreDelParametro'];
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }

@@ -45,6 +45,7 @@ export class InicioComponent implements OnInit {
   archivos3: any[] = [];
   fileList: any;
   options: string[] = [];
+  mostrarDiv: any;
 
   Okshare = false;
   Notshare = false;
