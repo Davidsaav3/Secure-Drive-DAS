@@ -36,12 +36,13 @@ export class NavComponent implements OnInit {
     localStorage.removeItem('auth');
   }
 
-  nombre(event: any) { // FILE
+  nombre(event: any) { // OBTENER NOMBRE 
     let input = event.target;
     this.fileName = input.files[0].name;
     this.upload(event)
     setTimeout(() => {
       this.fileName= '';
+      //this.getAllPosts();
     }, 1000);
   }
 

@@ -57,42 +57,66 @@ export class InicioComponent implements OnInit {
   NoNoupload = false;
   Okupload = false;
 
-  imageName = 'tu-imagen.jpg'; // Reemplaza con el nombre de tu imagen
   imageUrl1: string[] = [];
-
   folderPath = '/imagenes'; // Reemplaza con la ruta de tus imágenes
   images: any[] = [];
   shareForm: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
   });
 
+  posts = {
+    post:[
+      {
+        id: 0,
+        name: "imagen",
+        likes: 10,
+        url: "https://via.placeholder.com/600",
+        comments: [
+          {
+            id: 0,
+            username: "Davidsaav3",
+            text: "Contenido de comentario"
+          },
+          {
+            id: 1,
+            username: "Luis",
+            text: "Contenido de comentario"
+          },
+        ],
+      },
+      {
+        id: 0,
+        name: "imagen",
+        likes: 10,
+        url: "https://via.placeholder.com/600",
+        comments: [
+          {
+            id: 0,
+            username: "Davidsaav3",
+            text: "Contenido de comentario"
+          },
+          {
+            id: 1,
+            username: "Luis",
+            text: "Contenido de comentario"
+          },
+        ],
+      },
+  ],
+  };
+
   ngOnInit(): void {
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }
-    this.cargar();
-    this.fileMy();
-    this.fileOther();
-    this.getOptions();
+    this.getAllPosts();
   }
 
-  getOptions(){
-    const formData = new FormData();
-    formData.append('username', this.username+``);
-    return this.http.post<any>('https://proteccloud.000webhostapp.com/select.php', formData)
-      .subscribe(data => {
-        if (data) {
-          this.options = data.usernames;
-        } 
-        else {
-          //console.error('Formato de respuesta incorrecto', data);
-        }
-      }, error => {
-        //console.error('Error al realizar la solicitud', error);
-      });  
+  toggleDiv() {
+    this.mostrarDiv = !this.mostrarDiv;
   }
 
-  cargar() {
+  getAllPosts() {  // OBTENER PUBLICACIONES
     const folderPath = 'storage/' + this.username; 
     this.filesService.files(folderPath).subscribe(
       (response: any) => {
@@ -117,65 +141,7 @@ export class InicioComponent implements OnInit {
     );
   }  
 
-  fileMy() { /////////////// ARCHIVOS COMPARTIDOS POR TI ///////////////
-    const folderPath = 'storage/' + this.username; 
-    this.myfilesService.files(folderPath, this.username+'').subscribe(
-      (response: any) => {
-        this.archivos2 = response.archivos;
-        for (let i = 0; i < this.archivos2.length; i++) {
-          const archivo = this.archivos2[i];
-          const filePath = this.username + '/' + archivo.nombre;
-          this.downService.getFileView(filePath).subscribe(
-            (url: string) => {
-              this.archivos2[i].url= url;
-            },
-            (error: any) => {
-              //console.error('Error al obtener la imagen:', error);
-            }
-          );
-        }
-      },
-      (error: any) => {
-        //console.error('Error al obtener la lista de archivos:', error);
-      }
-    );
-  }  
-
-  fileOther() { /////////////// ARCHIVOS COMPARTIDOS CONTIGO ///////////////
-    const folderPath = 'storage/' + this.username; 
-    this.otherfilesService.files(folderPath, this.username+'').subscribe(
-      (response: any) => {
-        // Verifica si response.archivos es un array y tiene una propiedad 'length'
-        if (Array.isArray(response.archivos) && response.archivos.length) {
-          this.archivos3 = response.archivos;
-  
-          for (let i = 0; i < this.archivos3.length; i++) {
-            const archivo = this.archivos3[i];
-            const filePath = archivo.owner + '/' + archivo.nombre;
-  
-            this.downService.getFileView(filePath).subscribe(
-              (url: string) => {
-                this.archivos3[i].url = url;
-              },
-              (error: any) => {
-                // console.error('Error al obtener la imagen:', error);
-              }
-            );
-          }
-        } 
-        else {               
-          // console.error('Error al obtener la imagen:', error);
-        }
-      },
-      (error: any) => {
-        // console.error('Error al obtener la imagen:', error);
-      }
-    );
-  }  
-
-  ///////////////////////
-
-  down(id :string): void {
+  down(id :string): void { // PREVISUALIZAIÓN DE IMAGENES
     this.downService.getFileView(id).subscribe(
       (url: string) => {
         return url;
@@ -187,77 +153,8 @@ export class InicioComponent implements OnInit {
     );
   }
 
-  getSafeImageUrl(image: any): SafeUrl {
-    const base64Image = image.contenido;
-    const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
-    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
-  }
-
-  nombre(event: any) { // FILE
-    let input = event.target;
-    this.fileName = input.files[0].name;
-    this.upload(event)
-    setTimeout(() => {
-      this.fileName= '';
-      this.cargar();
-    }, 1000);
-  }
-  
-  logout(): void { // CERRRA SESIÓN
-    this.authService.setAuthenticated(false);
-    localStorage.removeItem('username');
-    localStorage.removeItem('auth');
-  }
-
-  upload(event: any) {
-    const file = event.target.files && event.target.files[0];
-    this.uploadService.upload(file, this.username).subscribe(
-      response => {
-        //console.log(response.code)
-        if (response.code==201) { // Archivo subido correctamente
-          this.fileList = response.files;
-          this.Okupload = true;         
-          setTimeout(() => {
-            this.cargar();
-          }, 500); 
-          setTimeout(() => {
-            this.Okupload = false;
-          }, 3000);
-        }
-        if (response.code==401) { // Error al subir el archivo
-          this.Noupload = true;          
-          setTimeout(() => {
-            this.Noupload = false;
-          }, 3000);
-        } 
-        if (response.code==402) { // No puedes subir un archivo con el mismo nombre
-          this.NoNoupload = true;          
-          setTimeout(() => {
-            this.NoNoupload = false;
-          }, 3000);
-        } 
-      },
-      error => {
-        //console.log(error.status)
-        if (error.status==401) { // Error al subir el archivo
-          this.Noupload = true;          
-          setTimeout(() => {
-            this.Noupload = false;
-          }, 3000);
-        } 
-        if (error.status==200) { // No puedes subir un archivo con el mismo nombre
-          this.NoNoupload = true;          
-          setTimeout(() => {
-            this.NoNoupload = false;
-          }, 3000);
-        } 
-        //console.error('Error al hacer la solicitud:', error.error);
-      }
-    );
-  }
-
-  eliminar(id: string) { /////////////// ELIMIANR ARCHIVO ///////////////
-    const url = `https://proteccloud.000webhostapp.com/files.php`;
+  eliminar(id: string) { // ELIMIANR POST
+    const url = `https://dasapp.alwaysdata.net/files.php`;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
@@ -265,7 +162,7 @@ export class InicioComponent implements OnInit {
     formData.append('file_name', this.username+'/'+id);
 
       const headers = new HttpHeaders();
-      this.http.post('https://proteccloud.000webhostapp.com/delete.php', formData, { headers })
+      this.http.post('https://dasapp.alwaysdata.net/delete.php', formData, { headers })
         .subscribe(
           (data: any) => {
             this.Okdeleteall = true;  
@@ -273,7 +170,7 @@ export class InicioComponent implements OnInit {
               this.Okdeleteall =  false;
             }, 3000);
             setTimeout(() => {
-              this.cargar();
+              this.getAllPosts();
             }, 500);
           },
           (error: any) => {
@@ -283,98 +180,126 @@ export class InicioComponent implements OnInit {
               this.Okdeleteall =  false;
             }, 3000);
             setTimeout(() => {
-              this.cargar();
+              this.getAllPosts();
             }, 500);
           }
         );
   }
 
-  descargar(id: any) { /////////////// DESCARGAR ///////////////
+  descargar(id: any) { // DESCARGAR POST
     this.downloaderService.downloader(this.username+'/'+id);
   }
 
-  descargarShared(id: any, owner: any) { /////////////// DESCARGAR ///////////////
+  descargarShared(id: any, owner: any) { // DESCARGAR POST DE OTRO USUARIO
     this.downloaderShared.downloader(owner+'/'+id, owner, this.username);
   }
 
-  compartir(id: any) { /////////////// COMPARTIR ///////////////
-    if (this.shareForm.valid) {
-      console
-      const url = 'https://proteccloud.000webhostapp.com/share.php';
-      const body = {
-        files_user: this.username, 
-        share_user: this.shareForm.get('username')?.value, 
-        files_name: id
-      };
-      const httpOptions = {
-          headers: new HttpHeaders({
-              'Content-Type': 'application/x-www-form-urlencoded'
-          })
-      };
-      this.http.post(url, JSON.stringify(body), httpOptions)
-      .pipe(
-          catchError((error: HttpErrorResponse) => {
-              this.Notshare = true;
-              setTimeout(() => {
-                this.Notshare = false;
-              }, 3000);
-              if (error.error instanceof ErrorEvent) {
-                  //console.error('Error del lado del cliente:', error.error.message);
-              } else {
-                  //console.error(`Código de error del servidor: ${error.status}, ` + `cuerpo del error: ${error.error}`);
-              }
-              return throwError('Algo salió mal; inténtalo de nuevo más tarde.');
-          })
-      )
-      .subscribe(
-          (response: any) => {
-              if(response.code=="Se subio dpm"){
-                this.Okshare = true;
-                this.fileMy();
-                this.fileOther();
-                
-                setTimeout(() => {
-                  this.Okshare = false;
-                }, 3000);
-              }
-          },
-          (error: any) => {
-              //console.error('Error de solicitud:', error);
-          }
-      );
-    }
-    else{
-      this.shareForm.markAllAsTouched();
-    }    
+  getSafeImageUrl(image: any): SafeUrl { // URL IMAGEN
+    const base64Image = image.contenido;
+    const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
+    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
   }
 
-  noShare(id: any, num: any, otro: any) { //////////////// DEJAR DE COMPARTIR ///////////////
-    const formData = new FormData();
-    formData.append('file_name', this.username+'/'+id+'/'+num+'/'+otro);
-    const headers = new HttpHeaders();
-    this.http.post('https://proteccloud.000webhostapp.com/noshare.php', formData, { headers })
+  postLike(idUser: any, idPost: any) { // DAR LIKE
+    const url = "https://dasapp.alwaysdata.net/postlike";
+    const data = {
+      idUser: 0,
+      idPost: 0
+    };
+    this.http.post(url, data).subscribe((respuesta) => {
+      console.log("Respuesta:", respuesta);
+    }, (error) => {
+      console.log("Error:", error);
+    });
+  }
+
+  postComment(idUser: any, idPost: any, text: any){ // COMENTAR POST
+    const url = "https://dasapp.alwaysdata.net/postreqqest";
+    const data = {
+      idUser: 0,
+      idPost: 0,
+      text: "Contenido comentario"
+    };
+    this.http.post(url, data).subscribe((respuesta) => {
+      console.log("Respuesta:", respuesta);
+    }, (error) => {
+      console.log("Error:", error);
+    });
+  }
+
+  editPost(idPost: any, name: any){ // EDITAR POST
+    const url = "https://dasapp.alwaysdata.net/editpost";
+    const data = {
+      idPost: 0,
+      name: "imagen"
+    };
+    this.http.post(url, data).subscribe((respuesta) => {
+      console.log("Respuesta:", respuesta);
+    }, (error) => {
+      console.log("Error:", error);
+    });
+  }
+
+  resolveReqqest(idUser: any, idUser2: any){ // ACEPTAR O DENEGAR / SOLICCITUD
+    const url = "https://dasapp.alwaysdata.net/resolvereqqest";
+    const data = {
+      idUser: 0,
+      idUser2: 0
+    };
+    this.http.post(url, data).subscribe((respuesta) => {
+      console.log("Respuesta:", respuesta);
+    }, (error) => {
+      console.log("Error:", error);
+    });
+  }
+
+  postRequest(idUser: any, idUser2: any){ // SEGUIR USUARIO
+    const url = "https://dasapp.alwaysdata.net/postreqqest";
+    const data = {
+      idUser: 0,
+      idUser2: 0
+    };
+    this.http.post(url, data).subscribe((respuesta) => {
+      console.log("Respuesta:", respuesta);
+    }, (error) => {
+      console.log("Error:", error);
+    });
+  }
+
+  postPublicPrivateProfile(id: any, option: any){ // ACEPTAR SOLICITUD
+    const url = "https://dasapp.alwaysdata.net/resolvereqqest";
+    const data = {
+      id: 0,
+      option: true,
+    };
+    this.http.post(url, data).subscribe((respuesta) => {
+      console.log("Respuesta:", respuesta);
+    }, (error) => {
+      console.log("Error:", error);
+    });
+  }
+  
+  login2() {
+    const apiUrl = 'https://dasapp.alwaysdata.net/login';
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      })
+    };
+
+    this.http.post(apiUrl, { username: "david", password: "123" }, httpOptions)
       .subscribe(
-        (data: any) => {
-          //console.log('Respuesta del servidor:', data);
+        (response: any) => {
+          console.log('Inicio de sesión exitoso');
         },
-        (error: any) => {
-          if(error.status==200){
-            this.Okdelete = true;
-            this.fileMy();
-            this.fileOther();
-            setTimeout(() => {
-            this.Okdelete = false;
-            }, 3000);
-          }
-          else{
-            this.Nodelete = true;
-            this.fileMy();
-            this.fileOther();
-            setTimeout(() => {
-              this.Nodelete = false;
-            }, 3000);
-          }
+        (error) => {
+          console.error('Error al iniciar sesión:', error);
         }
       );
   }
+
 }

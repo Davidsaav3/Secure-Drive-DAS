@@ -12,7 +12,7 @@ export class DownloaderService {
   constructor(private http: HttpClient) {}
 
   downloadFile(fileName: string): Observable<any> {
-    const url = `https://proteccloud.000webhostapp.com/downloader.php`; 
+    const url = `https://dasapp.alwaysdata.net/downloader.php`; 
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     const formData = new FormData();

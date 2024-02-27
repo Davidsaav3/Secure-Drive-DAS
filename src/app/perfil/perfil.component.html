@@ -4,11 +4,11 @@
   <div class="px-3 pt-3 pb-3" style="background-color: rgb(33, 37, 41)">
     <div class="row">
       <div class="col-md-1">
-        <img [src]=profileimage alt="Foto de Perfil" class="img-fluid rounded-circle">
+        <img [src]=user.profilepicture alt="Foto de Perfil" class="img-fluid rounded-circle">
       </div>
       <div style="color: aliceblue;" class="col-md-9">
-        <h2>{{username}}</h2>
-        <p> {{numimages}} Imagenes &nbsp; {{numfollowers}} Seguidores &nbsp; {{numfollow}} Siguiendo</p>
+        <h2>{{user.username}}</h2>
+        <p> {{user.posts}} Imagenes &nbsp; {{user.followers}} Seguidores &nbsp; {{user.following}} Siguiendo</p>
       </div>
       <div *ngIf="profile" style="background-color: rgb(33, 37, 41);"  class="col-md-2">
         <span *ngIf="!follow" class="input-group-text" style="justify-content: center;">Seguir</span>
@@ -20,24 +20,24 @@
   <div class="row m-0">
     <div class="col-md-9 m-0 scrollable-div">
       <div *ngIf="pag==0" class="container py-2" style="min-height: 100vh;">
-        <div class="row" *ngIf="archivos && archivos.length > 0">
-          <div class="col-md-6 pb-4" *ngFor="let archivo of archivos">
+        <div class="row" *ngIf="posts && posts.post.length > 0">
+          <div class="col-md-6 pb-4" *ngFor="let archivo of posts.post">
             <div class="container mt-3">
               <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px; position: relative;">
                 <div class="d-flex justify-content-between align-items-center p-2 ps-0">
                   <div class="d-flex">
-                    <h5 class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.nombre.split('.')[0]}}</strong></h5>
+                    <h5 class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.name.split('.')[0]}}</strong></h5>
                   </div>
                   <div class="d-flex">
-                    <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2" style="color: aliceblue; border: 1px solid white;">{{megusta}} Me gusta </p>
-                    <p class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;" (click)="toggleDiv()">{{megusta}} Comentarios </p>
+                    <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2" style="color: aliceblue; border: 1px solid white;">{{archivo.likes}} Me gusta </p>
+                    <p class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;" (click)="toggleDiv()">{{archivo.comments.length}} Comentarios </p>
                   </div>
                 </div>
                 <div class="row no-gutters">
-                    <div *ngIf="archivo.tipo=='jpg' || archivo.tipo=='png'" class="col-md-2" style="width: auto;">
+                    <div class="col-md-2" style="width: auto;">
                       <img [src]="archivo.url" class="card-img" alt="...">
                     </div>
-                    <video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
+                    <!--<video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
                       <source [src]="archivo.url" type="video/mp4">
                       Tu navegador no soporta el elemento de video.
                     </video>
@@ -45,7 +45,7 @@
                       <source [src]="archivo.url" type="audio/mp3">
                       Tu navegador no soporta el elemento de audio.
                     </audio>
-                    <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>
+                    <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>-->
                   <div class="">
                     <div class="card-body">
                       <div class="d-flex pt-1">
@@ -109,9 +109,9 @@
         <label class="form-check-label" style="color: black;" for="flexSwitchCheckDefault">Perfil público</label>
         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
       </div>
-      <ul class="list-group" *ngFor="let item of solicitudes">
+      <ul class="list-group" *ngFor="let item of user.reqqests">
         <li class="list-group-item d-flex justify-content-between align-items-center mt-2" style="background-color: rgb(33, 37, 41); color: aliceblue;">
-           {{item}}
+           {{item.username}}
           <div>
             <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
@@ -142,41 +142,11 @@
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="eliminar(id)">Eliminar</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="detelePost(id)">Eliminar</button>
               </div>
           </div>
       </div>
   </div>
-
-  <div class="modal fade" id="confirmDeleteModal2" tabindex="-1" aria-labelledby="confirmDeleteModalLabel2" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="confirmDeleteModalLabel2">Compartir archivo</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <p>¿Con qué usuario desea compartir el archivo?</p>
-              <form [formGroup]="shareForm">
-                <div class="form-group">
-                  <select formControlName="username" class="form-control" id="username" placeholder="Nombre de usuario">
-                    <option *ngFor="let option of options" [value]="option">{{ option }}</option>
-                  </select>
-                  <div *ngIf="shareForm.get('username')?.invalid && (shareForm.get('username')?.dirty || shareForm.get('username')?.touched)" class="text-danger">
-                    <div *ngIf="shareForm.get('username')?.errors?.['required']">
-                      Nombre de usuario requerido.
-                    </div>
-                  </div>
-                </div>
-              </form>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="compartir(id)">Enviar</button>
-          </div>
-        </div>
-    </div>
-</div>
 
 <div *ngIf="Okdeleteall" class="top-0 left-0 p-3" style="position: fixed;">
   <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">

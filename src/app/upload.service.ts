@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UploadService {
-  private apiUrl = 'https://proteccloud.000webhostapp.com/upload.php';
+  private apiUrl = 'https://dasapp.alwaysdata.net/upload.php';
 
   constructor(private http: HttpClient) {}
 

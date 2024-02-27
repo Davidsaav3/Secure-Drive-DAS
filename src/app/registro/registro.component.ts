@@ -40,7 +40,7 @@ export class RegistroComponent {
   register() {
     if (this.registerForm.valid) {
       console
-      const url = 'https://proteccloud.000webhostapp.com/registro.php';
+      const url = 'https://dasapp.alwaysdata.net/register';
       const body = { 
           username: this.registerForm.get('username')?.value, 
           email: this.registerForm.get('email')?.value, 
@@ -94,7 +94,7 @@ export class RegistroComponent {
     this.cont++;
     if (this.registerForm2.valid && this.cont<3) {
       console
-      const url = 'https://proteccloud.000webhostapp.com/code.php';
+      const url = 'https://dasapp.alwaysdata.net/code';
       const body = { 
         username: this.registerForm.get('username')?.value, 
         fa: this.registerForm2.get('fa')?.value
