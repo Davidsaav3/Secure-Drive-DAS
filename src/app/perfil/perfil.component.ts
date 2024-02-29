@@ -136,12 +136,13 @@ export class PerfilComponent implements OnInit {
   };
 
   ngOnInit(): void { // INICILIZACIÓN
+    this.getData();
     this.login2();
     this.profilename = this.route.snapshot.url[1].path;
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }
-    this.getPosts();
+    //this.getPosts();
   }
 
   toggleDiv() {
@@ -336,26 +337,29 @@ export class PerfilComponent implements OnInit {
   }
   
   login2() {
-    const apiUrl = 'https://dasapp.alwaysdata.net/login';
+    const url = 'https://dasapp.alwaysdata.net/login';
+    const credentials = { username: 'david', password: '123' };
 
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      })
-    };
-
-    this.http.post(apiUrl, { username: "david", password: "123" }, httpOptions)
-      .subscribe(
-        (response: any) => {
-          console.log('Inicio de sesión exitoso');
-        },
-        (error) => {
-          console.error('Error al iniciar sesión:', error);
-        }
-      );
+    this.http.post<any>(url, credentials).subscribe(
+      (response) => {
+        console.log('Respuesta del servidor:', response);
+      },
+      (error) => {
+        console.error('Error al iniciar sesión:', error);
+      }
+    );
+  }
+  
+  getData() {
+    const url = 'https://dasapp.alwaysdata.net/data';
+    this.http.get<any>(url).subscribe(
+      (response) => {
+        console.log('Respuesta del servidor:', response);
+      },
+      (error) => {
+        console.error('Error al obtener datos:', error);
+      }
+    );
   }
 
 }
