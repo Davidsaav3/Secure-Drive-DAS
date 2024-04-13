@@ -54,19 +54,23 @@ export class NavComponent implements OnInit {
   }
 
   PostImage() { // PUBLICAR IMAGEN
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    };
     const url = `https://das-uabook.000webhostapp.com/post_image.php`;
-    const body = { 
-      id_user: '1', 
-      text: this.postData.text, 
-      url_image: this.postData.image
-    };
 
-  this.http.post(url, JSON.stringify(body), httpOptions)
+    const formData = new FormData();
+    formData.append('text', this.postData.text);
+    if (this.postData.image) {
+      formData.append('url_image', this.postData.image);
+    }
+
+    const userId = localStorage.getItem('id');
+    if (userId !== null) {
+      formData.append('id_user', userId);
+    } else {
+      console.error('El ID de usuario en el almacenamiento local es nulo.');
+      return; 
+    }
+
+    this.http.post(url, formData)
     .subscribe(
       (data: any) => {
         this.Okupload = true;  
@@ -87,7 +91,8 @@ export class NavComponent implements OnInit {
         }, 500);
       }
     );
-  }
+}
+
 
   onFileSelected(event: any) { // CARGA IMAGENES
     const file: File = event.target.files[0];

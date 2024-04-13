@@ -68,7 +68,8 @@ export class EntrarComponent {
         (response: any) => {
           if(response.code==100 || response.code==200){
             this.username = this.registerForm.get('username')?.value;
-            localStorage.setItem('username', this.username);
+            localStorage.setItem('username', response.username);
+            localStorage.setItem('id', response.id);
             this.authService.setAuthenticated(true);
             this.router.navigate(['/inicio']);
           }

@@ -70,7 +70,8 @@ export class RegistroComponent {
         (response: any) => {
             if(response.code==100 || response.code==200){
               this.mostrar= true;
-              this.username = this.registerForm.get('username')?.value;
+              localStorage.setItem('username', response.username);
+              localStorage.setItem('id', response.id);
               this.authService.setAuthenticated(true);
               this.router.navigate(['/inicio']);                  
 

@@ -89,7 +89,7 @@ export class PerfilComponent implements OnInit {
   posts = {
     post:[
       {
-        id_post: 0,
+        id_post: -1,
         id_user: 0,
         text_post: "",
         url_image: "",
@@ -106,6 +106,8 @@ export class PerfilComponent implements OnInit {
       }
     ],
   };
+
+  mostrarComentarios= false;
 
   postData = {
     text: '',
@@ -261,7 +263,7 @@ export class PerfilComponent implements OnInit {
     const body = { 
       id: this.id_post,
       text: this.postData.text, 
-      url_image: this.postData.image
+      //url_image: this.postData.image
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)

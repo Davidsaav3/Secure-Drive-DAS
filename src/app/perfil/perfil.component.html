@@ -8,7 +8,7 @@
         <h2>{{user.username}}</h2>
         <p> {{user.num_posts}} Imagenes &nbsp; {{user.followers}} Seguidores &nbsp; {{user.following}} Siguiendo</p>
       </div>
-      <div *ngIf="profile" style="background-color: rgb(33, 37, 41);"  class="col-md-2" (click)="PostRequest()">
+      <div *ngIf="this.username!=this.profilename" style="background-color: rgb(33, 37, 41);"  class="col-md-2" (click)="PostRequest()">
         <span *ngIf="!follow" class="input-group-text" style="justify-content: center;">Seguir</span>
         <span *ngIf="follow" class="input-group-text" style="justify-content: center;">Dejar de seguir</span>
       </div>
@@ -16,9 +16,9 @@
   </div>
 
   <div class="row m-0">
-    <div class="col-md-9 m-0 scrollable-div">
+    <div [ngClass]="{'col-md-9': username === profilename, 'col-md-12': username !== profilename}" class="m-0 scrollable-div">
       <div *ngIf="pag==0" class="container py-2" style="min-height: 100vh;">
-        <div class="row" *ngIf="posts && posts.post.length > 0">
+        <div class="row" *ngIf="posts && posts.post.length > 0 && posts.post[0].id_post>0">
           <div class="col-md-6 pb-4" *ngFor="let archivo of posts.post">
             <div class="container mt-3">
               <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px; position: relative;">
@@ -28,12 +28,16 @@
                   </div>
                   <div class="d-flex">
                     <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2" style="color: aliceblue; border: 1px solid white;">{{archivo.likes}} Me gusta </p>
-                    <p class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;" (click)="toggleDiv()">{{archivo.comments.length}} Comentarios </p>
+                    <p (click)="mostrarComentarios=!mostrarComentarios" class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;">{{archivo.comments.length}} Comentarios 
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down" viewBox="0 0 16 16">
+                        <path d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659"/>
+                      </svg>
+                    </p>
                   </div>
                 </div>
                 <div class="row no-gutters">
                     <div class="col-md-2" style="width: auto;">
-                      <img [src]="archivo.url_image" class="card-img" alt="...">
+                      <img [src]="'https://das-uabook.000webhostapp.com/'+archivo.url_image" class="card-img" alt="...">
                     </div>
                     <div class="m-2" style="color: white;">
                       <p class="m-0"> {{archivo.text_post}}</p>
@@ -63,26 +67,26 @@
                             </svg>
                           </button>
                         </div>
-                        <p data-bs-toggle="modal" data-bs-target="#confirmDeleteModal3" class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;">
+                        <p *ngIf="this.username==this.profilename" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal3" class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;" (click)="id_post= archivo.id_post;">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                             <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
                           </svg>
                         </p>
-                        <p class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id_post= archivo.id_post;">
+                        <p *ngIf="this.username==this.profilename" class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id_post= archivo.id_post;">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
                           </svg>
                         </p>
-                        <p class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;">
+                        <!--<p class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
                           </svg>
-                        </p>
+                        </p>-->
                       </div>
                     </div>
-                    <div *ngIf="archivo.comments.length>=1 && archivo.comments[0].id!=null">
+                    <div *ngIf="archivo.comments.length>=1 && archivo.comments[0].id!=null && mostrarComentarios">
                         <div *ngFor="let arch of archivo.comments" >
                           <div class="p-3 pt-0">
                             <div class="card bg-white rounded">
@@ -104,7 +108,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3 scrollable-div" style="background-color: rgb(194, 194, 194)">
+    <div *ngIf="this.username==this.profilename" class="col-md-3 scrollable-div" style="background-color: rgb(194, 194, 194)">
       <h2 class="mt-2">Solicitudes de amistad</h2>
       <div *ngIf="profile" class="form-check form-switch">
         <label class="form-check-label" style="color: black;" for="flexSwitchCheckDefault">Perfil público</label>
@@ -139,7 +143,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                  ¿Estás seguro de que deseas eliminar este archivo?
+                  ¿Estás seguro de que deseas eliminar la publicación?
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
@@ -196,11 +200,11 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
+            <!--<div class="form-group">
               <label for="image">Imagen</label><br>
               <input type="file" class="form-control-file" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" required>
-            </div>
-              <div class="form-group pt-3">
+            </div>-->
+              <div class="form-group">
                 <label for="text">Texto</label>
                 <textarea class="form-control" id="text" name="text" [(ngModel)]="postData.text" required></textarea>
               </div>
@@ -223,7 +227,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              ¿Estás seguro de que deseas eliminar este archivo?
+              ¿Estás seguro de que deseas eliminar la publicación?
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
