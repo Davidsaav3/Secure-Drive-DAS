@@ -110,6 +110,11 @@ export class PerfilComponent implements OnInit {
     ],
   };
 
+  postData = {
+    text: '',
+    image: null as File | null  // Se inicializa como null y se asignará al seleccionar un archivo
+  };
+
   ngOnInit(): void { // INICILIZACIÓN
     this.getUser()
     this.getPosts()
@@ -342,30 +347,117 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  postRequest(idUser: any, idUser2: any){ // SEGUIR USUARIO
-    const url = "https://dasapp.alwaysdata.net/postreqqest";
-    const data = {
-      idUser: 0,
-      idUser2: 0
+
+  PostRequest(){ // ACEPTAR SOLICITUD
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
     };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
+    const url = `https://das-uabook.000webhostapp.com/post_request.php`;
+    const body = { 
+      id_sender: 1,
+      id_receiver: 2,
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      },
+      (error: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      }
+    );
   }
 
-  postPublicPrivateProfile(id: any, option: any){ // ACEPTAR SOLICITUD
-    const url = "https://dasapp.alwaysdata.net/resolvereqqest";
-    const data = {
-      id: 0,
-      option: true,
+  ResolveRequest(state: any){
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
     };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
+    const url = `https://das-uabook.000webhostapp.com/resolve_request.php`;
+    const body = { 
+      id_sender: 1,
+      id_receiver: 2,
+      status: state
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      },
+      (error: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      }
+    );
+  }
+
+  onSubmit2() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/edit_post.php`;
+    const body = { 
+      id: '1', 
+      text: this.postData.text, 
+      url_image: this.postData.text
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      },
+      (error: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      }
+    );
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    this.postData.image = file;
   }
 
 }
