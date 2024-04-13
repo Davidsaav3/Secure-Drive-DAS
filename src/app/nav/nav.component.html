@@ -33,7 +33,7 @@
         </form>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/perfil/davidsaav3">Perfil de {{username}}</a>
+        <a class="nav-link" [href]="'/perfil/' + username">Perfil de {{ username }}</a>
       </li>
       <li class="nav-item pe-3">
         <i class="bi bi-heart"></i>
@@ -51,24 +51,24 @@
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
   <div class="modal-dialog">
       <div class="modal-content">
-        <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+        <form (ngSubmit)="PostImage()" enctype="multipart/form-data">
           <div class="modal-header">
-              <h5 class="modal-title" id="confirmDeleteModalLabel">Subir imagen</h5>
+              <h5 class="modal-title" id="confirmDeleteModalLabel">Publicar imagen</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <div class="form-group">
-                <label for="text">Texto:</label>
-                <textarea class="form-control" id="text" name="text" [(ngModel)]="postData.text" required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="image">Imagen:</label>
-                <input type="file" class="form-control-file" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" required>
-              </div>
+            <div class="form-group">
+              <label for="image">Imagen</label><br>
+              <input type="file" class="form-control-file" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" required>
+            </div>
+            <div class="form-group pt-3">
+              <label for="text">Texto</label>
+              <textarea class="form-control" id="text" name="text" [(ngModel)]="postData.text" required></textarea>
+            </div>
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Subir Imagen</button>
+              <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Subir</button>
           </div>
         </form>
       </div>

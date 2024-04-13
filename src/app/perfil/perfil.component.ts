@@ -5,17 +5,8 @@ import { AuthService } from '../auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-
-import { Delete_postService } from '../delete_post.service';
-import { Edit_postService } from '../edit_post.service';
-import { Edit_profileService } from '../edit_profile.service';
 import { Get_my_postsService } from '../get_my_posts.service';
 import { Get_profileService } from '../get_profile.service';
-import { Post_commentService } from '../post_comment.service';
-import { Post_imageService } from '../post_image.service';
-import { Post_likeService } from '../post_like.service';
-import { Post_requestService } from '../post_request.service';
-import { Resolve_requestService } from '../resolve_request.service';
 
 @Pipe({ name: 'replace' })
 export class ReplacePipe implements PipeTransform {
@@ -32,16 +23,19 @@ export class ReplacePipe implements PipeTransform {
 
 export class PerfilComponent implements OnInit {
 
-  constructor(private get_profileService: Get_profileService, private resolve_requestService: Resolve_requestService, private post_requestService: Post_requestService, private post_likeService: Post_likeService, private post_imageService: Post_imageService, private post_commentService: Post_commentService, private get_my_postsService : Get_my_postsService, private edit_profileService: Edit_profileService, private edit_postService: Edit_postService, private delete_postService: Delete_postService, private route: ActivatedRoute, private sanitizer: DomSanitizer, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private router: Router) {
+  constructor( private get_profileService: Get_profileService,  private get_my_postsService : Get_my_postsService, private route: ActivatedRoute, private sanitizer: DomSanitizer, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private router: Router) {
   }
  
   files: any[] = [];
   fileName: string = '';
   email: any;
   pag= 0;
+
   username= localStorage.getItem('username');
+  id= localStorage.getItem('id');
+  id_post= 1;
+
   profilename: String | undefined;
-  id= 'p2.txt';
   archivos: any[] = [];
   archivos2: any[] = [];
   fileList: any;
@@ -70,6 +64,8 @@ export class PerfilComponent implements OnInit {
   folderPath = '/imagenes'; // Reemplaza con la ruta de tus imágenes
   images: any[] = [];
 
+  switchState: boolean = false; // Estado inicial del switch
+
   shareForm: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
   });
@@ -84,7 +80,7 @@ export class PerfilComponent implements OnInit {
     requests: [
       {
         id_user: 0,
-        username: "Davidsaav3"
+        username: ""
       }
     ],
   };
@@ -94,11 +90,11 @@ export class PerfilComponent implements OnInit {
       {
         id_post: 0,
         id_user: 0,
-        text_post: '',
-        url_image: '',
-        date: '',
+        text_post: "",
+        url_image: "",
+        date: "",
         likes: 0,
-        username: '',
+        username: "",
         comments: [
           {
             id: 0,
@@ -116,98 +112,53 @@ export class PerfilComponent implements OnInit {
   };
 
   ngOnInit(): void { // INICILIZACIÓN
-    this.getUser()
-    this.getPosts()
+    this.getProfile()
+    this.getMyPosts()
 
     this.profilename = this.route.snapshot.url[1].path;
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }
-    //this.getPosts();
   }
 
   toggleDiv() {
     this.mostrarDiv = !this.mostrarDiv;
   }
 
-  getUser(){ // OBTIENE DATOS DE USUARIO
-    const id_user = 1; 
-    this.get_profileService.get_profile(id_user).subscribe(
+  getProfile(){ // OBTIENE DATOS DE USUARIO
+    this.get_profileService.get_profile(this.id).subscribe(
       (response: any) => {
         console.log(response)
         this.user = response;
-        /*for (let i = 0; i < this.archivos.length; i++) {
-          const archivo = this.archivos[i];
-          const filePath = this.username + '/' + archivo.nombre;
-          this.downService.getFileView(filePath).subscribe(
-            (url: string) => {
-              this.archivos[i].url= url;
-            },
-            (error: any) => {
-              //console.error('Error al obtener la imagen:', error);
-            }
-          );
-        }*/
       },
       (error: any) => {
-        console.error('Error al obtener la lista de archivos:', error);
+        console.error('Error al obtener datos de usuario:', error);
       }
     );
   }
 
-  getPosts() {  // OBTENER PUBLICACIONES
-    const id_user = 1; 
-    this.get_my_postsService.get_my_posts(id_user).subscribe(
+  getMyPosts() {  // OBTENER POSTS
+    this.get_my_postsService.get_my_posts(this.id).subscribe(
       (response: any) => {
         console.log(response)
         this.posts.post = response;
-        /*for (let i = 0; i < this.archivos.length; i++) {
-          const archivo = this.archivos[i];
-          const filePath = this.username + '/' + archivo.nombre;
-          this.downService.getFileView(filePath).subscribe(
-            (url: string) => {
-              this.archivos[i].url= url;
-            },
-            (error: any) => {
-              //console.error('Error al obtener la imagen:', error);
-            }
-          );
-        }*/
       },
       (error: any) => {
-        console.error('Error al obtener la lista de archivos:', error);
+        console.error('Error al obtener las publicaciones del usuario:', error);
       }
     );
   }  
 
-  /*down(id :string): void { // DESCARGAR IMAGENES
-    this.downService.getFileView(id).subscribe(
-      (url: string) => {
-        return url;
-        this.imageUrl1.push(url);
-      },
-      (error: any) => {
-        //console.error('Error al obtener la imagen:', error);
-      }
-    );
-  }*/
-
-  getPreImage(image: any): SafeUrl { // PREVISUALIZACIÓN IMAGENES
-    const base64Image = image.contenido;
-    const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
-    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
-  }
-
-  getUsername(event: any) { // OBTENER NOMBRE DE USUARIO ACTUAL
+  getProfilename(event: any) { // OBTENER NOMBRE DE USUARIO
     let input = event.target;
     this.fileName = input.files[0].name;
     setTimeout(() => {
       this.fileName= '';
-      this.getPosts();
+      this.getMyPosts();
     }, 1000);
   }
 
-  detelePost(id: string) { // ELIMINA UNA PUBLICACIÓN
+  deletePost() { // ELIMINA UNA PUBLICACIÓN
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -215,8 +166,8 @@ export class PerfilComponent implements OnInit {
     };
     const url = `https://das-uabook.000webhostapp.com/delete_post.php`;
     const body = { 
-      id: '3', 
-      id_user: '2', 
+      id: this.id_post,
+      id_user: this.id, 
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
@@ -227,7 +178,8 @@ export class PerfilComponent implements OnInit {
           this.Okdeleteall =  false;
         }, 3000);
         setTimeout(() => {
-          this.getPosts();
+          this.getMyPosts();
+          this.getProfile();
         }, 500);
       },
       (error: any) => {
@@ -236,21 +188,13 @@ export class PerfilComponent implements OnInit {
           this.Okdeleteall =  false;
         }, 3000);
         setTimeout(() => {
-          this.getPosts();
+          this.getMyPosts();
         }, 500);
       }
     );
   }
-
-  downloadPost(id: any) { // DESCARGAR IMAGEN
-    //this.downloaderService.downloader(this.username+'/'+id);
-  }
-
-  downloadPostExt(id: any, owner: any) { // DESCARGAR COMPARTIDA
-    //this.downloaderShared.downloader(owner+'/'+id, owner, this.username);
-  }
   
-  postLike(idUser: any, idPost: any) { // DAR LIKE
+  postLike(id_post: any) { // DAR LIKE
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -258,34 +202,26 @@ export class PerfilComponent implements OnInit {
     };
     const url = `https://das-uabook.000webhostapp.com/post_like.php`;
     const body = { 
-      id: '3', 
-      id_user: '2', 
+      id: id_post, 
+      id_user: this.id, 
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
     .subscribe(
       (data: any) => {
-        this.Okdeleteall = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          this.getPosts();
+          this.getMyPosts();
         }, 500);
       },
       (error: any) => {
-        this.Okdeleteall = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          this.getPosts();
+          this.getMyPosts();
         }, 500);
       }
     );
   }
 
-  postComment(idUser: any, idPost: any, text: any){ // COMENTAR POST
+  postComment(id_post: any, text: any){ // COMENTAR POST
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -293,133 +229,27 @@ export class PerfilComponent implements OnInit {
     };
     const url = `https://das-uabook.000webhostapp.com/post_comment.php`;
     const body = { 
-      id_post: '3', 
-      id_user: '2', 
-      text: 'hola'
+      id_post: id_post, 
+      id_user: this.id, 
+      text: text
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
     .subscribe(
       (data: any) => {
-        this.Okdeleteall = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          this.getPosts();
+          this.getMyPosts();
         }, 500);
       },
       (error: any) => {
-        this.Okdeleteall = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          this.getPosts();
+          this.getMyPosts();
         }, 500);
       }
     );
   }
 
-  editPost(idPost: any, name: any){ // EDITAR POST
-    const url = "https://dasapp.alwaysdata.net/editpost";
-    const data = {
-      idPost: 0,
-      name: "imagen"
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-
-  resolveReqqest(idUser: any, idUser2: any){ // ACEPTAR O DENEGAR / SOLICCITUD
-    const url = "https://dasapp.alwaysdata.net/resolvereqqest";
-    const data = {
-      idUser: 0,
-      idUser2: 0
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-
-
-  PostRequest(){ // ACEPTAR SOLICITUD
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    };
-    const url = `https://das-uabook.000webhostapp.com/post_request.php`;
-    const body = { 
-      id_sender: 1,
-      id_receiver: 2,
-    };
-
-  this.http.post(url, JSON.stringify(body), httpOptions)
-    .subscribe(
-      (data: any) => {
-        this.Okdeleteall = true;  
-        setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          //this.getPosts();
-        }, 500);
-      },
-      (error: any) => {
-        this.Okdeleteall = true;  
-        setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          //this.getPosts();
-        }, 500);
-      }
-    );
-  }
-
-  ResolveRequest(state: any){
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    };
-    const url = `https://das-uabook.000webhostapp.com/resolve_request.php`;
-    const body = { 
-      id_sender: 1,
-      id_receiver: 2,
-      status: state
-    };
-
-  this.http.post(url, JSON.stringify(body), httpOptions)
-    .subscribe(
-      (data: any) => {
-        this.Okdeleteall = true;  
-        setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          //this.getPosts();
-        }, 500);
-      },
-      (error: any) => {
-        this.Okdeleteall = true;  
-        setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          //this.getPosts();
-        }, 500);
-      }
-    );
-  }
-
-  onSubmit2() {
+  editPost() { // EDITAR PERFIL
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -427,29 +257,21 @@ export class PerfilComponent implements OnInit {
     };
     const url = `https://das-uabook.000webhostapp.com/edit_post.php`;
     const body = { 
-      id: '1', 
+      id: this.id_post,
       text: this.postData.text, 
-      url_image: this.postData.text
+      url_image: this.postData.image
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
     .subscribe(
       (data: any) => {
-        this.Okdeleteall = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          //this.getPosts();
+          this.getMyPosts();
         }, 500);
       },
       (error: any) => {
-        this.Okdeleteall = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
-        }, 3000);
-        setTimeout(() => {
-          //this.getPosts();
+          this.getMyPosts();
         }, 500);
       }
     );
@@ -459,5 +281,88 @@ export class PerfilComponent implements OnInit {
     const file: File = event.target.files[0];
     this.postData.image = file;
   }
+
+  PostRequest(){ // ACEPTAR O DENEGAR SOLICITUD DE SEGUIMIENTO
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/post_request.php`;
+    const body = { 
+      id_sender: this.id,
+      id_receiver: this.user.id,
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          this.getProfile();
+        }, 500);
+      },
+      (error: any) => {
+        setTimeout(() => {
+          this.getProfile();
+        }, 500);
+      }
+    );
+  }
+
+  ResolveRequest(state: any){ // RESOLVER SOLICITUD DE SEGUIMIENTO
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/resolve_request.php`;
+    const body = { 
+      id_sender: this.user.id,
+      id_receiver: this.id,
+      status: state
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          this.getProfile();
+        }, 500);
+      },
+      (error: any) => {
+        setTimeout(() => {
+          this.getProfile();
+        }, 500);
+      }
+    );
+  }
+
+  editProfile(state: any){ // RESOLVER SOLICITUD DE SEGUIMIENTO
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/edit_profile.php`;
+    const body = { 
+      id_user: this.id,
+      status: state
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          //this.getProfile();
+        }, 500);
+      },
+      (error: any) => {
+        setTimeout(() => {
+          //this.getProfile();
+        }, 500);
+      }
+    );
+  }
+
 
 }

@@ -12,7 +12,7 @@ import { HttpClient , HttpHeaders} from '@angular/common/http';
 export class NavComponent implements OnInit {
 
   constructor(private http: HttpClient, private authService:AuthService, private uploadService: UploadService) {
-    }
+  }
  
   Okshare = false;
   Notshare = false;
@@ -29,7 +29,7 @@ export class NavComponent implements OnInit {
 
   postData = {
     text: '',
-    image: null as File | null  // Se inicializa como null y se asignará al seleccionar un archivo
+    image: null as File | null  
   };
 
   ngOnInit(): void {
@@ -39,66 +39,21 @@ export class NavComponent implements OnInit {
   logout(): void { // CERRRA SESIÓN
     this.authService.setAuthenticated(false);
     localStorage.removeItem('username');
+    localStorage.removeItem('id');
     localStorage.removeItem('auth');
   }
 
   nombre(event: any) { // OBTENER NOMBRE 
     let input = event.target;
     this.fileName = input.files[0].name;
-    this.upload(event)
+    //this.upload(event)
     setTimeout(() => {
       this.fileName= '';
       //this.getAllPosts();
     }, 1000);
   }
 
-  upload(event: any) {
-    const file = event.target.files && event.target.files[0];
-    this.uploadService.upload(file, this.username).subscribe(
-      response => {
-        //console.log(response.code)
-        if (response.code==201) { // Archivo subido correctamente
-          this.fileList = response.files;
-          this.Okupload = true;         
-          setTimeout(() => {
-          }, 500); 
-          setTimeout(() => {
-            this.Okupload = false;
-          }, 3000);
-        }
-        if (response.code==401) { // Error al subir el archivo
-          this.Noupload = true;          
-          setTimeout(() => {
-            this.Noupload = false;
-          }, 3000);
-        } 
-        if (response.code==402) { // No puedes subir un archivo con el mismo nombre
-          this.NoNoupload = true;          
-          setTimeout(() => {
-            this.NoNoupload = false;
-          }, 3000);
-        } 
-      },
-      error => {
-        //console.log(error.status)
-        if (error.status==401) { // Error al subir el archivo
-          this.Noupload = true;          
-          setTimeout(() => {
-            this.Noupload = false;
-          }, 3000);
-        } 
-        if (error.status==200) { // No puedes subir un archivo con el mismo nombre
-          this.NoNoupload = true;          
-          setTimeout(() => {
-            this.NoNoupload = false;
-          }, 3000);
-        } 
-        //console.error('Error al hacer la solicitud:', error.error);
-      }
-    );
-  }
-
-  onSubmit() {
+  PostImage() { // PUBLICAR IMAGEN
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -114,18 +69,18 @@ export class NavComponent implements OnInit {
   this.http.post(url, JSON.stringify(body), httpOptions)
     .subscribe(
       (data: any) => {
-        this.Okdeleteall = true;  
+        this.Okupload = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
+          this.Okupload =  false;
         }, 3000);
         setTimeout(() => {
           //this.getPosts();
         }, 500);
       },
       (error: any) => {
-        this.Okdeleteall = true;  
+        this.NoNoupload = true;  
         setTimeout(() => {
-          this.Okdeleteall =  false;
+          this.NoNoupload =  false;
         }, 3000);
         setTimeout(() => {
           //this.getPosts();
@@ -134,7 +89,7 @@ export class NavComponent implements OnInit {
     );
   }
 
-  onFileSelected(event: any) {
+  onFileSelected(event: any) { // CARGA IMAGENES
     const file: File = event.target.files[0];
     this.postData.image = file;
   }

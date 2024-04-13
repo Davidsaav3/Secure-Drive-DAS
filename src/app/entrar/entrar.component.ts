@@ -5,7 +5,6 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service'; 
-import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-entrar',
@@ -31,7 +30,7 @@ export class EntrarComponent {
   fa: string | undefined;
   username= '';
 
-  constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient, private loginService: LoginService) { }
+  constructor(private authService:AuthService, private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
 
   get registerFormControl() {
     return this.registerForm.controls;
@@ -54,7 +53,7 @@ export class EntrarComponent {
       .pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.error instanceof ErrorEvent) {
-            //console.error('Error del lado del cliente:', error.error.message);
+            console.error('Error del lado del cliente:', error.error.message);
           } 
           else {
             if(error.status==200){
@@ -81,7 +80,7 @@ export class EntrarComponent {
           }
         },
         (error: any) => {
-          //console.error('Error de solicitud:', error);
+          console.error('Error de solicitud:', error);
         }
       );
     }

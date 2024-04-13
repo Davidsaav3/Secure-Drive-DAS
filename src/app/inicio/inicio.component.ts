@@ -38,8 +38,11 @@ export class InicioComponent implements OnInit {
   fileName: string = '';
   email: any;
   pag= 0;
+
   username= localStorage.getItem('username');
-  id= 'p2.txt';
+  id= localStorage.getItem('id');
+  id_post= 1;
+
   archivos: any[] = [];
   archivos2: any[] = [];
   archivos3: any[] = [];
@@ -64,6 +67,11 @@ export class InicioComponent implements OnInit {
     username: ['', [Validators.required]],
   });
 
+  postData = {
+    text: '',
+    image: null as File | null  // Se inicializa como null y se asignará al seleccionar un archivo
+  };
+
   posts = {
     post:[
       {
@@ -85,14 +93,14 @@ export class InicioComponent implements OnInit {
     ],
   };
 
-  ngOnInit(): void {
+  ngOnInit(): void { // INICIALIZACIÓN
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }
     this.getAllPosts();
   }
 
-  toggleDiv() {
+  toggleDiv() { // MOSTRAR
     this.mostrarDiv = !this.mostrarDiv;
   }
 
@@ -102,18 +110,6 @@ export class InicioComponent implements OnInit {
       (response: any) => {
         console.log(response)
         this.posts.post = response;
-        /*for (let i = 0; i < this.archivos.length; i++) {
-          const archivo = this.archivos[i];
-          const filePath = this.username + '/' + archivo.nombre;
-          this.downService.getFileView(filePath).subscribe(
-            (url: string) => {
-              this.archivos[i].url= url;
-            },
-            (error: any) => {
-              //console.error('Error al obtener la imagen:', error);
-            }
-          );
-        }*/
       },
       (error: any) => {
         console.error('Error al obtener la lista de archivos:', error);
@@ -121,165 +117,128 @@ export class InicioComponent implements OnInit {
     );
   }  
 
-  down(id :string): void { // PREVISUALIZAIÓN DE IMAGENES
-    this.downService.getFileView(id).subscribe(
-      (url: string) => {
-        return url;
-        this.imageUrl1.push(url);
+  deletePost() { // ELIMINA UNA PUBLICACIÓN
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/delete_post.php`;
+    const body = { 
+      id: this.id_post,
+      id_user: this.id, 
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
       },
       (error: any) => {
-        //console.error('Error al obtener la imagen:', error);
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
+      }
+    );
+  }
+  
+  postLike(id_post: any) { // DAR LIKE
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/post_like.php`;
+    const body = { 
+      id: id_post, 
+      id_user: this.id, 
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
+      },
+      (error: any) => {
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
       }
     );
   }
 
-  eliminar(id: string) { // ELIMIANR POST
-    const url = `https://dasapp.alwaysdata.net/files.php`;
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    };
-    const formData = new FormData();
-    formData.append('file_name', this.username+'/'+id);
-
-      const headers = new HttpHeaders();
-      this.http.post('https://dasapp.alwaysdata.net/delete.php', formData, { headers })
-        .subscribe(
-          (data: any) => {
-            this.Okdeleteall = true;  
-            setTimeout(() => {
-              this.Okdeleteall =  false;
-            }, 3000);
-            setTimeout(() => {
-              this.getAllPosts();
-            }, 500);
-          },
-          (error: any) => {
-            //console.error('Error al subir el archivo:', error);
-            this.Okdeleteall = true;  
-            setTimeout(() => {
-              this.Okdeleteall =  false;
-            }, 3000);
-            setTimeout(() => {
-              this.getAllPosts();
-            }, 500);
-          }
-        );
-  }
-
-  descargar(id: any) { // DESCARGAR POST
-    this.downloaderService.downloader(this.username+'/'+id);
-  }
-
-  descargarShared(id: any, owner: any) { // DESCARGAR POST DE OTRO USUARIO
-    this.downloaderShared.downloader(owner+'/'+id, owner, this.username);
-  }
-
-  getSafeImageUrl(image: any): SafeUrl { // URL IMAGEN
-    const base64Image = image.contenido;
-    const imageUrl = 'data:image/' + image.tipo + ';base64,' + base64Image;
-    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
-  }
-
-  postLike(idUser: any, idPost: any) { // DAR LIKE
-    const url = "https://dasapp.alwaysdata.net/postlike";
-    const data = {
-      idUser: 0,
-      idPost: 0
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-
-  postComment(idUser: any, idPost: any, text: any){ // COMENTAR POST
-    const url = "https://dasapp.alwaysdata.net/postreqqest";
-    const data = {
-      idUser: 0,
-      idPost: 0,
-      text: "Contenido comentario"
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-
-  editPost(idPost: any, name: any){ // EDITAR POST
-    const url = "https://dasapp.alwaysdata.net/editpost";
-    const data = {
-      idPost: 0,
-      name: "imagen"
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-
-  resolveReqqest(idUser: any, idUser2: any){ // ACEPTAR O DENEGAR / SOLICCITUD
-    const url = "https://dasapp.alwaysdata.net/resolvereqqest";
-    const data = {
-      idUser: 0,
-      idUser2: 0
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-
-  postRequest(idUser: any, idUser2: any){ // SEGUIR USUARIO
-    const url = "https://dasapp.alwaysdata.net/postreqqest";
-    const data = {
-      idUser: 0,
-      idUser2: 0
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-
-  postPublicPrivateProfile(id: any, option: any){ // ACEPTAR SOLICITUD
-    const url = "https://dasapp.alwaysdata.net/resolvereqqest";
-    const data = {
-      id: 0,
-      option: true,
-    };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
-  }
-  
-  login2() {
-    const apiUrl = 'https://dasapp.alwaysdata.net/login';
-
+  postComment(id_post: any, text: any){ // COMENTAR POST
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
+        'Content-Type': 'application/x-www-form-urlencoded'
       })
     };
+    const url = `https://das-uabook.000webhostapp.com/post_comment.php`;
+    const body = { 
+      id_post: id_post, 
+      id_user: this.id, 
+      text: text
+    };
 
-    this.http.post(apiUrl, { username: "david", password: "123" }, httpOptions)
-      .subscribe(
-        (response: any) => {
-          console.log('Inicio de sesión exitoso');
-        },
-        (error) => {
-          console.error('Error al iniciar sesión:', error);
-        }
-      );
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
+      },
+      (error: any) => {
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
+      }
+    );
   }
+
+  editPost() { // EDITAR PERFIL
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/edit_post.php`;
+    const body = { 
+      id: this.id_post,
+      text: this.postData.text, 
+      url_image: this.postData.image
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
+      },
+      (error: any) => {
+        setTimeout(() => {
+          this.getAllPosts();
+        }, 500);
+      }
+    );
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    this.postData.image = file;
+  }
+
 
 }
