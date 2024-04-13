@@ -37,6 +37,7 @@
                 s.id_sender = $id_user AND s.status = 1
             GROUP BY 
                 p.id";
+
     
     $result = $conn->query($sql);
     

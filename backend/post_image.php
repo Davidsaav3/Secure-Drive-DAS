@@ -13,7 +13,7 @@
     
     $sql = "INSERT INTO Posts (id_user, text, url_image) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iis", $id_user, $text, $url_image);
+    $stmt->bind_param("iss", $id_user, $text, $url_image);
     
     if ($stmt->execute()) {
         echo json_encode(array("mensaje" => "¡Imagen subida correctamente!"));

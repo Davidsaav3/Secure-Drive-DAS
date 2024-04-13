@@ -13,7 +13,7 @@
     
     $sql = "UPDATE Posts SET text = ?, url_image = ?  WHERE id = ?;";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iis", $text, $url_image, $id); 
+    $stmt->bind_param("ssi", $text, $url_image, $id);
     
     if ($stmt->execute()) {
         echo json_encode(array("mensaje" => "¡Post editado correctamente!"));
