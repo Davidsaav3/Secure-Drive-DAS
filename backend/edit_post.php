@@ -9,11 +9,10 @@
     $data = json_decode(file_get_contents('php://input'));
     $id = $data->id;
     $text = $data->text;
-    $url_image = $data->url_image;
-    
-    $sql = "UPDATE Posts SET text = ?, url_image = ?  WHERE id = ?;";
+
+    $sql = "UPDATE Posts SET text = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssi", $text, $url_image, $id);
+    $stmt->bind_param("si", $text, $id);
     
     if ($stmt->execute()) {
         echo json_encode(array("mensaje" => "¡Post editado correctamente!"));

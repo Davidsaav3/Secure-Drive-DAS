@@ -36,6 +36,7 @@
     $sql_info_usuario = "SELECT 
                             id,
                             username,
+                            status,
                             (SELECT COUNT(*) FROM Posts WHERE id_user = Users.id) AS num_posts,
                             (SELECT COUNT(*) FROM Requests WHERE id_receiver = Users.id AND status = 1) AS followers,
                             (SELECT COUNT(*) FROM Requests WHERE id_sender = Users.id AND status = 1) AS following
@@ -57,7 +58,7 @@
             "num_posts" => $row_info_usuario['num_posts'],
             "followers" => $row_info_usuario['followers'],
             "following" => $row_info_usuario['following'],
-            "status" => true,
+            "status" => $row_info_usuario['status'],
             "requests" => $solicitudes_seguimiento
         );
 

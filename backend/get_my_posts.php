@@ -19,6 +19,7 @@
     // Consulta SQL para obtener las publicaciones del usuario utilizando subconsulta
     $sql = "SELECT 
                 url_image, 
+                p.date,
                 p.id AS id_post,
                 p.text AS text_post,
                 p.date,
@@ -38,7 +39,8 @@
             WHERE 
                 p.id_user = (SELECT id FROM Users WHERE username = ?)
             GROUP BY 
-                p.id;";
+                p.id ORDER BY p.date DESC;";
+                
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $username);
     $stmt->execute();

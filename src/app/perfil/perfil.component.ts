@@ -66,6 +66,7 @@ export class PerfilComponent implements OnInit {
   images: any[] = [];
 
   switchState: boolean = false; // Estado inicial del switch
+  comentario: string = ''; // Propiedad para almacenar el valor del input
 
   shareForm: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
@@ -77,7 +78,7 @@ export class PerfilComponent implements OnInit {
     following: 0,
     followers: 0,
     num_posts: 0,
-    status: true,
+    status: 0,
     requests: [
       {
         id_user: 0,
@@ -121,10 +122,6 @@ export class PerfilComponent implements OnInit {
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }
-  }
-
-  toggleDiv() {
-    this.mostrarDiv = !this.mostrarDiv;
   }
 
   getProfile(){ // OBTIENE DATOS DE USUARIO
@@ -243,6 +240,7 @@ export class PerfilComponent implements OnInit {
       (data: any) => {
         setTimeout(() => {
           this.getMyPosts();
+          this.mostrarComentarios= true;
         }, 500);
       },
       (error: any) => {

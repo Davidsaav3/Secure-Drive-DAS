@@ -61,6 +61,7 @@ export class InicioComponent implements OnInit {
   Okupload = false;
 
   mostrarComentarios= false;
+  comentario: string = ''; // Propiedad para almacenar el valor del input
 
   imageUrl1: string[] = [];
   folderPath = '/imagenes'; // Reemplaza con la ruta de tus imágenes
@@ -102,12 +103,8 @@ export class InicioComponent implements OnInit {
     this.getAllPosts();
   }
 
-  toggleDiv() { // MOSTRAR
-    this.mostrarDiv = !this.mostrarDiv;
-  }
-
   getAllPosts() {  // OBTENER PUBLICACIONES
-    const id_user = 1; 
+    const id_user = this.id; 
     this.get_all_postsService.get_all_posts(id_user).subscribe(
       (response: any) => {
         console.log(response)
@@ -198,6 +195,7 @@ export class InicioComponent implements OnInit {
     .subscribe(
       (data: any) => {
         setTimeout(() => {
+          this.mostrarComentarios= true;
           this.getAllPosts();
         }, 500);
       },

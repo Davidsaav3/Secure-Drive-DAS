@@ -8,7 +8,7 @@
         <h2>{{user.username}}</h2>
         <p> {{user.num_posts}} Imagenes &nbsp; {{user.followers}} Seguidores &nbsp; {{user.following}} Siguiendo</p>
       </div>
-      <div *ngIf="this.username!=this.profilename" style="background-color: rgb(33, 37, 41);"  class="col-md-2" (click)="PostRequest()">
+      <div *ngIf="this.username!=this.profilename && user.status==0" style="background-color: rgb(33, 37, 41);"  class="col-md-2" (click)="PostRequest()">
         <span *ngIf="!follow" class="input-group-text" style="justify-content: center;">Seguir</span>
         <span *ngIf="follow" class="input-group-text" style="justify-content: center;">Dejar de seguir</span>
       </div>
@@ -28,7 +28,12 @@
                   </div>
                   <div class="d-flex">
                     <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2" style="color: aliceblue; border: 1px solid white;">{{archivo.likes}} Me gusta </p>
-                    <p (click)="mostrarComentarios=!mostrarComentarios" class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;">{{archivo.comments.length}} Comentarios 
+                    <p *ngIf="archivo.comments[0].id === null" (click)="mostrarComentarios=!mostrarComentarios" class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;">0 Comentarios 
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down" viewBox="0 0 16 16">
+                        <path d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659"/>
+                      </svg>
+                    </p>
+                    <p *ngIf="archivo.comments[0].id != null" (click)="mostrarComentarios=!mostrarComentarios" class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;">{{archivo.comments.length}} Comentarios 
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down" viewBox="0 0 16 16">
                         <path d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659"/>
                       </svg>
@@ -60,8 +65,8 @@
                           </svg>
                         </button>
                         <div class="input-group rounded">
-                          <input type="text" class="form-control rounded-start" placeholder="Añade un comentario...">
-                          <button class="btn btn-secondary rounded-end enviar-btn" (click)="postComment(archivo.id_post,'hola')">
+                          <input type="text" class="form-control rounded-start" placeholder="Añade un comentario..." [(ngModel)]="comentario">
+                          <button class="btn btn-secondary rounded-end enviar-btn" (click)="postComment(archivo.id_post, comentario)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
                               <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
                             </svg>

@@ -9,13 +9,13 @@
     $conn = createDataBaseConnection();
     $data = json_decode(file_get_contents('php://input'));
     
-    $sql = "SELECT password, username FROM Users WHERE username='".$data->username."'"  ; 
+    $sql = "SELECT id, password, username FROM Users WHERE username='".$data->username."'";
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if(checkHash($row['password'], $data->password)){// Se comprueba si la contraseña coincide
-            $response = array("code" => 100);
+            $response = array("code" => 100, "id" => $row['id'], "username" => $row['username']); // Devolver el id y el username
         }
         else{
             $response = array("code" => 400);

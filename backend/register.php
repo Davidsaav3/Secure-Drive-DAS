@@ -14,7 +14,7 @@
     $debug = array();
 
     if ($result->num_rows > 0) {
-        $response = array("code" => 400); //El nombre del usuario esta en uso
+        $response = array("code" => 400); //El nombre del usuario está en uso
     } 
     else { 
         $randomNumber = rand(100000, 999999);
@@ -22,9 +22,10 @@
         $ogHash    = generateHash($data->password);
         $pvKey = AESEncoding($keysToUse["private"], $ogHash);
         $sql2 = "INSERT INTO Users (username, password, status)
-        VALUES ('".$data->username."', '".prepareHashToUpload($ogHash)."', '0')";
+        VALUES ('".$data->username."', '".prepareHashToUpload($ogHash)."', '1')";
         if ($conn->query($sql2) === TRUE) {
-            $response = array("code"  => 100);
+            $inserted_id = $conn->insert_id;
+            $response = array("code"  => 100, "id" => $inserted_id, "username" => $data->username); // Agregar el id y el username del usuario
         } 
         else {
             $response = array("code"  => 401);
@@ -33,5 +34,4 @@
 
     closeDataBaseConnection($conn);
     echo json_encode($response);
-
 ?>
