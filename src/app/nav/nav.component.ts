@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service'; 
 import { UploadService } from '../old/upload.service';
+import { HttpClient , HttpHeaders} from '@angular/common/http';
 
 @Component({
   selector: 'app-nav',
@@ -10,7 +11,7 @@ import { UploadService } from '../old/upload.service';
 
 export class NavComponent implements OnInit {
 
-  constructor(private authService:AuthService, private uploadService: UploadService) {
+  constructor(private http: HttpClient, private authService:AuthService, private uploadService: UploadService) {
     }
  
   Okshare = false;
@@ -25,6 +26,11 @@ export class NavComponent implements OnInit {
   fileName: string = '';
   username= localStorage.getItem('username');
   fileList: any;
+
+  postData = {
+    text: '',
+    image: null as File | null  // Se inicializa como null y se asignará al seleccionar un archivo
+  };
 
   ngOnInit(): void {
 
@@ -90,6 +96,47 @@ export class NavComponent implements OnInit {
         //console.error('Error al hacer la solicitud:', error.error);
       }
     );
+  }
+
+  onSubmit() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    const url = `https://das-uabook.000webhostapp.com/post_image.php`;
+    const body = { 
+      id_user: '1', 
+      text: this.postData.text, 
+      url_image: this.postData.text
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      },
+      (error: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          //this.getPosts();
+        }, 500);
+      }
+    );
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    this.postData.image = file;
   }
   
 }

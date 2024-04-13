@@ -3,12 +3,10 @@
 
   <div class="px-3 pt-3 pb-3" style="background-color: rgb(33, 37, 41)">
     <div class="row">
-      <div class="col-md-1">
-        <img [src]=user.profilepicture alt="Foto de Perfil" class="img-fluid rounded-circle">
-      </div>
+      
       <div style="color: aliceblue;" class="col-md-9">
         <h2>{{user.username}}</h2>
-        <p> {{user.posts}} Imagenes &nbsp; {{user.followers}} Seguidores &nbsp; {{user.following}} Siguiendo</p>
+        <p> {{user.num_posts}} Imagenes &nbsp; {{user.followers}} Seguidores &nbsp; {{user.following}} Siguiendo</p>
       </div>
       <div *ngIf="profile" style="background-color: rgb(33, 37, 41);"  class="col-md-2">
         <span *ngIf="!follow" class="input-group-text" style="justify-content: center;">Seguir</span>
@@ -21,12 +19,12 @@
     <div class="col-md-9 m-0 scrollable-div">
       <div *ngIf="pag==0" class="container py-2" style="min-height: 100vh;">
         <div class="row" *ngIf="posts && posts.post.length > 0">
-          <div class="col-md-6 pb-4" *ngFor="let archivo of posts.post">
+          <div class="col-md-4 pb-4" *ngFor="let archivo of posts.post">
             <div class="container mt-3">
               <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px; position: relative;">
                 <div class="d-flex justify-content-between align-items-center p-2 ps-0">
                   <div class="d-flex">
-                    <h5 class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.name.split('.')[0]}}</strong></h5>
+                    <h5 class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.username.split('.')[0]}}</strong></h5>
                   </div>
                   <div class="d-flex">
                     <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2" style="color: aliceblue; border: 1px solid white;">{{archivo.likes}} Me gusta </p>
@@ -35,7 +33,7 @@
                 </div>
                 <div class="row no-gutters">
                     <div class="col-md-2" style="width: auto;">
-                      <img [src]="archivo.url" class="card-img" alt="...">
+                      <img [src]="archivo.url_image" class="card-img" alt="...">
                     </div>
                     <!--<video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
                       <source [src]="archivo.url" type="video/mp4">
@@ -49,14 +47,14 @@
                   <div class="">
                     <div class="card-body">
                       <div class="d-flex pt-1">
-                        <button class="btn btn-secondary rounded-end enviar-btn me-3">
+                        <button class="btn btn-secondary rounded-end enviar-btn me-3" (click)="postLike(1,1)">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
                             <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
                           </svg>
                         </button>
                         <div class="input-group rounded">
                           <input type="text" class="form-control rounded-start" placeholder="Añade un comentario...">
-                          <button class="btn btn-secondary rounded-end enviar-btn">
+                          <button class="btn btn-secondary rounded-end enviar-btn" (click)="postComment(1,1,1)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
                               <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
                             </svg>
@@ -81,13 +79,13 @@
                         </p>
                       </div>
                     </div>
-                    <div *ngIf="mostrarDiv">
-                        <div *ngFor="let archivo of archivos" >
+                    <div *ngIf="archivo.comments.length>=1 && archivo.comments[0].id!=null">
+                        <div *ngFor="let arch of archivo.comments" >
                           <div class="p-3 pt-0">
                             <div class="card bg-white rounded">
                               <div class="card-body">
-                                <p class="card-title"><strong>Luis</strong></p>
-                                <p class="card-text mt-0">Este es un comentario de ejemplo.</p>
+                                <p class="card-title"><strong>{{arch.username}}</strong></p>
+                                <p class="card-text mt-0">{{arch.text}}</p>
                               </div>
                             </div>
                           </div>
@@ -109,9 +107,9 @@
         <label class="form-check-label" style="color: black;" for="flexSwitchCheckDefault">Perfil público</label>
         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
       </div>
-      <ul class="list-group" *ngFor="let item of user.reqqests">
+      <ul class="list-group" *ngFor="let item of user.requests">
         <li class="list-group-item d-flex justify-content-between align-items-center mt-2" style="background-color: rgb(33, 37, 41); color: aliceblue;">
-           {{item.username}}
+           {{item.id_user}}
           <div>
             <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">

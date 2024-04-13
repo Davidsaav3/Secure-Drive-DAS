@@ -24,22 +24,7 @@
             <div *ngIf="mostrar4" style="color: red;">
               Nombre de usuario en uso, pruebe con otro.
             </div>
-            <div class="mb-3">
-              <label style="color: aliceblue;" for="email" class="form-label">Correo electrónico</label>
-              <input type="email" formControlName="email" class="form-control" id="email" placeholder="Correo electrónico">
-              <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)" class="text-danger">
-                <div *ngIf="registerForm.get('email')?.errors?.['required']">
-                  Correo electrónico es requerido.
-                </div>
-                <div *ngIf="registerForm.get('email')?.errors?.['email']">
-                  Correo electrónico no es válido.
-                </div>
-              
-              </div>
-            </div>
-            <div *ngIf="mostrar2" style="color: red;">
-              Correo electrónico en uso, pruebe con otro.
-            </div>
+
             <div class="mb-3">
               <label style="color: aliceblue;" for="password" class="form-label">Contraseña</label>
               <input type="password" formControlName="password" class="form-control" id="password" placeholder="Contraseña">
@@ -64,34 +49,9 @@
                 </div>
               </div>
             </div>
-            <button type="submit" class="btn btn-dark d-block mx-auto">Enviar código</button>
+            <button type="submit" class="btn btn-dark d-block mx-auto">Registrar</button>
           </form>
-        
-          <form [formGroup]="registerForm2" (ngSubmit)="comp()" *ngIf="mostrar" class="p-3">
-            <div class="my-3">
-              <label style="color: aliceblue;" for="fa" class="form-label">Código de verificación</label>
-              <input type="text" formControlName="fa" class="form-control" id="fa" placeholder="Código de verificación">
-              <div *ngIf="registerForm2.get('fa')?.invalid && (registerForm2.get('fa')?.dirty || registerForm2.get('fa')?.touched)" class="text-danger">
-                <div *ngIf="registerForm2.get('fa')?.errors?.['required']">
-                  Código de verificación es requerido.
-                </div>
-                <div *ngIf="registerForm2.get('fa')?.errors?.['minlength']">
-                  Código de verificación debe tener al menos 6 dígitos.
-                </div>
-                <div *ngIf="registerForm2.get('fa')?.errors?.['maxlength']">
-                  Código de verificación no puede tener más de 6 dígitos.
-                </div>
-          
-              </div>
-            </div>
-            <div *ngIf="mostrar3" style="color: red;">
-              Código de verificación incorrecto.
-            </div>
-            <div *ngIf="mostrar5" style="color: red;">
-              Demasiados intentos fallidos.
-            </div>
-            <button type="submit" class="btn btn-dark d-block mx-auto">Registrarse</button>
-          </form>
+
           <div class="text-center mt-1">
             <a style="color: rgb(99, 99, 99);" routerLink="/entrar">Inicia sesión aquí</a>
           </div>

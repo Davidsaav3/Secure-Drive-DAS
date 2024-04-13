@@ -39,34 +39,9 @@
                 </div>
               </div>
             </div>
-            <button type="submit" class="btn btn-dark d-block mx-auto">Enviar código</button>
-          </form>
-        
-          <form [formGroup]="registerForm2" (ngSubmit)="comp()" *ngIf="mostrar" class="p-3">
-            <div class="my-3">
-              <label for="fa" class="form-label">Código de verificación</label>
-              <input type="text" formControlName="fa" class="form-control" id="fa" placeholder="Código de verificación">
-              <div *ngIf="registerForm2.get('fa')?.invalid && (registerForm2.get('fa')?.dirty || registerForm2.get('fa')?.touched)" class="text-danger">
-                <div *ngIf="registerForm2.get('fa')?.errors?.['required']">
-                  Código de verificación es requerido.
-                </div>
-                <div *ngIf="registerForm2.get('fa')?.errors?.['minlength']">
-                  Código de verificación debe tener al menos 6 dígitos.
-                </div>
-                <div *ngIf="registerForm2.get('fa')?.errors?.['maxlength']">
-                  Código de verificación no puede tener más de 6 dígitos.
-                </div>
-             
-              </div>
-            </div>
-            <div *ngIf="mostrar3" style="color: red;">
-              Código de verificación incorrecto.
-            </div>
-            <div *ngIf="mostrar5" style="color: red;">
-              Demasiados intentos fallidos.
-            </div>
             <button type="submit" class="btn btn-dark d-block mx-auto">Iniciar sesión</button>
           </form>
+        
           <div class="text-center mt-1">
             <a style="color: rgb(142, 142, 142);" routerLink="/registro">Registrate aquí</a>
           </div>

@@ -1,19 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service'; 
-import { DownloaderService } from '../old/downloader.service';
-import { DownloaderSharedService } from '../old/downloaderShared.service';
-import { UploadService } from '../old/upload.service';
-import { FilesService } from '../get_all_posts.service';
-import { MyfilesService } from '../old/myshare.service';
-import { OtherfilesService } from '../old/othershare.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { DownService } from '../old/down.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+import { Delete_postService } from '../delete_post.service';
+import { Edit_postService } from '../edit_post.service';
+import { Edit_profileService } from '../edit_profile.service';
+import { Get_my_postsService } from '../get_my_posts.service';
+import { Get_profileService } from '../get_profile.service';
+import { Post_commentService } from '../post_comment.service';
+import { Post_imageService } from '../post_image.service';
+import { Post_likeService } from '../post_like.service';
+import { Post_requestService } from '../post_request.service';
+import { Resolve_requestService } from '../resolve_request.service';
 
 @Pipe({ name: 'replace' })
 export class ReplacePipe implements PipeTransform {
@@ -30,7 +32,7 @@ export class ReplacePipe implements PipeTransform {
 
 export class PerfilComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private downloaderShared: DownloaderSharedService, private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
+  constructor(private get_profileService: Get_profileService, private resolve_requestService: Resolve_requestService, private post_requestService: Post_requestService, private post_likeService: Post_likeService, private post_imageService: Post_imageService, private post_commentService: Post_commentService, private get_my_postsService : Get_my_postsService, private edit_profileService: Edit_profileService, private edit_postService: Edit_postService, private delete_postService: Delete_postService, private route: ActivatedRoute, private sanitizer: DomSanitizer, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private router: Router) {
   }
  
   files: any[] = [];
@@ -74,70 +76,44 @@ export class PerfilComponent implements OnInit {
 
   user = {
     id: 0,
-    username: "davidsaav3",
-    profilepicture:"https://via.placeholder.com/150", 
-    email: "",
-    password: "",
-    following: 11,
-    followers: 12,
-    posts: 13,
-    open: true,
-    reqqests: [
+    username: "",
+    following: 0,
+    followers: 0,
+    num_posts: 0,
+    status: true,
+    requests: [
       {
-        id: 0,
+        id_user: 0,
         username: "Davidsaav3"
-      },
-      {
-        id: 1,
-        username: "Luis"
-      },
+      }
     ],
   };
 
   posts = {
     post:[
       {
-        id: 0,
-        name: "imagen",
-        likes: 10,
-        url: "https://via.placeholder.com/600",
+        id_post: 0,
+        id_user: 0,
+        text_post: '',
+        url_image: '',
+        date: '',
+        likes: 0,
+        username: '',
         comments: [
           {
             id: 0,
-            username: "Davidsaav3",
-            text: "Contenido de comentario"
-          },
-          {
-            id: 1,
-            username: "Luis",
-            text: "Contenido de comentario"
-          },
+            username: "",
+            text: ""
+          }
         ],
-      },
-      {
-        id: 0,
-        name: "imagen",
-        likes: 10,
-        url: "https://via.placeholder.com/600",
-        comments: [
-          {
-            id: 0,
-            username: "Davidsaav3",
-            text: "Contenido de comentario"
-          },
-          {
-            id: 1,
-            username: "Luis",
-            text: "Contenido de comentario"
-          },
-        ],
-      },
-  ],
+      }
+    ],
   };
 
   ngOnInit(): void { // INICILIZACIÓN
-    this.getData();
-    this.login2();
+    this.getUser()
+    this.getPosts()
+
     this.profilename = this.route.snapshot.url[1].path;
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
@@ -150,27 +126,12 @@ export class PerfilComponent implements OnInit {
   }
 
   getUser(){ // OBTIENE DATOS DE USUARIO
-    const formData = new FormData();
-    formData.append('username', this.username+``);
-    return this.http.post<any>('https://dasapp.alwaysdata.net/select.php', formData)
-      .subscribe(data => {
-        if (data) {
-          this.options = data.usernames;
-        } 
-        else {
-          //console.error('Formato de respuesta incorrecto', data);
-        }
-      }, error => {
-        //console.error('Error al realizar la solicitud', error);
-      });  
-  }
-
-  getPosts() { // OBTENER IMAGENES DE USUARIO
-    const folderPath = 'storage/' + this.username; 
-    this.filesService.files(folderPath).subscribe(
+    const id_user = 1; 
+    this.get_profileService.get_profile(id_user).subscribe(
       (response: any) => {
-        this.archivos = response.archivos;
-        for (let i = 0; i < this.archivos.length; i++) {
+        console.log(response)
+        this.user = response;
+        /*for (let i = 0; i < this.archivos.length; i++) {
           const archivo = this.archivos[i];
           const filePath = this.username + '/' + archivo.nombre;
           this.downService.getFileView(filePath).subscribe(
@@ -181,16 +142,40 @@ export class PerfilComponent implements OnInit {
               //console.error('Error al obtener la imagen:', error);
             }
           );
-        }
-        //console.log(this.archivos)
+        }*/
       },
       (error: any) => {
-        //console.error('Error al obtener la lista de archivos:', error);
+        console.error('Error al obtener la lista de archivos:', error);
+      }
+    );
+  }
+
+  getPosts() {  // OBTENER PUBLICACIONES
+    const id_user = 1; 
+    this.get_my_postsService.get_my_posts(id_user).subscribe(
+      (response: any) => {
+        console.log(response)
+        this.posts.post = response;
+        /*for (let i = 0; i < this.archivos.length; i++) {
+          const archivo = this.archivos[i];
+          const filePath = this.username + '/' + archivo.nombre;
+          this.downService.getFileView(filePath).subscribe(
+            (url: string) => {
+              this.archivos[i].url= url;
+            },
+            (error: any) => {
+              //console.error('Error al obtener la imagen:', error);
+            }
+          );
+        }*/
+      },
+      (error: any) => {
+        console.error('Error al obtener la lista de archivos:', error);
       }
     );
   }  
 
-  down(id :string): void { // DESCARGAR IMAGENES
+  /*down(id :string): void { // DESCARGAR IMAGENES
     this.downService.getFileView(id).subscribe(
       (url: string) => {
         return url;
@@ -200,7 +185,7 @@ export class PerfilComponent implements OnInit {
         //console.error('Error al obtener la imagen:', error);
       }
     );
-  }
+  }*/
 
   getPreImage(image: any): SafeUrl { // PREVISUALIZACIÓN IMAGENES
     const base64Image = image.contenido;
@@ -218,70 +203,117 @@ export class PerfilComponent implements OnInit {
   }
 
   detelePost(id: string) { // ELIMINA UNA PUBLICACIÓN
-    const url = `https://dasapp.alwaysdata.net/files.php`;
     const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
     };
-    const formData = new FormData();
-    formData.append('file_name', this.username+'/'+id);
+    const url = `https://das-uabook.000webhostapp.com/delete_post.php`;
+    const body = { 
+      id: '3', 
+      id_user: '2', 
+    };
 
-      const headers = new HttpHeaders();
-      this.http.post('https://dasapp.alwaysdata.net/delete.php', formData, { headers })
-        .subscribe(
-          (data: any) => {
-            this.Okdeleteall = true;  
-            setTimeout(() => {
-              this.Okdeleteall =  false;
-            }, 3000);
-            setTimeout(() => {
-              this.getPosts();
-            }, 500);
-          },
-          (error: any) => {
-            this.Okdeleteall = true;  
-            setTimeout(() => {
-              this.Okdeleteall =  false;
-            }, 3000);
-            setTimeout(() => {
-              this.getPosts();
-            }, 500);
-          }
-        );
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getPosts();
+        }, 500);
+      },
+      (error: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getPosts();
+        }, 500);
+      }
+    );
   }
 
   downloadPost(id: any) { // DESCARGAR IMAGEN
-    this.downloaderService.downloader(this.username+'/'+id);
+    //this.downloaderService.downloader(this.username+'/'+id);
   }
 
   downloadPostExt(id: any, owner: any) { // DESCARGAR COMPARTIDA
-    this.downloaderShared.downloader(owner+'/'+id, owner, this.username);
+    //this.downloaderShared.downloader(owner+'/'+id, owner, this.username);
   }
   
   postLike(idUser: any, idPost: any) { // DAR LIKE
-    const url = "https://dasapp.alwaysdata.net/postlike";
-    const data = {
-      idUser: 0,
-      idPost: 0
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
     };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
+    const url = `https://das-uabook.000webhostapp.com/post_like.php`;
+    const body = { 
+      id: '3', 
+      id_user: '2', 
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getPosts();
+        }, 500);
+      },
+      (error: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getPosts();
+        }, 500);
+      }
+    );
   }
 
   postComment(idUser: any, idPost: any, text: any){ // COMENTAR POST
-    const url = "https://dasapp.alwaysdata.net/postreqqest";
-    const data = {
-      idUser: 0,
-      idPost: 0,
-      text: "Contenido comentario"
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
     };
-    this.http.post(url, data).subscribe((respuesta) => {
-      console.log("Respuesta:", respuesta);
-    }, (error) => {
-      console.log("Error:", error);
-    });
+    const url = `https://das-uabook.000webhostapp.com/post_comment.php`;
+    const body = { 
+      id_post: '3', 
+      id_user: '2', 
+      text: 'hola'
+    };
+
+  this.http.post(url, JSON.stringify(body), httpOptions)
+    .subscribe(
+      (data: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getPosts();
+        }, 500);
+      },
+      (error: any) => {
+        this.Okdeleteall = true;  
+        setTimeout(() => {
+          this.Okdeleteall =  false;
+        }, 3000);
+        setTimeout(() => {
+          this.getPosts();
+        }, 500);
+      }
+    );
   }
 
   editPost(idPost: any, name: any){ // EDITAR POST
@@ -334,32 +366,6 @@ export class PerfilComponent implements OnInit {
     }, (error) => {
       console.log("Error:", error);
     });
-  }
-  
-  login2() {
-    const url = 'https://dasapp.alwaysdata.net/login';
-    const credentials = { username: 'david', password: '123' };
-
-    this.http.post<any>(url, credentials).subscribe(
-      (response) => {
-        console.log('Respuesta del servidor:', response);
-      },
-      (error) => {
-        console.error('Error al iniciar sesión:', error);
-      }
-    );
-  }
-  
-  getData() {
-    const url = 'https://dasapp.alwaysdata.net/data';
-    this.http.get<any>(url).subscribe(
-      (response) => {
-        console.log('Respuesta del servidor:', response);
-      },
-      (error) => {
-        console.error('Error al obtener datos:', error);
-      }
-    );
   }
 
 }
