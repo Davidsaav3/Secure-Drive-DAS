@@ -11,9 +11,9 @@ export class Get_my_postsService {
   
   constructor(private http: HttpClient) {}
 
-  get_my_posts(id_user: any): Observable<any> {
+  get_my_posts(username: any): Observable<any> {
     const formData = new FormData();
-    formData.append('id_user', id_user);
+    formData.append('username', username);
     return this.http.post<any>(this.apiUrl, formData);
   }
 }

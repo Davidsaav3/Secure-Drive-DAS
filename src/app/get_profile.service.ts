@@ -11,9 +11,9 @@ export class Get_profileService {
   
   constructor(private http: HttpClient) {}
 
-  get_profile(id_user: any): Observable<any> {
+  get_profile(username: any): Observable<any> {
     const formData = new FormData();
-    formData.append('id_user', id_user);
+    formData.append('username', username);
     return this.http.post<any>(this.apiUrl, formData);
   }
 }

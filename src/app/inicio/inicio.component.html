@@ -8,7 +8,7 @@
           <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px; position: relative;">
             <div class="d-flex justify-content-between align-items-center p-2 ps-0">
               <div class="d-flex">
-                <h5 class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.username.split('.')[0]}}</strong></h5>
+                <a [href]="'/perfil/' + archivo.username" class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.username.split('.')[0]}}</strong></a>
               </div>
               <div class="d-flex">
                 <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2" style="color: aliceblue; border: 1px solid white;">{{archivo.likes}} Me gusta </p>
@@ -18,6 +18,9 @@
             <div class="row no-gutters">
                 <div class="col-md-2" style="width: auto;">
                   <img [src]="archivo.url_image" class="card-img" alt="...">
+                </div>
+                <div class="m-2" style="color: white;">
+                  <p class="m-0"> {{archivo.text_post}}</p>
                 </div>
                 <!--<video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
                   <source [src]="archivo.url" type="video/mp4">
@@ -68,7 +71,7 @@
                       <div class="p-3 pt-0">
                         <div class="card bg-white rounded">
                           <div class="card-body">
-                            <p class="card-title"><strong>{{arch.username}}</strong></p>
+                            <a [href]="'/perfil/' + arch.username" class="card-title" style="color: black;"><strong>{{arch.username.split('.')[0]}}</strong></a>
                             <p class="card-text mt-0">{{arch.text}}</p>
                           </div>
                         </div>

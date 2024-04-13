@@ -63,7 +63,7 @@ export class NavComponent implements OnInit {
     const body = { 
       id_user: '1', 
       text: this.postData.text, 
-      url_image: this.postData.text
+      url_image: this.postData.image
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)

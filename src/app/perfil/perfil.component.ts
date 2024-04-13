@@ -24,6 +24,7 @@ export class ReplacePipe implements PipeTransform {
 export class PerfilComponent implements OnInit {
 
   constructor( private get_profileService: Get_profileService,  private get_my_postsService : Get_my_postsService, private route: ActivatedRoute, private sanitizer: DomSanitizer, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private router: Router) {
+    this.profilename = this.route.snapshot.url[1].path;
   }
  
   files: any[] = [];
@@ -115,7 +116,6 @@ export class PerfilComponent implements OnInit {
     this.getProfile()
     this.getMyPosts()
 
-    this.profilename = this.route.snapshot.url[1].path;
     if (localStorage.getItem('username')==null) {
       //this.router.navigate(['login']);
     }
@@ -126,7 +126,8 @@ export class PerfilComponent implements OnInit {
   }
 
   getProfile(){ // OBTIENE DATOS DE USUARIO
-    this.get_profileService.get_profile(this.id).subscribe(
+    console.log(this.profilename)
+    this.get_profileService.get_profile(this.profilename).subscribe(
       (response: any) => {
         console.log(response)
         this.user = response;
@@ -138,7 +139,8 @@ export class PerfilComponent implements OnInit {
   }
 
   getMyPosts() {  // OBTENER POSTS
-    this.get_my_postsService.get_my_posts(this.id).subscribe(
+    console.log(this.profilename)
+    this.get_my_postsService.get_my_posts(this.profilename).subscribe(
       (response: any) => {
         console.log(response)
         this.posts.post = response;
