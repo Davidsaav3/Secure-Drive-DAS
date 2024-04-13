@@ -5,14 +5,15 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class FilesService {
-  private apiUrl = 'https://dasapp.alwaysdata.net/files.php';
+
+export class Post_requestService {
+  private apiUrl = 'https://das-uabook.000webhostapp.com/post_request.php';
   
   constructor(private http: HttpClient) {}
 
-  files(folderPath: string): Observable<any> {
+  post_request(id_user: any): Observable<any> {
     const formData = new FormData();
-    formData.append('folder_path', folderPath);
+    formData.append('id_user', id_user);
     return this.http.post<any>(this.apiUrl, formData);
   }
 }

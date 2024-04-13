@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service'; 
-import { UploadService } from '../upload.service';
+import { UploadService } from '../old/upload.service';
 
 @Component({
   selector: 'app-nav',

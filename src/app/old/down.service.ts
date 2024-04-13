@@ -10,9 +10,9 @@ export class DownService {
   constructor(private http: HttpClient) {}
 
   downloadFile(fileName: string): Observable<any> {
-    const url = `https://dasapp.alwaysdata.net/downloader.php`
+    const url = `https://dasapp.alwaysdata.net/dameUsuario`
     const formData = new FormData();
-    formData.append('file_name', fileName);
+    formData.append('usuario', 'David');
     return this.http.post(url, formData, { responseType: 'blob' }).pipe(
       catchError((error: HttpErrorResponse) => {
         //console.error('Error al descargar el archivo:', error);

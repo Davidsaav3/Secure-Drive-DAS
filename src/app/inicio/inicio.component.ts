@@ -4,14 +4,14 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service'; 
-import { DownloaderService } from '../downloader.service';
-import { DownloaderSharedService } from '../downloaderShared.service';
-import { UploadService } from '../upload.service';
-import { FilesService } from '../files.service';
-import { MyfilesService } from '../myshare.service';
-import { OtherfilesService } from '../othershare.service';
+import { DownloaderService } from '../old/downloader.service';
+import { DownloaderSharedService } from '../old/downloaderShared.service';
+import { UploadService } from '../old/upload.service';
+import { Get_all_postsService } from '../get_all_posts.service';
+import { MyfilesService } from '../old/myshare.service';
+import { OtherfilesService } from '../old/othershare.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { DownService } from '../down.service';
+import { DownService } from '../old/down.service';
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
 
@@ -30,7 +30,7 @@ export class ReplacePipe implements PipeTransform {
 
 export class InicioComponent implements OnInit {
 
-  constructor(private downloaderShared: DownloaderSharedService, private downService: DownService, private sanitizer: DomSanitizer, private filesService: FilesService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
+  constructor(private downloaderShared: DownloaderSharedService, private downService: DownService, private sanitizer: DomSanitizer, private get_all_postsService: Get_all_postsService,private uploadService: UploadService, private downloaderService: DownloaderService, private authService:AuthService, private formBuilder: FormBuilder, private http: HttpClient, private myfilesService: MyfilesService, private otherfilesService: OtherfilesService, private router: Router) {
   }
  
   files: any[] = [];
@@ -67,42 +67,22 @@ export class InicioComponent implements OnInit {
   posts = {
     post:[
       {
-        id: 0,
-        name: "imagen",
-        likes: 10,
-        url: "https://via.placeholder.com/600",
+        id_post: 0,
+        id_user: 0,
+        text_post: '',
+        url_image: '',
+        date: '',
+        likes: 0,
+        username: '',
         comments: [
           {
             id: 0,
-            username: "Davidsaav3",
-            text: "Contenido de comentario"
-          },
-          {
-            id: 1,
-            username: "Luis",
-            text: "Contenido de comentario"
-          },
+            username: "",
+            text: ""
+          }
         ],
-      },
-      {
-        id: 0,
-        name: "imagen",
-        likes: 10,
-        url: "https://via.placeholder.com/600",
-        comments: [
-          {
-            id: 0,
-            username: "Davidsaav3",
-            text: "Contenido de comentario"
-          },
-          {
-            id: 1,
-            username: "Luis",
-            text: "Contenido de comentario"
-          },
-        ],
-      },
-  ],
+      }
+    ],
   };
 
   ngOnInit(): void {
@@ -117,11 +97,12 @@ export class InicioComponent implements OnInit {
   }
 
   getAllPosts() {  // OBTENER PUBLICACIONES
-    const folderPath = 'storage/' + this.username; 
-    this.filesService.files(folderPath).subscribe(
+    const id_user = 1; 
+    this.get_all_postsService.get_all_posts(id_user).subscribe(
       (response: any) => {
-        this.archivos = response.archivos;
-        for (let i = 0; i < this.archivos.length; i++) {
+        console.log(response)
+        this.posts.post = response;
+        /*for (let i = 0; i < this.archivos.length; i++) {
           const archivo = this.archivos[i];
           const filePath = this.username + '/' + archivo.nombre;
           this.downService.getFileView(filePath).subscribe(
@@ -132,11 +113,10 @@ export class InicioComponent implements OnInit {
               //console.error('Error al obtener la imagen:', error);
             }
           );
-        }
-        //console.log(this.archivos)
+        }*/
       },
       (error: any) => {
-        //console.error('Error al obtener la lista de archivos:', error);
+        console.error('Error al obtener la lista de archivos:', error);
       }
     );
   }  

@@ -39,7 +39,7 @@ export class EntrarComponent {
   login() {
     if (this.registerForm.valid) {
       console
-      const url = 'https://dasapp.alwaysdata.net/entrar.php';
+      const url = 'https://uabook.infinityfreeapp.com/login.php';
       const body = { 
         username: this.registerForm.get('username')?.value, 
         password: this.registerForm.get('password')?.value 
