@@ -40,6 +40,7 @@ export class NavComponent implements OnInit {
   logout(): void { // CERRRA SESIÓN
     localStorage.removeItem('username');
     localStorage.removeItem('id');
+    localStorage.removeItem('token');
     this.authService.logout();
     this.router.navigate(['entrar']);
   }

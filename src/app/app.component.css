@@ -16,3 +16,16 @@
     overflow: auto;
   }
   
+  .google-login-button {
+    background-color: #4285F4; /* Color primario de Google */
+    color: white; /* Texto en color blanco */
+    border: none; /* Sin borde */
+    border-radius: 50px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Cursor al pasar sobre el botón */
+  }
+  
+  .google-login-button:hover {
+    background-color: #357ae8; /* Color de fondo al pasar el ratón */
+  }
