@@ -117,6 +117,7 @@ export class InicioComponent implements OnInit {
   }  
 
   deletePost() { // ELIMINA UNA PUBLICACIÓN
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -124,8 +125,9 @@ export class InicioComponent implements OnInit {
     };
     const url = `https://das-uabook.000webhostapp.com/delete_post.php`;
     const body = { 
-      id: this.id_post,
+      id_post: this.id_post,
       id_user: this.id, 
+      token: token
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
@@ -152,6 +154,7 @@ export class InicioComponent implements OnInit {
   }
   
   postLike(id_post: any) { // DAR LIKE
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -161,6 +164,7 @@ export class InicioComponent implements OnInit {
     const body = { 
       id: id_post, 
       id_user: this.id, 
+      token: token, 
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
@@ -179,6 +183,7 @@ export class InicioComponent implements OnInit {
   }
 
   postComment(id_post: any, text: any){ // COMENTAR POST
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -188,7 +193,8 @@ export class InicioComponent implements OnInit {
     const body = { 
       id_post: id_post, 
       id_user: this.id, 
-      text: text
+      text: text,
+      token: token
     };
 
     if(this.comentario!=''){
@@ -211,6 +217,7 @@ export class InicioComponent implements OnInit {
   }
 
   editPost() { // EDITAR PERFIL
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -220,7 +227,7 @@ export class InicioComponent implements OnInit {
     const body = { 
       id: this.id_post,
       text: this.postData.text, 
-      //url_image: this.postData.image
+      token: token
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)

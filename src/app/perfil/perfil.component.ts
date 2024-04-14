@@ -160,18 +160,19 @@ export class PerfilComponent implements OnInit {
   }
 
   deletePost() { // ELIMINA UNA PUBLICACIÓN
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    };
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    })
+    
     const url = `https://das-uabook.000webhostapp.com/delete_post.php`;
     const body = { 
-      id: this.id_post,
+      id_post: this.id_post,
       id_user: this.id, 
+      token: token
     };
 
-  this.http.post(url, JSON.stringify(body), httpOptions)
+  this.http.post(url, JSON.stringify(body), { headers: headers })
     .subscribe(
       (data: any) => {
         this.Okdeleteall = true;  
@@ -196,6 +197,7 @@ export class PerfilComponent implements OnInit {
   }
   
   postLike(id_post: any) { // DAR LIKE
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -205,6 +207,7 @@ export class PerfilComponent implements OnInit {
     const body = { 
       id: id_post, 
       id_user: this.id, 
+      token: token
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
@@ -223,6 +226,7 @@ export class PerfilComponent implements OnInit {
   }
 
   postComment(id_post: any, text: any){ // COMENTAR POST
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -232,7 +236,8 @@ export class PerfilComponent implements OnInit {
     const body = { 
       id_post: id_post, 
       id_user: this.id, 
-      text: text
+      text: text,
+      token: token
     };
 
   if(this.comentario!=''){
@@ -255,6 +260,7 @@ export class PerfilComponent implements OnInit {
   }
 
   editPost() { // EDITAR PERFIL
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -264,7 +270,7 @@ export class PerfilComponent implements OnInit {
     const body = { 
       id: this.id_post,
       text: this.postData.text, 
-      //url_image: this.postData.image
+      token: token 
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
@@ -288,6 +294,7 @@ export class PerfilComponent implements OnInit {
   }
 
   PostRequest(){ // ACEPTAR O DENEGAR SOLICITUD DE SEGUIMIENTO
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -297,6 +304,7 @@ export class PerfilComponent implements OnInit {
     const body = { 
       id_sender: this.id,
       id_receiver: this.user.id,
+      token: token
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
@@ -315,6 +323,7 @@ export class PerfilComponent implements OnInit {
   }
 
   ResolveRequest(state: any){ // RESOLVER SOLICITUD DE SEGUIMIENTO
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -324,7 +333,8 @@ export class PerfilComponent implements OnInit {
     const body = { 
       id_sender: this.user.id,
       id_receiver: this.id,
-      status: state
+      status: state,
+      token: token
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)
@@ -343,6 +353,7 @@ export class PerfilComponent implements OnInit {
   }
 
   editProfile(state: any){ // RESOLVER SOLICITUD DE SEGUIMIENTO
+    const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -351,7 +362,8 @@ export class PerfilComponent implements OnInit {
     const url = `https://das-uabook.000webhostapp.com/edit_profile.php`;
     const body = { 
       id_user: this.id,
-      status: state
+      status: state,
+      token: token
     };
 
   this.http.post(url, JSON.stringify(body), httpOptions)

@@ -56,9 +56,14 @@ export class NavComponent implements OnInit {
 
   PostImage() { // PUBLICAR IMAGEN
     const url = `https://das-uabook.000webhostapp.com/post_image.php`;
+    const token = localStorage.getItem('token');
 
     const formData = new FormData();
     formData.append('text', this.postData.text);
+    if(token!=null){
+      formData.append('token', token);
+    }
+
     if (this.postData.image) {
       formData.append('url_image', this.postData.image);
     }

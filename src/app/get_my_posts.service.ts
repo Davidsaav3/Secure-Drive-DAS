@@ -13,6 +13,10 @@ export class Get_my_postsService {
 
   get_my_posts(username: any): Observable<any> {
     const formData = new FormData();
+    const token = localStorage.getItem('token');
+    if(token!=null){
+      formData.append('token', token);
+    }
     formData.append('username', username);
     return this.http.post<any>(this.apiUrl, formData);
   }
