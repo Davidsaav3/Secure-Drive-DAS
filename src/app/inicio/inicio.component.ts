@@ -98,7 +98,7 @@ export class InicioComponent implements OnInit {
 
   ngOnInit(): void { // INICIALIZACIÓN
     if (localStorage.getItem('username')==null) {
-      //this.router.navigate(['login']);
+      this.router.navigate(['entrar']);
     }
     this.getAllPosts();
   }
@@ -191,20 +191,23 @@ export class InicioComponent implements OnInit {
       text: text
     };
 
-  this.http.post(url, JSON.stringify(body), httpOptions)
-    .subscribe(
-      (data: any) => {
-        setTimeout(() => {
-          this.mostrarComentarios= true;
-          this.getAllPosts();
-        }, 500);
-      },
-      (error: any) => {
-        setTimeout(() => {
-          this.getAllPosts();
-        }, 500);
-      }
-    );
+    if(this.comentario!=''){
+      this.http.post(url, JSON.stringify(body), httpOptions)
+        .subscribe(
+          (data: any) => {
+            setTimeout(() => {
+              this.mostrarComentarios= true;
+              this.getAllPosts();
+              this.comentario= '';
+            }, 500);
+          },
+          (error: any) => {
+            setTimeout(() => {
+              this.getAllPosts();
+            }, 500);
+          }
+      );
+    }
   }
 
   editPost() { // EDITAR PERFIL

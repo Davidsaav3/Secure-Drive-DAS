@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service'; 
 import { UploadService } from '../old/upload.service';
 import { HttpClient , HttpHeaders} from '@angular/common/http';
+import { CanActivate, Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -11,7 +12,7 @@ import { HttpClient , HttpHeaders} from '@angular/common/http';
 
 export class NavComponent implements OnInit {
 
-  constructor(private http: HttpClient, private authService:AuthService, private uploadService: UploadService) {
+  constructor(private router: Router, private http: HttpClient, private authService:AuthService, private uploadService: UploadService) {
   }
  
   Okshare = false;
@@ -37,10 +38,10 @@ export class NavComponent implements OnInit {
   }
 
   logout(): void { // CERRRA SESIÓN
-    this.authService.setAuthenticated(false);
     localStorage.removeItem('username');
     localStorage.removeItem('id');
-    localStorage.removeItem('auth');
+    this.authService.logout();
+    this.router.navigate(['entrar']);
   }
 
   nombre(event: any) { // OBTENER NOMBRE 

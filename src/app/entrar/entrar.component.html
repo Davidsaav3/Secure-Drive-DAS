@@ -34,9 +34,12 @@
                 <div *ngIf="registerForm.get('password')?.errors?.['required']">
                   Contraseña es requerida.
                 </div>
-                <div *ngIf="registerForm.get('password')?.errors?.['minlength']">
+                <!--<div *ngIf="registerForm.get('password')?.errors?.['minlength']">
                   Contraseña debe tener al menos 6 caracteres.
                 </div>
+                <div *ngIf="registerForm.get('password')?.errors?.['pattern']">
+                  La contraseña debe contener al menos una mayúscula, un número y un carácter especial.
+                </div>-->
               </div>
             </div>
             <button type="submit" class="btn btn-dark d-block mx-auto">Iniciar sesión</button>

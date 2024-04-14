@@ -120,7 +120,7 @@ export class PerfilComponent implements OnInit {
     this.getMyPosts()
 
     if (localStorage.getItem('username')==null) {
-      //this.router.navigate(['login']);
+      this.router.navigate(['entrar']);
     }
   }
 
@@ -235,12 +235,14 @@ export class PerfilComponent implements OnInit {
       text: text
     };
 
-  this.http.post(url, JSON.stringify(body), httpOptions)
+  if(this.comentario!=''){
+    this.http.post(url, JSON.stringify(body), httpOptions)
     .subscribe(
       (data: any) => {
         setTimeout(() => {
           this.getMyPosts();
           this.mostrarComentarios= true;
+          this.comentario= '';
         }, 500);
       },
       (error: any) => {
@@ -249,6 +251,7 @@ export class PerfilComponent implements OnInit {
         }, 500);
       }
     );
+  }
   }
 
   editPost() { // EDITAR PERFIL

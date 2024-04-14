@@ -18,7 +18,7 @@ export class EntrarComponent {
   });
   registerForm: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/)]]
   });
 
   cont: any= 0;
@@ -72,6 +72,7 @@ export class EntrarComponent {
             localStorage.setItem('id', response.id);
             this.authService.setAuthenticated(true);
             this.router.navigate(['/inicio']);
+            localStorage.setItem('token', response.token);
           }
           if(response.code==400){
             this.mostrar2= true;

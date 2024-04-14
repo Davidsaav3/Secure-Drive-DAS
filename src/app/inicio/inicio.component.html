@@ -29,7 +29,8 @@
                   <img [src]="'https://das-uabook.000webhostapp.com/'+archivo.url_image" class="card-img" alt="...">
                 </div>
                 <div class="m-2" style="color: white;">
-                  <p class="m-0"> {{archivo.text_post}}</p>
+                  <p class="m-0"><strong>{{archivo.text_post}}</strong> </p>
+                  <p class="m-0"> {{archivo.date}}</p>
                 </div>
                 <!--<video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
                   <source [src]="archivo.url" type="video/mp4">
@@ -40,8 +41,8 @@
                   Tu navegador no soporta el elemento de audio.
                 </audio>
                 <iframe *ngIf="archivo.tipo=='pdf'" type="application/pdf" [src]="archivo.url"></iframe>-->
-              <div class="">
-                <div class="card-body">
+              <div >
+                <div class="card-body pt-0">
                   <div class="d-flex pt-1">
                     <button class="btn btn-secondary rounded-end enviar-btn me-3" (click)="postLike(archivo.id_post)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
