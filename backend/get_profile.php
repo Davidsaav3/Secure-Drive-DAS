@@ -5,11 +5,28 @@
     header("Allow: GET, POST, OPTIONS, PUT, DELETE");
     header("Referrer-Policy: unsafe-url");
     include_once("sql.php");
+    require_once("vendor/autoload.php");
+
 
     // Obtener el username del parámetro POST
     $username = $_POST['username'];
     if (!isset($username)) {
         echo "Se requiere el parámetro username.";
+        exit();
+    }
+    
+    $token = $_POST['token'];
+    if (!$token) {
+        echo json_encode(array("mensaje" => "Token de autorización no proporcionado"));
+        exit();
+    }
+    try {
+        $key = 'your_secret_key';
+        $decoded = Firebase\JWT\JWT::decode($token, new Firebase\JWT\Key($key, 'HS256'));   
+        $id_user = $decoded->id;
+    } 
+    catch (Exception $e) {
+        echo json_encode(array("mensaje" => "Token de autorización inválido"));
         exit();
     }
 

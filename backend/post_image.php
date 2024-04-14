@@ -5,13 +5,29 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 include_once("sql.php");
 
-$conn = createDataBaseConnection();
+    require_once("vendor/autoload.php"); 
+    $conn = createDataBaseConnection();
 
 // Verificar si se han recibido los datos del formulario y el archivo
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['url_image']) && isset($_POST['id_user']) && isset($_POST['text'])) {
     $id_user = $_POST['id_user'];
     $text = $_POST['text'];
+    $token = $_POST['token'];
     
+    if (!$token) {
+        echo json_encode(array("mensaje" => "Token de autorización no proporcionado"));
+        exit();
+    }
+    try {
+        $key = 'your_secret_key';
+        $decoded = Firebase\JWT\JWT::decode($token, new Firebase\JWT\Key($key, 'HS256'));   
+        $id_user = $decoded->id;
+    } 
+    catch (Exception $e) {
+        echo json_encode(array("mensaje" => "Token de autorización inválido"));
+        exit();
+    }
+
     // Verificar si el archivo se cargó correctamente
     if ($_FILES['url_image']['error'] !== UPLOAD_ERR_OK) {
         echo json_encode(array("mensaje" => "Error al cargar la imagen."));
