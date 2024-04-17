@@ -43,7 +43,7 @@ export class PerfilComponent implements OnInit {
   options: string[] = [];
 
   profile= true;
-  follow= true;
+  follow= false;
   numfollow= 0;
   numfollowers= 0;
   numimages= 0;
@@ -79,6 +79,7 @@ export class PerfilComponent implements OnInit {
     followers: 0,
     num_posts: 0,
     status: 0,
+    auth: 0,
     requests: [
       {
         id_user: 0,
@@ -126,7 +127,7 @@ export class PerfilComponent implements OnInit {
 
   getProfile(){ // OBTIENE DATOS DE USUARIO
     console.log(this.profilename)
-    this.get_profileService.get_profile(this.profilename).subscribe(
+    this.get_profileService.get_profile(this.profilename, this.id).subscribe(
       (response: any) => {
         console.log(response)
         this.user = response;
@@ -322,7 +323,7 @@ export class PerfilComponent implements OnInit {
     );
   }
 
-  ResolveRequest(state: any){ // RESOLVER SOLICITUD DE SEGUIMIENTO
+  ResolveRequest(state: any, sender: any){ // RESOLVER SOLICITUD DE SEGUIMIENTO
     const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
@@ -331,7 +332,7 @@ export class PerfilComponent implements OnInit {
     };
     const url = `https://das-uabook.000webhostapp.com/resolve_request.php`;
     const body = { 
-      id_sender: this.user.id,
+      id_sender: sender,
       id_receiver: this.id,
       status: state,
       token: token

@@ -11,13 +11,14 @@ export class Get_profileService {
   
   constructor(private http: HttpClient) {}
 
-  get_profile(username: any): Observable<any> {
+  get_profile(username: any, id: any): Observable<any> {
     const formData = new FormData();
     const token = localStorage.getItem('token');
     if(token!=null){
       formData.append('token', token);
     }
     formData.append('username', username);
+    formData.append('id', id);
     return this.http.post<any>(this.apiUrl, formData);
   }
 }
