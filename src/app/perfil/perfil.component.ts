@@ -66,7 +66,7 @@ export class PerfilComponent implements OnInit {
   images: any[] = [];
 
   switchState: boolean = false; // Estado inicial del switch
-  comentario: string = ''; // Propiedad para almacenar el valor del input
+  comentario: string[] = [];// Propiedad para almacenar el valor del input
 
   shareForm: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
@@ -109,7 +109,7 @@ export class PerfilComponent implements OnInit {
     ],
   };
 
-  mostrarComentarios= false;
+  mostrarComentarios: boolean[] = [];
 
   postData = {
     text: '',
@@ -226,7 +226,7 @@ export class PerfilComponent implements OnInit {
     );
   }
 
-  postComment(id_post: any, text: any){ // COMENTAR POST
+  postComment(id_post: any, text: any, i: any){ // COMENTAR POST
     const token = localStorage.getItem('token');
     const httpOptions = {
       headers: new HttpHeaders({
@@ -241,14 +241,14 @@ export class PerfilComponent implements OnInit {
       token: token
     };
 
-  if(this.comentario!=''){
+  if(this.comentario[i]!=''){
     this.http.post(url, JSON.stringify(body), httpOptions)
     .subscribe(
       (data: any) => {
         setTimeout(() => {
           this.getMyPosts();
-          this.mostrarComentarios= true;
-          this.comentario= '';
+          this.mostrarComentarios[i]= true;
+          this.comentario[i]= '';
         }, 500);
       },
       (error: any) => {
