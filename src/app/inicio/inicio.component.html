@@ -26,7 +26,7 @@
             </div>
             <div class="row no-gutters">
                 <div class="col-md-2" style="width: auto;">
-                  <img [src]="'https://das-uabook.000webhostapp.com/'+archivo.url_image" class="card-img" alt="...">
+                  <img [src]="'data:image/jpeg;base64,'+archivo.image" class="card-img" alt="...">
                 </div>
                 <div class="m-2" style="color: white;">
                   <p class="m-0"><strong>{{archivo.text_post}}</strong> </p>
@@ -114,7 +114,7 @@
                 <input type="file" class="form-control-file" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" required>
               </div>-->
                 <div class="form-group">
-                  <label for="text">Texto</label>
+                  <label for="text">Título</label>
                   <textarea class="form-control" id="text" name="text" [(ngModel)]="postData.text" required></textarea>
                 </div>
               

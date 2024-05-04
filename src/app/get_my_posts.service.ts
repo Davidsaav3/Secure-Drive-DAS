@@ -8,16 +8,18 @@ import { Observable } from 'rxjs';
 
 export class Get_my_postsService {
   private apiUrl = 'https://das-uabook.000webhostapp.com/get_my_posts.php';
-  
-  constructor(private http: HttpClient) {}
 
-  get_my_posts(username: any): Observable<any> {
+  constructor(private http: HttpClient) { }
+
+  get_my_posts(username: any, id: any): Observable<any> {
     const formData = new FormData();
     const token = localStorage.getItem('token');
-    if(token!=null){
+    if (token != null) {
       formData.append('token', token);
     }
     formData.append('username', username);
+    formData.append('id', id);
+
     return this.http.post<any>(this.apiUrl, formData);
   }
 }

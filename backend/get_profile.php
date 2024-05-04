@@ -1,9 +1,26 @@
 <?php
-header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: POST");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 header("Referrer-Policy: unsafe-url");
+header("X-XSS-Protection: 1; mode=block");
+header("X-Content-Type-Options: nosniff");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+//header("Content-Security-Policy: default-src 'self'");
+
+    $allowed_domains = array(
+        'http://localhost:4200',
+        'https://uabook-81dcf.web.app'
+    );
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    if (in_array($origin, $allowed_domains)) {
+        header("Access-Control-Allow-Origin: $origin");
+    } 
+    else {
+        header("HTTP/1.1 403 Forbidden");
+        exit();
+    }
+
 include_once("sql.php");
 require_once("vendor/autoload.php");
 include_once("functions.php");
@@ -56,6 +73,7 @@ try {
         if ($id_user == $id2) {
             $auth = -1; // Otros casos
         }
+        
     } else {
         echo json_encode(array("mensaje" => "Usuario no encontrado"));
         exit();
@@ -87,12 +105,15 @@ $stmt_check_request_status->bind_param("ii", $id_user, $id2);
 $stmt_check_request_status->execute();
 $result_request_status = $stmt_check_request_status->get_result();
 
+        //echo $result_request_status . $account_status . $auth;
+            //exit();
+
 if ($result_request_status->num_rows > 0) {
     $row_request_status = $result_request_status->fetch_assoc();
     $request_status = $row_request_status['status'];
     
     // Determinar el valor del campo "auth" basado en el estado de la cuenta y las solicitudes
-                //echo $request_status . $account_status;
+            //echo $request_status . $account_status . $auth;
             //exit();
         
     if ($auth != -1) {
@@ -110,7 +131,9 @@ if ($result_request_status->num_rows > 0) {
         }
     }
 } else {
-    $request_status = null; // Si no hay solicitudes
+    if($auth==0){
+        $auth = $account_status; // Si no hay solicitudes
+    }
 }
 
 // Consulta preparada para obtener las solicitudes de seguimiento
@@ -149,6 +172,10 @@ $result_info_usuario = $stmt_info_usuario->get_result();
 
 if ($result_info_usuario->num_rows > 0) {
     $row_info_usuario = $result_info_usuario->fetch_assoc();
+
+
+//echo $auth;
+//exit();
 
     $user = array(
         "id" => $row_info_usuario['id'],

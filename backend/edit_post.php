@@ -49,7 +49,7 @@
     }
     
     if (!property_exists($data, 'text')) {
-        echo json_encode(array("mensaje" => "No se proporcionó el texto del post"));
+        echo json_encode(array("mensaje" => "No se proporcionó un título para el post"));
         exit();
     }
     

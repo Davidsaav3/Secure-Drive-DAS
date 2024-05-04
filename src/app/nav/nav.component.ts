@@ -77,7 +77,8 @@ export class NavComponent implements OnInit {
       return; 
     }
 
-    this.http.post(url, formData)
+    if(this.postData.image && this.postData.text){
+      this.http.post(url, formData)
     .subscribe(
       (data: any) => {
         this.Okupload = true;  
@@ -98,6 +99,7 @@ export class NavComponent implements OnInit {
         }, 500);
       }
     );
+    }
 }
 
 

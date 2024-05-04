@@ -1,12 +1,31 @@
 <?php
-    header('Access-Control-Allow-Origin: *');
-    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-    header("Allow: GET, POST, OPTIONS, PUT, DELETE");
-    header("Referrer-Policy: unsafe-url");
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
+header("Access-Control-Allow-Methods: POST");
+header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+header("Referrer-Policy: unsafe-url");
+header("X-XSS-Protection: 1; mode=block");
+header("X-Content-Type-Options: nosniff");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+//header("Content-Security-Policy: default-src 'self'");
+    
+    $allowed_domains = array(
+        'http://localhost:4200',
+        'https://uabook-81dcf.web.app'
+    );
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    if (in_array($origin, $allowed_domains)) {
+        header("Access-Control-Allow-Origin: $origin");
+    } 
+    else {
+        header("HTTP/1.1 403 Forbidden");
+        exit();
+    }
+    
     include_once("sql.php");
     require_once("vendor/autoload.php");
     include_once("functions.php");
+
+    $key = getConfigVariable('enc');
 
     // Crear una conexión a la base de datos
     $conn = createDataBaseConnection();
@@ -83,9 +102,24 @@
 
         while($row = $result->fetch_assoc()) {
             $row['comments'] = json_decode('[' . $row['comments'] . ']', true);
+
+            $file_path = AESDecode($row['url_image'], $key);
+            if (file_exists($file_path)) {
+                // Desciframos el archivo
+                $decryptedContent = AESDecode(file_get_contents($file_path), $key);
+                //Pasamos la imagen a base64
+                $base64Content = base64_encode($decryptedContent);
+                //Asignamos la imagen al array
+                $row['image'] = $base64Content;
+            } else {
+                $row['image'] = 'ImageNotFound';
+            }
+
+            unset($row['url_image']);
             $publicaciones[] = $row;
         }
         echo json_encode($publicaciones);
+        
     } 
     else {
         echo "No se encontraron publicaciones para el usuario.";

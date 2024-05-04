@@ -81,7 +81,7 @@ export class InicioComponent implements OnInit {
         id_post: -1,
         id_user: 0,
         text_post: '',
-        url_image: '',
+        image: '',
         date: '',
         likes: 0,
         username: '',

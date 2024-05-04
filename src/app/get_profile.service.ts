@@ -8,13 +8,13 @@ import { Observable } from 'rxjs';
 
 export class Get_profileService {
   private apiUrl = 'https://das-uabook.000webhostapp.com/get_profile.php';
-  
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient) { }
 
   get_profile(username: any, id: any): Observable<any> {
     const formData = new FormData();
     const token = localStorage.getItem('token');
-    if(token!=null){
+    if (token != null) {
       formData.append('token', token);
     }
     formData.append('username', username);
