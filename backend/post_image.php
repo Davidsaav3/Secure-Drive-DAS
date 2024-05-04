@@ -1,12 +1,31 @@
 <?php
-header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
+header("X-XSS-Protection: 1; mode=block");
+header("X-Content-Type-Options: nosniff");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+//header("Content-Security-Policy: default-src 'self'");
+
+    $allowed_domains = array(
+        'http://localhost:4200',
+        'https://uabook-81dcf.web.app'
+    );
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    if (in_array($origin, $allowed_domains)) {
+        header("Access-Control-Allow-Origin: $origin");
+    } 
+    else {
+        header("HTTP/1.1 403 Forbidden");
+        exit();
+    }
+
 include_once("sql.php");
 include_once("functions.php");
 
 require_once("vendor/autoload.php"); 
+
+$key = getConfigVariable('enc');
 $conn = createDataBaseConnection();
 
 // Verificar si se han recibido los datos del formulario y el archivo
@@ -59,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['url_image']) && isse
     if (!is_dir($destiny . $id_user)) {
         mkdir($destiny . $id_user, 0777, true);
     }
-    
+    file_put_contents($uploadedFile, AESEncoding(file_get_contents($uploadedFile), $key));
     if (!move_uploaded_file($uploadedFile, $destination)) {
         echo json_encode(array("mensaje" => "Error al subir la imagen."));
         exit();
@@ -80,7 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['url_image']) && isse
     // Preparar la consulta para insertar el post
     $sql = "INSERT INTO Posts (id_user, text, url_image, date) VALUES (?, ?, ?, NOW())";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iss", $id_user, $text, $destination); // Guardar la ruta del archivo en la base de datos
+    $route = AESEncoding($destination, $key);
+    $stmt->bind_param("iss", $id_user, $text, $route); // Guardar la ruta del archivo en la base de datos
     
     if ($stmt->execute()) {
         echo json_encode(array("mensaje" => "¡Imagen subida correctamente!"));

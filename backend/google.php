@@ -1,8 +1,14 @@
 <?php
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: POST");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+header("Referrer-Policy: unsafe-url");
+header("X-XSS-Protection: 1; mode=block");
+header("X-Content-Type-Options: nosniff");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+//header("Content-Security-Policy: default-src 'self'");
+
 include_once("sql.php");
 include_once("functions.php");
 

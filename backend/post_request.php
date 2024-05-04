@@ -1,8 +1,25 @@
 <?php
-    header('Access-Control-Allow-Origin: *');
-    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-    header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
+header("X-XSS-Protection: 1; mode=block");
+header("X-Content-Type-Options: nosniff");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+//header("Content-Security-Policy: default-src 'self'");
+    
+    $allowed_domains = array(
+        'http://localhost:4200',
+        'https://uabook-81dcf.web.app'
+    );
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    if (in_array($origin, $allowed_domains)) {
+        header("Access-Control-Allow-Origin: $origin");
+    } 
+    else {
+        header("HTTP/1.1 403 Forbidden");
+        exit();
+    }
+    
     include_once("sql.php");
     require_once("vendor/autoload.php");
     include_once("functions.php");
@@ -64,7 +81,7 @@
         $stmt_update_request->close();
     } else {
         // La combinación no existe, proceder con la inserción normalmente
-        $sql_insert_request = "INSERT INTO Requests (id_sender, id_receiver, status) VALUES (?, ?, ?)";
+        $sql_insert_request = "INSERT INTO Requests (id_sender, id_receiver, status, req_date) VALUES (?, ?, ?, NOW())";
         $stmt_insert_request = $conn->prepare($sql_insert_request);
         $stmt_insert_request->bind_param("iii", $id_sender, $id_receiver, $status);
         if ($stmt_insert_request->execute()) {

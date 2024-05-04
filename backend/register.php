@@ -1,8 +1,26 @@
 <?php
-header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: POST");
 header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+header("Referrer-Policy: unsafe-url");
+header("X-XSS-Protection: 1; mode=block");
+header("X-Content-Type-Options: nosniff");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+//header("Content-Security-Policy: default-src 'self'");
+
+    $allowed_domains = array(
+        'http://localhost:4200',
+        'https://uabook-81dcf.web.app'
+    );
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    if (in_array($origin, $allowed_domains)) {
+        header("Access-Control-Allow-Origin: $origin");
+    } 
+    else {
+        header("HTTP/1.1 403 Forbidden");
+        exit();
+    }
+
 include_once("functions.php");
 include_once("sql.php");
 require __DIR__ . '/vendor/autoload.php'; // Incluir la biblioteca JWT
@@ -23,7 +41,7 @@ if ($result_check_username->num_rows > 0) {
     $ogHash = generateHash($data->password);
     $uploadHash = prepareHashToUpload($ogHash);
     // Consulta preparada para insertar el nuevo usuario
-    $sql_insert_user = "INSERT INTO Users (username, password, status) VALUES (?, ?, '1')";
+    $sql_insert_user = "INSERT INTO Users (username, password, status) VALUES (?, ?, '0')";
     $stmt_insert_user = $conn->prepare($sql_insert_user);
     $stmt_insert_user->bind_param("ss", $data->username, $uploadHash);
 

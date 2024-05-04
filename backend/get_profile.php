@@ -105,24 +105,24 @@ $stmt_check_request_status->bind_param("ii", $id_user, $id2);
 $stmt_check_request_status->execute();
 $result_request_status = $stmt_check_request_status->get_result();
 
-        //echo $result_request_status . $account_status . $auth;
-            //exit();
+//echo $result_request_status . $account_status . $auth;
+//exit();
 
 if ($result_request_status->num_rows > 0) {
     $row_request_status = $result_request_status->fetch_assoc();
     $request_status = $row_request_status['status'];
     
     // Determinar el valor del campo "auth" basado en el estado de la cuenta y las solicitudes
-            //echo $request_status . $account_status . $auth;
-            //exit();
+    //echo $request_status . $account_status . $auth;
+    //exit();
         
     if ($auth != -1) {
         if ($account_status == 1) {
             // Cuenta abierta
             $auth = 1;
         } 
-              //echo $request_status . $account_status . $auth;
-            //exit();
+        //echo $request_status . $account_status . $auth;
+        //exit();
         if ($account_status == 0 && $request_status == 1) {
             // Cuenta cerrada con solicitud aceptada
             //echo $request_status;
