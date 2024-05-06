@@ -80,6 +80,7 @@ export class PerfilComponent implements OnInit {
     num_posts: 0,
     status: 0,
     auth: 0,
+    status1: 0,
     requests: [
       {
         id_user: 0,
@@ -130,8 +131,9 @@ export class PerfilComponent implements OnInit {
     console.log(this.profilename)
     this.get_profileService.get_profile(this.profilename, this.id).subscribe(
       (response: any) => {
-        console.log(response)
         this.user = response;
+        console.log('HOLA '+response.status1)
+        this.user.status1 = response.status1;
       },
       (error: any) => {
         console.error('Error al obtener datos de usuario:', error);

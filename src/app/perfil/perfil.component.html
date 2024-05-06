@@ -8,10 +8,10 @@
         <h2>{{user.username}}</h2>
         <p> {{user.num_posts}} Imagenes &nbsp; {{user.followers}} Seguidores &nbsp; {{user.following}} Siguiendo</p>
       </div>
-      <div *ngIf="this.username!=this.profilename" style="background-color: rgb(33, 37, 41);"  class="col-md-2" (click)="PostRequest()">
-        <span *ngIf="user.auth==0" class="input-group-text" style="justify-content: center;">Seguir</span>
-        <span *ngIf="(user.auth==1 && user.status==0) || (user.auth==1 && user.status==1)" class="input-group-text" style="justify-content: center;">Dejar de seguir</span>
-      </div>
+      <div *ngIf="username !== profilename" style="background-color: rgb(33, 37, 41);" class="col-md-2" (click)="PostRequest()">
+        <span *ngIf="user.status1==0" class="input-group-text" style="justify-content: center;">Seguir</span>
+        <span *ngIf="user.status1==1" class="input-group-text" style="justify-content: center;">Dejar de seguir</span>
+    </div>
     </div>
   </div>
 
@@ -118,7 +118,7 @@
     <div *ngIf="this.username==this.profilename" class="col-md-3 scrollable-div" style="background-color: rgb(194, 194, 194)">
       <h2 class="mt-2">Solicitudes de amistad</h2>
       <div *ngIf="profile" class="form-check form-switch">
-        <label class="form-check-label" style="color: black;" for="flexSwitchCheckDefault">Perfil público</label>
+        <label class="form-check-label" style="color: black;" for="flexSwitchCheckDefault">Perfil visible</label>
         <input class="form-check-input" type="checkbox" [(ngModel)]="user.status" (ngModelChange)="editProfile($event ? 1 : 0)" />
       </div>
       <ul class="list-group" *ngFor="let item of user.requests">
