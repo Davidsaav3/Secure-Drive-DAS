@@ -66,9 +66,13 @@ export class EntrarComponent {
         username: this.registerForm.get('username')?.value, 
         password: this.registerForm.get('password')?.value 
       };
+      //const username = 'public'
+      //const password = 'logsmflkskv7930989rhjg@A'
+      //const token = Buffer.from(`${username}:${password}*`, 'utf8').toString('base64');
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-Type': 'application/x-www-form-urlencoded'
+          //'Authorization': 'Basic ' + token
         })
       };
       this.http.post(url, JSON.stringify(body), httpOptions)
