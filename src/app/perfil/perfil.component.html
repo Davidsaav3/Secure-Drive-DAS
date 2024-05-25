@@ -3,53 +3,67 @@
 
   <div class="px-3 pt-3 pb-3" style="background-color: rgb(33, 37, 41)">
     <div class="row">
-      
+
       <div style="color: aliceblue;" class="col-md-9">
         <h2>{{user.username}}</h2>
         <p> {{user.num_posts}} Imagenes &nbsp; {{user.followers}} Seguidores &nbsp; {{user.following}} Siguiendo</p>
       </div>
-      <div *ngIf="username !== profilename" style="background-color: rgb(33, 37, 41);" class="col-md-2" (click)="PostRequest()">
-        <span *ngIf="user.status1==0" class="input-group-text" style="justify-content: center;">Seguir</span>
+      <div *ngIf="username !== profilename" style="background-color: rgb(33, 37, 41);" class="col-md-2"
+        (click)="PostRequest()">
+        <span *ngIf="user.status1!=1" class="input-group-text" style="justify-content: center;">Seguir</span>
         <span *ngIf="user.status1==1" class="input-group-text" style="justify-content: center;">Dejar de seguir</span>
-    </div>
+      </div>
     </div>
   </div>
 
   <div class="row m-0">
-    <div [ngClass]="{'col-md-9': username === profilename, 'col-md-12': username !== profilename}" class="m-0 scrollable-div">
+    <div [ngClass]="{'col-md-9': username === profilename, 'col-md-12': username !== profilename}"
+      class="m-0 scrollable-div">
       <div *ngIf="pag==0" class="container py-2" style="min-height: 100vh;">
-        <div *ngIf="user.auth==0" class="row"><h1>Cuenta privada</h1></div>
+        <div *ngIf="user.auth==0" class="row">
+          <h1>Cuenta privada</h1>
+        </div>
         <div class="row" *ngIf="posts && posts.post.length > 0 && posts.post[0].id_post>0 && user.auth!=0">
           <div class="col-md-6 pb-4" *ngFor="let archivo of posts.post; let i = index">
             <div class="container mt-3">
               <div class="card" style="background-color: rgb(33, 37, 41); border-radius:20px; position: relative;">
                 <div class="d-flex justify-content-between align-items-center p-2 ps-0">
                   <div class="d-flex">
-                    <a [href]="'/perfil/' + archivo.username" class="card-title m-0 ps-3 p-2" style="color: aliceblue;"><strong>{{archivo.username.split('.')[0]}}</strong></a>
+                    <a [href]="'/perfil/' + archivo.username" class="card-title m-0 ps-3 p-2"
+                      style="color: aliceblue;"><strong>{{archivo.username.split('.')[0]}}</strong></a>
                   </div>
                   <div class="d-flex">
-                    <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2" style="color: aliceblue; border: 1px solid white;">{{archivo.likes}} Me gusta </p>
-                    <p *ngIf="archivo.comments[0].id === null" (click)="mostrarComentarios[i]=!mostrarComentarios[i]" class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;">0 Comentarios 
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down" viewBox="0 0 16 16">
-                        <path d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659"/>
+                    <p class="card-text mb-0 ms-2 me-2 pt-1 rounded px-2"
+                      style="color: aliceblue; border: 1px solid white;">{{archivo.likes}} Me gusta </p>
+                    <p *ngIf="archivo.comments[0].id === null" (click)="mostrarComentarios[i]=!mostrarComentarios[i]"
+                      class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2"
+                      style="color: aliceblue; border: 1px solid white;">0 Comentarios
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-caret-down" viewBox="0 0 16 16">
+                        <path
+                          d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659" />
                       </svg>
                     </p>
-                    <p *ngIf="archivo.comments[0].id != null" (click)="mostrarComentarios[i]=!mostrarComentarios[i]" class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2" style="color: aliceblue; border: 1px solid white;">{{archivo.comments.length}} Comentarios 
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down" viewBox="0 0 16 16">
-                        <path d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659"/>
+                    <p *ngIf="archivo.comments[0].id != null" (click)="mostrarComentarios[i]=!mostrarComentarios[i]"
+                      class="card-text mb-0 pt-1 rounded ms-2 px-2 me-2"
+                      style="color: aliceblue; border: 1px solid white;">{{archivo.comments.length}} Comentarios
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-caret-down" viewBox="0 0 16 16">
+                        <path
+                          d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659" />
                       </svg>
                     </p>
                   </div>
                 </div>
                 <div class="row no-gutters">
-                    <div class="col-md-2" style="width: auto;">
-                      <img [src]="'data:image/jpeg;base64,'+archivo.image" class="card-img" alt="...">
-                    </div>
-                    <div class="m-2" style="color: white;">
-                      <p class="m-0"><strong>{{archivo.text_post}}</strong> </p>
-                      <p class="m-0"> {{archivo.date}}</p>
-                    </div>
-                    <!--<video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
+                  <div class="col-md-2" style="width: auto;">
+                    <img [src]="'data:image/jpeg;base64,'+archivo.image" class="card-img" alt="...">
+                  </div>
+                  <div class="m-2" style="color: white;">
+                    <p class="m-0"><strong>{{archivo.text_post}}</strong> </p>
+                    <p class="m-0"> {{archivo.date}}</p>
+                  </div>
+                  <!--<video *ngIf="archivo.tipo=='mp4'" width="600" height="400" controls>
                       <source [src]="archivo.url" type="video/mp4">
                       Tu navegador no soporta el elemento de video.
                     </video>
@@ -61,28 +75,46 @@
                   <div class="">
                     <div class="card-body pt-0">
                       <div class="d-flex pt-1">
-                        <button class="btn btn-secondary rounded-end enviar-btn me-3" (click)="postLike(archivo.id_post)">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                        <button class="btn btn-secondary rounded-end enviar-btn me-3"
+                          (click)="postLike(archivo.id_post)">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-heart" viewBox="0 0 16 16">
+                            <path
+                              d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
                           </svg>
                         </button>
                         <div class="input-group rounded">
-                          <input type="text" class="form-control rounded-start" [placeholder]="'Añade un comentario...'" [(ngModel)]="comentario[i]">
-                          <button class="btn btn-secondary rounded-end enviar-btn" (click)="postComment(archivo.id_post, comentario[i], i)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
-                              <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+                          <input type="text" class="form-control rounded-start" [placeholder]="'Añade un comentario...'"
+                            [(ngModel)]="comentario[i]">
+                          <button class="btn btn-secondary rounded-end enviar-btn"
+                            (click)="postComment(archivo.id_post, comentario[i], i)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                              class="bi bi-send" viewBox="0 0 16 16">
+                              <path
+                                d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
                             </svg>
                           </button>
                         </div>
-                        <p *ngIf="this.username==this.profilename" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal3" class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;" (click)="id_post= archivo.id_post;">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                        <p *ngIf="this.username==this.profilename" data-bs-toggle="modal"
+                          data-bs-target="#confirmDeleteModal3"
+                          class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn"
+                          style="color: aliceblue; border: 1px solid white;" (click)="id_post= archivo.id_post;">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-pencil" viewBox="0 0 16 16">
+                            <path
+                              d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
                           </svg>
                         </p>
-                        <p *ngIf="this.username==this.profilename" class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal2" (click)="id_post= archivo.id_post;">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                        <p *ngIf="this.username==this.profilename"
+                          class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn"
+                          style="color: aliceblue; border: 1px solid white;" data-bs-toggle="modal"
+                          data-bs-target="#confirmDeleteModal2" (click)="id_post= archivo.id_post;">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-trash" viewBox="0 0 16 16">
+                            <path
+                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                            <path
+                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
                           </svg>
                         </p>
                         <!--<p class="btn m-0 ms-3 btn-secondary rounded-end enviar-btn" style="color: aliceblue; border: 1px solid white;">
@@ -94,16 +126,17 @@
                       </div>
                     </div>
                     <div *ngIf="archivo.comments.length>=1 && archivo.comments[0].id!=null && mostrarComentarios[i]">
-                        <div *ngFor="let arch of archivo.comments" >
-                          <div class="p-3 pt-0">
-                            <div class="card bg-white rounded">
-                              <div class="card-body">
-                                <a [href]="'/perfil/' + arch.username" class="card-title" style="color: black;"><strong>{{arch.username.split('.')[0]}}</strong></a>
-                                <p class="card-text mt-0">{{arch.text}}</p>
-                              </div>
+                      <div *ngFor="let arch of archivo.comments">
+                        <div class="p-3 pt-0">
+                          <div class="card bg-white rounded">
+                            <div class="card-body">
+                              <a [href]="'/perfil/' + arch.username" class="card-title"
+                                style="color: black;"><strong>{{arch.username.split('.')[0]}}</strong></a>
+                              <p class="card-text mt-0">{{arch.text}}</p>
                             </div>
                           </div>
                         </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -115,24 +148,33 @@
         </div>
       </div>
     </div>
-    <div *ngIf="this.username==this.profilename" class="col-md-3 scrollable-div" style="background-color: rgb(194, 194, 194)">
+    <div *ngIf="this.username==this.profilename" class="col-md-3 scrollable-div"
+      style="background-color: rgb(194, 194, 194)">
       <h2 class="mt-2">Solicitudes de amistad</h2>
       <div *ngIf="profile" class="form-check form-switch">
         <label class="form-check-label" style="color: black;" for="flexSwitchCheckDefault">Perfil visible</label>
-        <input class="form-check-input" type="checkbox" [(ngModel)]="user.status" (ngModelChange)="editProfile($event ? 1 : 0)" />
+        <input class="form-check-input" type="checkbox" [(ngModel)]="user.status"
+          (ngModelChange)="editProfile($event ? 1 : 0)" />
       </div>
       <ul class="list-group" *ngFor="let item of user.requests">
-        <li class="list-group-item d-flex justify-content-between align-items-center mt-2" style="background-color: rgb(33, 37, 41); color: aliceblue;">
-           {{item.username}}
+        <li class="list-group-item d-flex justify-content-between align-items-center mt-2"
+          style="background-color: rgb(33, 37, 41); color: aliceblue;">
+          {{item.username}}
           <div>
-            <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2" (click)="ResolveRequest(1, item.id_user)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
-                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+            <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2"
+              (click)="ResolveRequest(1, item.id_user)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg"
+                viewBox="0 0 16 16">
+                <path
+                  d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
               </svg>
             </button>
-            <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2 ms-3" (click)="ResolveRequest(2, item.id_user)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+            <button type="button" style="background-color: white; color: rgb(33, 37, 41);" class="btn mr-2 ms-3"
+              (click)="ResolveRequest(2, item.id_user)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg"
+                viewBox="0 0 16 16">
+                <path
+                  d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
               </svg>
             </button>
           </div>
@@ -142,104 +184,115 @@
   </div>
 
 
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  ¿Estás seguro de que deseas eliminar la publicación?
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deletePost()">Eliminar</button>
-              </div>
-          </div>
-      </div>
-  </div>
-
-<div *ngIf="Okdeleteall" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Eliminado correctamente</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="Noupload" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Error al subir el archivo</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="Okupload" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Archivo subido correctamente</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="NoNoupload" class="top-0 left-0 p-3" style="position: fixed;">
-  <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">No puedes subir un archivo con el mismo nombre</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<div class="modal fade" id="confirmDeleteModal3" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
-        <form (ngSubmit)="editPost()" enctype="multipart/form-data">
-          <div class="modal-header">
-              <h5 class="modal-title" id="confirmDeleteModalLabel">Editar publicación</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <!--<div class="form-group">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro de que deseas eliminar la publicación?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deletePost()">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="Okdeleteall" class="top-0 left-0 p-3" style="position: fixed;">
+    <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">Eliminado correctamente</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="Noupload" class="top-0 left-0 p-3" style="position: fixed;">
+    <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">Error al subir el archivo</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="Okupload" class="top-0 left-0 p-3" style="position: fixed;">
+    <div role="alert" class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">Archivo subido correctamente</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="NoNoupload" class="top-0 left-0 p-3" style="position: fixed;">
+    <div role="alert" class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">No puedes subir un archivo con el mismo nombre</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade" id="confirmDeleteModal3" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form (ngSubmit)="editPost()" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteModalLabel">Editar publicación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!--<div class="form-group">
               <label for="image">Imagen</label><br>
               <input type="file" class="form-control-file" id="image" name="image" (change)="onFileSelected($event)" accept="image/*" required>
             </div>-->
-              <div class="form-group">
-                <label for="text">Título</label>
-                <textarea class="form-control" id="text" name="text" [(ngModel)]="postData.text" required></textarea>
-              </div>
-            
+          <div class="form-group">
+            <label for="text">Título</label>
+            <textarea class="form-control" id="text" name="text" [(ngModel)]="postData.text" required></textarea>
           </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
-          </div>
-        </form>
-      </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
-<div class="modal fade" id="confirmDeleteModal2" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmDeleteModal2" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              ¿Estás seguro de que deseas eliminar la publicación?
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deletePost()">Eliminar</button>
-          </div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas eliminar la publicación?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deletePost()">Eliminar</button>
+      </div>
+    </div>
   </div>
 </div>
